@@ -3,6 +3,7 @@
 
 
 // Low level functions (hardware depended)
+#include <stdint.h>
 #include "nrf24_hal.h"
 
 
