@@ -1,12 +1,18 @@
+# !!! WARNING !!! AUTO-GENERATED FILE, PLEASE DO NOT MODIFY IT AND USE
+# https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+#
+# If you need to override existing CMake configuration or add extra,
+# please create `CMakeListsUser.txt` in the root of project.
+# The `CMakeListsUser.txt` will not be overwritten by PlatformIO.
+
 cmake_minimum_required(VERSION 3.2)
 project(stm-32-nRF24)
 
 include(CMakeListsPrivate.txt)
 
-include_directories("$ENV{HOMEDRIVE}$ENV{HOMEPATH}/.platformio/packages/framework-stm32cube/f1/Drivers/STM32F1xx_HAL_Driver/Src")
-include_directories("$ENV{HOME}/.platformio/packages/framework-stm32cube/f1/Drivers/STM32F1xx_HAL_Driver/Src")
-
-include_directories("${CMAKE_CURRENT_LIST_DIR}/lib/PE_nRF24/src")
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/CMakeListsUser.txt)
+include(CMakeListsUser.txt)
+endif()
 
 add_custom_target(
     PLATFORMIO_BUILD ALL
