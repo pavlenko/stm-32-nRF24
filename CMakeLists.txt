@@ -6,6 +6,8 @@ include(CMakeListsPrivate.txt)
 include_directories("$ENV{HOMEDRIVE}$ENV{HOMEPATH}/.platformio/packages/framework-stm32cube/f1/Drivers/STM32F1xx_HAL_Driver/Src")
 include_directories("$ENV{HOME}/.platformio/packages/framework-stm32cube/f1/Drivers/STM32F1xx_HAL_Driver/Src")
 
+include_directories("${CMAKE_CURRENT_LIST_DIR}/lib/PE_nRF24/src")
+
 add_custom_target(
     PLATFORMIO_BUILD ALL
     COMMAND ${PLATFORMIO_CMD} -f -c clion run
