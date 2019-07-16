@@ -20,6 +20,7 @@ typedef enum {
 typedef struct {
     void (*setCE) (PE_nRF24_pinState_t state);
     void (*setCS) (PE_nRF24_pinState_t state);
+    uint8_t (*RW) (uint8_t data);
 } PE_nRF24_t;
 
 /* Exported constants --------------------------------------------------------*/
@@ -58,10 +59,12 @@ typedef struct {
 /** Instructions **************************************************************/
 
 // Register read
-#define PE_nRF24_CMD_R_REGISTER(_reg_) ((0x00U) | ((PE_nRF24_REG_MASK) & (_reg_)))
+#define PE_nRF24_CMD_R_REGISTER 0x00U
+#define PE_nRF24_CMD_R_REGISTER_(_reg_) ((0x00U) | ((PE_nRF24_REG_MASK) & (_reg_)))
 
 // Register write
-#define PE_nRF24_CMD_W_REGISTER(_reg_) ((0x20U) | ((PE_nRF24_REG_MASK) & (_reg_)))
+#define PE_nRF24_CMD_W_REGISTER 0x20U
+#define PE_nRF24_CMD_W_REGISTER_(_reg_) ((0x20U) | ((PE_nRF24_REG_MASK) & (_reg_)))
 
 // Read RX payload
 #define PE_nRF24_CMD_R_RX_PAYLOAD 0x61U
