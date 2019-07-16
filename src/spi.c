@@ -44,9 +44,13 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef *spi)
          * PA5 ------> SPI1_SCK
          * PA6 ------> SPI1_MISO
          * PA7 ------> SPI1_MOSI
-         *
-         * Do not initialize PA4/NSS because a software SS will be used
          */
+        GPIO_InitStruct.Pin   = GPIO_PIN_4;
+        GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+
+        HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
         GPIO_InitStruct.Pin   = GPIO_PIN_5|GPIO_PIN_7;
         GPIO_InitStruct.Mode  = GPIO_MODE_AF_PP;
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
@@ -77,9 +81,13 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef *spi)
          * PB13 ------> SPI2_SCK
          * PB14 ------> SPI2_MISO
          * PB15 ------> SPI2_MOSI
-         *
-         * Do not initialize PB12/NSS because a software SS will be used
          */
+        GPIO_InitStruct.Pin   = GPIO_PIN_12;
+        GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+
+        HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
         GPIO_InitStruct.Pin   = GPIO_PIN_13|GPIO_PIN_15;
         GPIO_InitStruct.Mode  = GPIO_MODE_AF_PP;
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
@@ -110,10 +118,8 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef *spi)
          * PA5 ------> SPI1_SCK
          * PA6 ------> SPI1_MISO
          * PA7 ------> SPI1_MOSI
-         *
-         * Do not de-initialize PB12/NSS because a software SS will be used
          */
-        HAL_GPIO_DeInit(GPIOA, GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7);
+        HAL_GPIO_DeInit(GPIOA, GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7);
 
         /* SPI interrupt Deinit */
         HAL_NVIC_DisableIRQ(SPI1_IRQn);
@@ -129,10 +135,8 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef *spi)
          * PB13 ------> SPI2_SCK
          * PB14 ------> SPI2_MISO
          * PB15 ------> SPI2_MOSI
-         *
-         * Do not de-initialize PB12/NSS because a software SS will be used
          */
-        HAL_GPIO_DeInit(GPIOB, GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15);
+        HAL_GPIO_DeInit(GPIOB, GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15);
 
         /* SPI interrupt Deinit */
         HAL_NVIC_DisableIRQ(SPI2_IRQn);
