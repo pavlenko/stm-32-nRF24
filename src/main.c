@@ -2,11 +2,15 @@
 
 #include "main.h"
 #include "led.h"
+#include "spi.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+
+SPI_HandleTypeDef SPI_Handle;
+
 /* Private function prototypes -----------------------------------------------*/
 
 void SystemClock_Config(void);
@@ -23,6 +27,8 @@ int main(void)
     HAL_Init();
 
     SystemClock_Config();
+
+    MX_SPI_Init(SPI1, &SPI_Handle);
 
     uint32_t tick = HAL_GetTick();
 
