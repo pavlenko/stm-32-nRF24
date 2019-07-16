@@ -11,6 +11,17 @@ extern "C" {
 #include <stdint.h>
 
 /* Exported types ------------------------------------------------------------*/
+
+typedef enum {
+    nRF24L01_PIN_L = 0,
+    nRF24L01_PIN_H = 1,
+} nRF24L01_pin_t;
+
+typedef struct {
+    void (*setCE) (nRF24L01_pin_t state);
+    void (*setCS) (nRF24L01_pin_t state);
+} nRF24L01_t;
+
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported function prototypes --------------------------------------------- */
