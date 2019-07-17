@@ -437,6 +437,22 @@ typedef enum {
     PE_nRF24_ARD_4000us = 0xFU,
 } PE_nRF24_AutoRetryDelay_t;
 
+typedef enum {
+    PE_nRF24_ADDRESS_3BIT = PE_nRF24_SETUP_AW_0,
+    PE_nRF24_ADDRESS_4BIT = PE_nRF24_SETUP_AW_1,
+    PE_nRF24_ADDRESS_5BIT = PE_nRF24_SETUP_AW_1|PE_nRF24_SETUP_AW_0,
+} PE_nRF24_AddressWidth_t;
+
+typedef enum {
+    PE_nRF24_PIPE0   = PE_nRF24_REG_RX_ADDR_P0,
+    PE_nRF24_PIPE1   = PE_nRF24_REG_RX_ADDR_P1,
+    PE_nRF24_PIPE2   = PE_nRF24_REG_RX_ADDR_P2,
+    PE_nRF24_PIPE3   = PE_nRF24_REG_RX_ADDR_P3,
+    PE_nRF24_PIPE4   = PE_nRF24_REG_RX_ADDR_P4,
+    PE_nRF24_PIPE5   = PE_nRF24_REG_RX_ADDR_P5,
+    PE_nRF24_PIPE_TX = PE_nRF24_REG_TX_ADDR,
+} PE_nRF24_PipeN_t;
+
 typedef struct {
     /**
      * Chip enable, activates RX or TX mode
@@ -486,6 +502,32 @@ inline void PE_nRF24_setRFChannel(PE_nRF24_t *handle, uint8_t channel);
  * @param tries  in range 1...15 or 0 for disable
  */
 inline void PE_nRF24_setAutoRetry(PE_nRF24_t *handle, PE_nRF24_AutoRetryDelay_t delay, uint8_t tries);
+
+/**
+ * Set address width
+ *
+ * @param handle connection
+ * @param width  one of PE_nRF24_AddressWidth_t
+ */
+inline void PE_nRF24_setAddressWidth(PE_nRF24_t *handle, PE_nRF24_AddressWidth_t width);
+
+/**
+ * Get address width
+ *
+ * @param handle connection
+ *
+ * @return Address width from device
+ */
+inline uint8_t PE_nRF24_getAddressWidth(PE_nRF24_t *handle);
+
+/**
+ * Set static RX address for a specified pipe
+ *
+ * @param handle  connection
+ * @param pipe    one of PE_nRF24_PipeN_t, each item is register address internally
+ * @param address pointer to address array
+ */
+inline void PE_nRF24_setAddressValue(PE_nRF24_t *handle, PE_nRF24_PipeN_t pipe, const uint8_t *address)
 
 #ifdef __cplusplus
 }

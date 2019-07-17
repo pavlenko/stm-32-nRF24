@@ -192,11 +192,52 @@ inline void PE_nRF24_setAutoRetry(PE_nRF24_t *handle, PE_nRF24_AutoRetryDelay_t 
     );
 }
 
-inline void PE_nRF24_setAddressWidth(PE_nRF24_t *handle, uint8_t width)
-{}
+inline void PE_nRF24_setAddressWidth(PE_nRF24_t *handle, PE_nRF24_AddressWidth_t width)
+{
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_SETUP_AW, (width & PE_nRF24_SETUP_AW));
+}
 
-inline void PE_nRF24_setAddressValue(PE_nRF24_t *handle, uint8_t pipe, const uint8_t *address)
-{}
+inline uint8_t PE_nRF24_getAddressWidth(PE_nRF24_t *handle)
+{
+    return PE_nRF24_readByte(handle, PE_nRF24_REG_SETUP_AW);
+}
+
+inline void PE_nRF24_setAddressValue(PE_nRF24_t *handle, PE_nRF24_PipeN_t pipe, const uint8_t *address)
+{
+    uint8_t width;
+
+    switch (pipe) {
+        case PE_nRF24_PIPE_TX:
+        case PE_nRF24_PIPE0:
+        case PE_nRF24_PIPE1:
+            // Get address width
+            width = PE_nRF24_getAddressWidth(handle) + 1;
+
+            // Write address in reverse order (LSB byte first)
+            address += width;
+
+            handle->setCS(PE_nRF24_PIN_L);
+
+            handle->RW(PE_nRF24_CMD_W_REGISTER | pipe);
+
+            do {
+                handle->RW(*address--);
+            } while (width--);
+
+            handle->setCS(PE_nRF24_PIN_H);
+            break;
+        case PE_nRF24_PIPE2:
+        case PE_nRF24_PIPE3:
+        case PE_nRF24_PIPE4:
+        case PE_nRF24_PIPE5:
+            // Write address LSB byte (only first byte from the addr buffer)
+            PE_nRF24_sendByte(handle, pipe, *address);
+            break;
+        default:
+            // Incorrect pipe number -> do nothing
+            break;
+    }
+}
 
 inline void PE_nRF24_setTXPower(PE_nRF24_t *handle, uint8_t level)
 {}
