@@ -146,6 +146,7 @@ extern "C" {
 #define PE_nRF24_EN_RXADDR_P5_Msk (1U << PE_nRF24_EN_RXADDR_P5_Pos)
 #define PE_nRF24_EN_RXADDR_P5     PE_nRF24_EN_RXADDR_P5_Msk
 
+#define PE_nRF24_EN_RXADDR_ALL    (PE_nRF24_EN_RXADDR_P5|PE_nRF24_EN_RXADDR_P4|PE_nRF24_EN_RXADDR_P3|PE_nRF24_EN_RXADDR_P2|PE_nRF24_EN_RXADDR_P1|PE_nRF24_EN_RXADDR_P0)
 #define PE_nRF24_EN_RXADDR_RESET  (PE_nRF24_EN_RXADDR_P1|PE_nRF24_EN_RXADDR_P0)
 
 /** SETUP_AW bits *************************************************************/
@@ -570,7 +571,7 @@ uint8_t PE_nRF24_getAddressWidth(PE_nRF24_t *handle);
  * @param pipe    one of PE_nRF24_PipeN_t, each item is register address internally
  * @param address pointer to address array
  */
-void PE_nRF24_setAddressValue(PE_nRF24_t *handle, PE_nRF24_PipeN_t pipe, const uint8_t *address);
+void PE_nRF24_setAddressValue(PE_nRF24_t *handle, PE_nRF24_Pipe_t pipe, const uint8_t *address);
 
 /**
  * Set transmitter output RF power level
@@ -589,6 +590,10 @@ void PE_nRF24_setTXPower(PE_nRF24_t *handle, PE_nRF24_TXPower_t level);
  * @param rate   one of PE_nRF24_DataRate_t
  */
 void PE_nRF24_setDataRate(PE_nRF24_t *handle, PE_nRF24_DataRate_t rate);
+
+void PE_nRF24_attachRXPipe(PE_nRF24_t *handle, PE_nRF24_Pipe_t pipe);
+
+void PE_nRF24_detachRXPipe(PE_nRF24_t *handle, PE_nRF24_Pipe_t pipe);
 
 /**
  * IRQ handler, must be called from interrupt if used

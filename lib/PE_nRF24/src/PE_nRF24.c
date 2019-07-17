@@ -261,6 +261,29 @@ void PE_nRF24_setDataRate(PE_nRF24_t *handle, PE_nRF24_DataRate_t rate)
     PE_nRF24_sendByte(handle, PE_nRF24_REG_RF_SETUP, reg);
 }
 
+void PE_nRF24_attachRXPipe(PE_nRF24_t *handle, PE_nRF24_Pipe_t pipe)
+{
+    uint8_t reg = PE_nRF24_readByte(handle, PE_nRF24_REG_EN_RXADDR);
+
+    reg |= (1U << pipe);
+    reg &= PE_nRF24_EN_RXADDR_ALL;
+
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_EN_RXADDR, reg);
+
+    //TODO set payload width, ?? how to receive less bytes
+    //TODO enable/disable auto acknowledgment in nRF24_REG_EN_AA
+}
+
+void PE_nRF24_detachRXPipe(PE_nRF24_t *handle, PE_nRF24_Pipe_t pipe)
+{
+    uint8_t reg = PE_nRF24_readByte(handle, PE_nRF24_REG_EN_RXADDR);
+
+    reg &= ~(1U << pipe);
+    reg &= PE_nRF24_EN_RXADDR_ALL;
+
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_EN_RXADDR, reg);
+}
+
 void PE_nRF24_readPayload(PE_nRF24_t *handle, PE_nRF24_Pipe_t pipe, uint8_t *data, uint8_t *size)
 {
     *size = PE_nRF24_readByte(handle, PE_nRF24_REG_RX_PW_Pn[pipe]);
