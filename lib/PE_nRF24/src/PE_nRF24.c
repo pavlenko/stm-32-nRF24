@@ -260,3 +260,45 @@ void PE_nRF24_setDataRate(PE_nRF24_t *handle, PE_nRF24_DataRate_t rate)
 
     PE_nRF24_sendByte(handle, PE_nRF24_REG_RF_SETUP, reg);
 }
+
+void PE_nRF24_IRQHandler(PE_nRF24_t *handle)
+{
+    uint8_t pipe;
+    uint8_t reg = PE_nRF24_readByte(handle, PE_nRF24_REG_STATUS);
+
+    if ((reg & PE_nRF24_STATUS_MAX_RT) != 0U) {
+        PE_nRF24_MaxRetriesHandler(handle);
+        return;
+    }
+
+    if ((reg & PE_nRF24_STATUS_TX_DS) != 0U) {
+        PE_nRF24_TXDataSentHandler(handle);
+        return;
+    }
+    /**
+     * The Data Ready interrupt is set by a new packet arrival event. The procedure for handling this interrupt should be:
+     * 1) read payload via SPI
+     * 2) clear RX_DR interrupt
+     * 3) read FIFO_STATUS to check if there are more payloads available in RX FIFO
+     * 4) if there are more data in RX FIFO repeat from 1).
+     */
+    //TODO create separate pipe enum & registers map and then cast to pipe enum
+    pipe = (reg & PE_nRF24_STATUS_RX_P_NO) >> PE_nRF24_STATUS_RX_P_NO_Pos;
+    PE_nRF24_RXDataReadyHandler(handle, pipe);
+}
+
+__attribute__((weak)) void PE_nRF24_RXDataReadyHandler(PE_nRF24_t *handle, uint8_t pipe)
+{
+    (void) handle;
+    (void) pipe;
+}
+
+__attribute__((weak)) void PE_nRF24_TXDataSentHandler(PE_nRF24_t *handle)
+{
+    (void) handle;
+}
+
+__attribute__((weak)) void PE_nRF24_MaxRetriesHandler(PE_nRF24_t *handle)
+{
+    (void) handle;
+}
