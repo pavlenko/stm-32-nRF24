@@ -175,8 +175,16 @@ void PE_nRF24_setDirection(PE_nRF24_t *handle, PE_nRF24_Direction_t dir)
     PE_nRF24_sendByte(handle, PE_nRF24_REG_CONFIG, reg);
 }
 
-void PE_nRF24_setCRC(PE_nRF24_t *handle, uint8_t crc)
-{}
+void PE_nRF24_setCRCScheme(PE_nRF24_t *handle, PE_nRF24_CRCScheme_t scheme)
+{
+    uint8_t reg = PE_nRF24_readByte(handle, PE_nRF24_REG_CONFIG);
+
+    // Configure EN_CRC[3] and CRCO[2] bits of the CONFIG register
+    reg &= ~(PE_nRF24_CONFIG_EN_CRC|PE_nRF24_CONFIG_CRCO);
+    reg |= scheme;
+
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_CONFIG, reg);
+}
 
 void PE_nRF24_setRFChannel(PE_nRF24_t *handle, uint8_t channel)
 {
