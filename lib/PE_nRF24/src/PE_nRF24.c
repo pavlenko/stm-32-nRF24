@@ -48,6 +48,50 @@ static void PE_nRF24_sendByte(PE_nRF24_t *handle, uint8_t addr, uint8_t byte)
     handle->setCS(PE_nRF24_PIN_H);
 }
 
+static void PE_nRF24_readData(PE_nRF24_t *handle, uint8_t addr, uint8_t *data, uint8_t size)
+{
+    handle->setCS(PE_nRF24_PIN_L);
+
+    handle->RW(addr);
+
+    while (size--) {
+        *data++ = handle->RW(PE_nRF24_CMD_NOP);
+    }
+
+    handle->setCS(PE_nRF24_PIN_H);
+}
+
+static void PE_nRF24_sendData(PE_nRF24_t *handle, uint8_t addr, uint8_t *data, uint8_t size)
+{
+    handle->setCS(PE_nRF24_PIN_L);
+
+    handle->RW(addr);
+
+    while (size--) {
+        handle->RW(*data++);
+    }
+
+    handle->setCS(PE_nRF24_PIN_H);
+}
+
+uint8_t PE_nRF24_check(PE_nRF24_t *handle)
+{
+    uint8_t buf[5];
+    uint8_t i;
+    uint8_t *ptr = (uint8_t *) PE_nRF24_TEST_ADDRESS;
+
+    // Write test TX address and read TX_ADDR register
+    PE_nRF24_sendData(handle, PE_nRF24_CMD_W_REGISTER | PE_nRF24_REG_TX_ADDR, ptr, 5);
+    PE_nRF24_readData(handle, PE_nRF24_CMD_R_REGISTER | PE_nRF24_REG_TX_ADDR, buf, 5);
+
+    // Compare buffers, return error on first mismatch
+    for (i = 0; i < 5; i++) {
+        if (buf[i] != *ptr++) return 0;
+    }
+
+    return 1;
+}
+
 void PE_nRF24_initialize(PE_nRF24_t *handle)
 {
     // Write registers initial values
@@ -95,7 +139,7 @@ inline void PE_nRF24_clearIRQFlags(PE_nRF24_t *handle)
 
     // Clear RX_DR, TX_DS and MAX_RT bits of the STATUS register
     reg  = PE_nRF24_readByte(handle, PE_nRF24_REG_STATUS);
-    reg |= 0x70U;//nRF24_MASK_STATUS_IRQ;
+    reg |= PE_nRF24_STATUS_RX_DR|PE_nRF24_STATUS_TX_DS|PE_nRF24_STATUS_MAX_RT;
 
     PE_nRF24_sendByte(handle, PE_nRF24_REG_STATUS, reg);
 }
