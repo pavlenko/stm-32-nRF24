@@ -404,8 +404,25 @@ typedef enum {
 } PE_nRF24_pinState_t;
 
 typedef struct {
+    /**
+     * Chip enable, activates RX or TX mode
+     *
+     * @param state
+     */
     void (*setCE) (PE_nRF24_pinState_t state);
+
+    /**
+     * SPI Chip select
+     *
+     * @param state
+     */
     void (*setCS) (PE_nRF24_pinState_t state);
+
+    /**
+     * SPI transceive data
+     *
+     * @param data
+     */
     uint8_t (*RW) (uint8_t data);
 } PE_nRF24_t;
 
