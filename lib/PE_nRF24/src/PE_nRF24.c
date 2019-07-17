@@ -123,17 +123,17 @@ void PE_nRF24_initialize(PE_nRF24_t *handle)
     handle->setCS(PE_nRF24_PIN_H);//TODO remove, this used in all data read/send logic
 }
 
-inline void PE_nRF24_flushRX(PE_nRF24_t *handle)
+void PE_nRF24_flushRX(PE_nRF24_t *handle)
 {
     PE_nRF24_sendByte(handle, PE_nRF24_CMD_FLUSH_RX, PE_nRF24_CMD_NOP);
 }
 
-inline void PE_nRF24_flushTX(PE_nRF24_t *handle)
+void PE_nRF24_flushTX(PE_nRF24_t *handle)
 {
     PE_nRF24_sendByte(handle, PE_nRF24_CMD_FLUSH_TX, PE_nRF24_CMD_NOP);
 }
 
-inline void PE_nRF24_clearIRQFlags(PE_nRF24_t *handle)
+void PE_nRF24_clearIRQFlags(PE_nRF24_t *handle)
 {
     uint8_t reg;
 
@@ -144,7 +144,7 @@ inline void PE_nRF24_clearIRQFlags(PE_nRF24_t *handle)
     PE_nRF24_sendByte(handle, PE_nRF24_REG_STATUS, reg);
 }
 
-inline void PE_nRF24_setPowerMode(PE_nRF24_t *handle, PE_nRF24_PowerMode_t mode)
+void PE_nRF24_setPowerMode(PE_nRF24_t *handle, PE_nRF24_PowerMode_t mode)
 {
     uint8_t reg;
 
@@ -163,7 +163,7 @@ inline void PE_nRF24_setPowerMode(PE_nRF24_t *handle, PE_nRF24_PowerMode_t mode)
     PE_nRF24_sendByte(handle, PE_nRF24_REG_CONFIG, reg);
 }
 
-inline void PE_nRF24_setDirection(PE_nRF24_t *handle, PE_nRF24_Direction_t dir)
+void PE_nRF24_setDirection(PE_nRF24_t *handle, PE_nRF24_Direction_t dir)
 {
     uint8_t reg;
 
@@ -175,15 +175,15 @@ inline void PE_nRF24_setDirection(PE_nRF24_t *handle, PE_nRF24_Direction_t dir)
     PE_nRF24_sendByte(handle, PE_nRF24_REG_CONFIG, reg);
 }
 
-inline void PE_nRF24_setCRC(PE_nRF24_t *handle, uint8_t crc)
+void PE_nRF24_setCRC(PE_nRF24_t *handle, uint8_t crc)
 {}
 
-inline void PE_nRF24_setRFChannel(PE_nRF24_t *handle, uint8_t channel)
+void PE_nRF24_setRFChannel(PE_nRF24_t *handle, uint8_t channel)
 {
     PE_nRF24_sendByte(handle, PE_nRF24_REG_RF_CH, (channel & PE_nRF24_RF_CH));
 }
 
-inline void PE_nRF24_setAutoRetry(PE_nRF24_t *handle, PE_nRF24_AutoRetryDelay_t delay, uint8_t tries)
+void PE_nRF24_setAutoRetry(PE_nRF24_t *handle, PE_nRF24_AutoRetryDelay_t delay, uint8_t tries)
 {
     PE_nRF24_sendByte(
         handle,
@@ -192,17 +192,17 @@ inline void PE_nRF24_setAutoRetry(PE_nRF24_t *handle, PE_nRF24_AutoRetryDelay_t 
     );
 }
 
-inline void PE_nRF24_setAddressWidth(PE_nRF24_t *handle, PE_nRF24_AddressWidth_t width)
+void PE_nRF24_setAddressWidth(PE_nRF24_t *handle, PE_nRF24_AddressWidth_t width)
 {
     PE_nRF24_sendByte(handle, PE_nRF24_REG_SETUP_AW, (width & PE_nRF24_SETUP_AW));
 }
 
-inline uint8_t PE_nRF24_getAddressWidth(PE_nRF24_t *handle)
+uint8_t PE_nRF24_getAddressWidth(PE_nRF24_t *handle)
 {
     return PE_nRF24_readByte(handle, PE_nRF24_REG_SETUP_AW);
 }
 
-inline void PE_nRF24_setAddressValue(PE_nRF24_t *handle, PE_nRF24_PipeN_t pipe, const uint8_t *address)
+void PE_nRF24_setAddressValue(PE_nRF24_t *handle, PE_nRF24_PipeN_t pipe, const uint8_t *address)
 {
     uint8_t width;
 
@@ -239,8 +239,24 @@ inline void PE_nRF24_setAddressValue(PE_nRF24_t *handle, PE_nRF24_PipeN_t pipe, 
     }
 }
 
-inline void PE_nRF24_setTXPower(PE_nRF24_t *handle, uint8_t level)
-{}
+void PE_nRF24_setTXPower(PE_nRF24_t *handle, PE_nRF24_TXPower_t level)
+{
+    uint8_t reg = PE_nRF24_readByte(handle, PE_nRF24_REG_RF_SETUP);
 
-inline void PE_nRF24_setDataRate(PE_nRF24_t *handle, uint8_t level)
-{}
+    // Configure RF_PWR[2:1] bits of the RF_SETUP register
+    reg &= ~PE_nRF24_RF_SETUP_RF_PWR;
+    reg |= (level << PE_nRF24_RF_SETUP_RF_PWR_Pos);
+
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_RF_SETUP, reg);
+}
+
+void PE_nRF24_setDataRate(PE_nRF24_t *handle, PE_nRF24_DataRate_t rate)
+{
+    uint8_t reg = PE_nRF24_readByte(handle, PE_nRF24_REG_RF_SETUP);
+
+    // Configure RF_DR_LOW[5] and RF_DR_HIGH[3] bits of the RF_SETUP register
+    reg &= ~(PE_nRF24_RF_SETUP_RF_DR_HIGH|PE_nRF24_RF_SETUP_RF_DR_LOW);
+    reg |= rate;
+
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_RF_SETUP, reg);
+}

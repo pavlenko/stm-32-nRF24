@@ -453,6 +453,19 @@ typedef enum {
     PE_nRF24_PIPE_TX = PE_nRF24_REG_TX_ADDR,
 } PE_nRF24_PipeN_t;
 
+typedef enum {
+    PE_nRF24_TX_POWER_18dBm,
+    PE_nRF24_TX_POWER_12dBm,
+    PE_nRF24_TX_POWER_6dBm,
+    PE_nRF24_TX_POWER_0dBm,
+} PE_nRF24_TXPower_t;
+
+typedef enum {
+    PE_nRF24_DR__250kbps = PE_nRF24_RF_SETUP_RF_DR_LOW,
+    PE_nRF24_DR_1000kbps = 0x00U,
+    PE_nRF24_DR_2000kbps = PE_nRF24_RF_SETUP_RF_DR_HIGH,
+} PE_nRF24_DataRate_t;
+
 typedef struct {
     /**
      * Chip enable, activates RX or TX mode
@@ -482,9 +495,9 @@ typedef struct {
 
 uint8_t PE_nRF24_check(PE_nRF24_t *handle);
 void PE_nRF24_initialize(PE_nRF24_t *handle);
-inline void PE_nRF24_flushRX(PE_nRF24_t *handle);
-inline void PE_nRF24_flushTX(PE_nRF24_t *handle);
-inline void PE_nRF24_clearIRQFlags(PE_nRF24_t *handle);
+void PE_nRF24_flushRX(PE_nRF24_t *handle);
+void PE_nRF24_flushTX(PE_nRF24_t *handle);
+void PE_nRF24_clearIRQFlags(PE_nRF24_t *handle);
 
 /**
  * Set frequency channel, frequency will be (2400 + channel) MHz
@@ -492,7 +505,7 @@ inline void PE_nRF24_clearIRQFlags(PE_nRF24_t *handle);
  * @param handle  connection
  * @param channel value in range 0...127
  */
-inline void PE_nRF24_setRFChannel(PE_nRF24_t *handle, uint8_t channel);
+void PE_nRF24_setRFChannel(PE_nRF24_t *handle, uint8_t channel);
 
 /**
  * Set automatic retransmission parameters
@@ -501,7 +514,7 @@ inline void PE_nRF24_setRFChannel(PE_nRF24_t *handle, uint8_t channel);
  * @param delay  one of PE_nRF24_AutoRetryDelay_t
  * @param tries  in range 1...15 or 0 for disable
  */
-inline void PE_nRF24_setAutoRetry(PE_nRF24_t *handle, PE_nRF24_AutoRetryDelay_t delay, uint8_t tries);
+void PE_nRF24_setAutoRetry(PE_nRF24_t *handle, PE_nRF24_AutoRetryDelay_t delay, uint8_t tries);
 
 /**
  * Set address width
@@ -509,7 +522,7 @@ inline void PE_nRF24_setAutoRetry(PE_nRF24_t *handle, PE_nRF24_AutoRetryDelay_t 
  * @param handle connection
  * @param width  one of PE_nRF24_AddressWidth_t
  */
-inline void PE_nRF24_setAddressWidth(PE_nRF24_t *handle, PE_nRF24_AddressWidth_t width);
+void PE_nRF24_setAddressWidth(PE_nRF24_t *handle, PE_nRF24_AddressWidth_t width);
 
 /**
  * Get address width
@@ -518,7 +531,7 @@ inline void PE_nRF24_setAddressWidth(PE_nRF24_t *handle, PE_nRF24_AddressWidth_t
  *
  * @return Address width from device
  */
-inline uint8_t PE_nRF24_getAddressWidth(PE_nRF24_t *handle);
+uint8_t PE_nRF24_getAddressWidth(PE_nRF24_t *handle);
 
 /**
  * Set static RX address for a specified pipe
@@ -527,7 +540,25 @@ inline uint8_t PE_nRF24_getAddressWidth(PE_nRF24_t *handle);
  * @param pipe    one of PE_nRF24_PipeN_t, each item is register address internally
  * @param address pointer to address array
  */
-inline void PE_nRF24_setAddressValue(PE_nRF24_t *handle, PE_nRF24_PipeN_t pipe, const uint8_t *address)
+void PE_nRF24_setAddressValue(PE_nRF24_t *handle, PE_nRF24_PipeN_t pipe, const uint8_t *address);
+
+/**
+ * Set transmitter output RF power level
+ *
+ * @param handle connection
+ * @param level  one of PE_nRF24_TXPower_t
+ */
+void PE_nRF24_setTXPower(PE_nRF24_t *handle, PE_nRF24_TXPower_t level);
+
+/**
+ * Set transmitter data rate speed
+ *
+ * Note: PE_nRF24_DR__250kbps can be used only for plus version
+ *
+ * @param handle connection
+ * @param rate   one of PE_nRF24_DataRate_t
+ */
+void PE_nRF24_setDataRate(PE_nRF24_t *handle, PE_nRF24_DataRate_t rate);
 
 #ifdef __cplusplus
 }
