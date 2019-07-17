@@ -99,9 +99,9 @@ void PE_nRF24_initialize(PE_nRF24_t *handle)
     PE_nRF24_sendByte(handle, PE_nRF24_REG_EN_AA, PE_nRF24_EN_AA_RESET);
     PE_nRF24_sendByte(handle, PE_nRF24_REG_EN_RXADDR, PE_nRF24_EN_RXADDR_RESET);
     PE_nRF24_sendByte(handle, PE_nRF24_REG_SETUP_AW, PE_nRF24_SETUP_AW_RESET);
-    PE_nRF24_sendByte(handle, PE_nRF24_REG_SETUP_RETR, 0x03);
-    PE_nRF24_sendByte(handle, PE_nRF24_REG_RF_CH, 0x02);
-    PE_nRF24_sendByte(handle, PE_nRF24_REG_RF_SETUP, 0x0E);
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_SETUP_RETR, PE_nRF24_SETUP_RETR_RESET);
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_RF_CH, PE_nRF24_RF_CH_RESET);
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_RF_SETUP, PE_nRF24_RF_SETUP_RESET);
     PE_nRF24_sendByte(handle, PE_nRF24_REG_STATUS, 0x00);
     PE_nRF24_sendByte(handle, PE_nRF24_REG_RX_PW_P0, 0x00);
     PE_nRF24_sendByte(handle, PE_nRF24_REG_RX_PW_P1, 0x00);

@@ -183,27 +183,38 @@ extern "C" {
 #define PE_nRF24_SETUP_RETR_ARD_2   (0x4U << PE_nRF24_SETUP_RETR_ARD_Pos)
 #define PE_nRF24_SETUP_RETR_ARD_3   (0x8U << PE_nRF24_SETUP_RETR_ARD_Pos)
 
+#define PE_nRF24_SETUP_RETR_RESET   (PE_nRF24_SETUP_RETR_ARD_1|PE_nRF24_SETUP_RETR_ARD_0)
+
 /** RF_CH bits ****************************************************************/
 
 // Sets the frequency channel, default 0b0000010
-#define PE_nRF24_RF_CH_RF_CH_Pos (0U)
-#define PE_nRF24_RF_CH_RF_CH_Msk (0x3FU << PE_nRF24_RF_CH_RF_CH_Pos)
-#define PE_nRF24_RF_CH_RF_CH     PE_nRF24_RF_CH_RF_CH_Msk
+#define PE_nRF24_RF_CH_Pos   (0U)
+#define PE_nRF24_RF_CH_Msk   (0x3FU << PE_nRF24_RF_CH_Pos)
+#define PE_nRF24_RF_CH       PE_nRF24_RF_CH_Msk
+#define PE_nRF24_RF_CH_0     (0x01U << PE_nRF24_RF_CH_Pos)
+#define PE_nRF24_RF_CH_1     (0x02U << PE_nRF24_RF_CH_Pos)
+#define PE_nRF24_RF_CH_2     (0x04U << PE_nRF24_RF_CH_Pos)
+#define PE_nRF24_RF_CH_3     (0x08U << PE_nRF24_RF_CH_Pos)
+#define PE_nRF24_RF_CH_4     (0x10U << PE_nRF24_RF_CH_Pos)
+#define PE_nRF24_RF_CH_5     (0x20U << PE_nRF24_RF_CH_Pos)
+#define PE_nRF24_RF_CH_6     (0x40U << PE_nRF24_RF_CH_Pos)
+
+#define PE_nRF24_RF_CH_RESET PE_nRF24_RF_CH_1
 
 /** RF_SETUP bits *************************************************************/
 
 // ONLY FOR PE_nRF24L01
 // Setup LNA gain
-#define PE_nRF24_RF_SETUP_LNA_HCURR_Pos (0U)
-#define PE_nRF24_RF_SETUP_LNA_HCURR_Msk (1U << PE_nRF24_RF_SETUP_LNA_HCURR_Pos)
-#define PE_nRF24_RF_SETUP_LNA_HCURR     PE_nRF24_RF_SETUP_LNA_HCURR_Msk
+#define PE_nRF24_RF_SETUP_LNA_HCURR_Pos  (0U)
+#define PE_nRF24_RF_SETUP_LNA_HCURR_Msk  (1U << PE_nRF24_RF_SETUP_LNA_HCURR_Pos)
+#define PE_nRF24_RF_SETUP_LNA_HCURR      PE_nRF24_RF_SETUP_LNA_HCURR_Msk
 
 // Set RF output power in TX mode
-#define PE_nRF24_RF_SETUP_RF_PWR_Pos (1U)
-#define PE_nRF24_RF_SETUP_RF_PWR_Msk (0x3U << PE_nRF24_RF_SETUP_RF_PWR_Pos)
-#define PE_nRF24_RF_SETUP_RF_PWR     PE_nRF24_RF_SETUP_RF_PWR_Msk
-#define PE_nRF24_RF_SETUP_RF_PWR_0   (0x1U << PE_nRF24_RF_SETUP_RF_PWR_Pos)
-#define PE_nRF24_RF_SETUP_RF_PWR_1   (0x2U << PE_nRF24_RF_SETUP_RF_PWR_Pos)
+#define PE_nRF24_RF_SETUP_RF_PWR_Pos     (1U)
+#define PE_nRF24_RF_SETUP_RF_PWR_Msk     (0x3U << PE_nRF24_RF_SETUP_RF_PWR_Pos)
+#define PE_nRF24_RF_SETUP_RF_PWR         PE_nRF24_RF_SETUP_RF_PWR_Msk
+#define PE_nRF24_RF_SETUP_RF_PWR_0       (0x1U << PE_nRF24_RF_SETUP_RF_PWR_Pos)
+#define PE_nRF24_RF_SETUP_RF_PWR_1       (0x2U << PE_nRF24_RF_SETUP_RF_PWR_Pos)
 
 // Select between the high speed data rates: 0x1 == 2 Mbps, 0x0 == 1 Mbps
 #define PE_nRF24_RF_SETUP_RF_DR_HIGH_Pos (3U)
@@ -211,21 +222,23 @@ extern "C" {
 #define PE_nRF24_RF_SETUP_RF_DR_HIGH     PE_nRF24_RF_SETUP_RF_DR_HIGH_Msk
 
 // Force PLL lock signal. Only used in test
-#define PE_nRF24_RF_SETUP_PLL_LOCK_Pos (4U)
-#define PE_nRF24_RF_SETUP_PLL_LOCK_Msk (1U << PE_nRF24_RF_SETUP_PLL_LOCK_Pos)
-#define PE_nRF24_RF_SETUP_PLL_LOCK     PE_nRF24_RF_SETUP_PLL_LOCK_Msk
+#define PE_nRF24_RF_SETUP_PLL_LOCK_Pos   (4U)
+#define PE_nRF24_RF_SETUP_PLL_LOCK_Msk   (1U << PE_nRF24_RF_SETUP_PLL_LOCK_Pos)
+#define PE_nRF24_RF_SETUP_PLL_LOCK       PE_nRF24_RF_SETUP_PLL_LOCK_Msk
 
 // ONLY FOR PE_nRF24L01+
 // Set RF Data Rate to 250kbps
-#define PE_nRF24_RF_SETUP_RF_DR_LOW_Pos (5U)
-#define PE_nRF24_RF_SETUP_RF_DR_LOW_Msk (1U << PE_nRF24_RF_SETUP_RF_DR_LOW_Pos)
-#define PE_nRF24_RF_SETUP_RF_DR_LOW     PE_nRF24_RF_SETUP_RF_DR_LOW_Msk
+#define PE_nRF24_RF_SETUP_RF_DR_LOW_Pos  (5U)
+#define PE_nRF24_RF_SETUP_RF_DR_LOW_Msk  (1U << PE_nRF24_RF_SETUP_RF_DR_LOW_Pos)
+#define PE_nRF24_RF_SETUP_RF_DR_LOW      PE_nRF24_RF_SETUP_RF_DR_LOW_Msk
 
 // ONLY FOR PE_nRF24L01+
 // Enables continuous carrier transmit when high
-#define PE_nRF24_RF_SETUP_CONT_WAVE_Pos (7U)
-#define PE_nRF24_RF_SETUP_CONT_WAVE_Msk (1U << PE_nRF24_RF_SETUP_CONT_WAVE_Pos)
-#define PE_nRF24_RF_SETUP_CONT_WAVE     PE_nRF24_RF_SETUP_CONT_WAVE_Msk
+#define PE_nRF24_RF_SETUP_CONT_WAVE_Pos  (7U)
+#define PE_nRF24_RF_SETUP_CONT_WAVE_Msk  (1U << PE_nRF24_RF_SETUP_CONT_WAVE_Pos)
+#define PE_nRF24_RF_SETUP_CONT_WAVE      PE_nRF24_RF_SETUP_CONT_WAVE_Msk
+
+#define PE_nRF24_RF_SETUP_RESET          (PE_nRF24_RF_SETUP_RF_DR_HIGH|PE_nRF24_RF_SETUP_RF_PWR_1|PE_nRF24_RF_SETUP_RF_PWR_0)
 
 /** STATUS bits ***************************************************************/
 
