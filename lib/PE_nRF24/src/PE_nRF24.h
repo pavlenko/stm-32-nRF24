@@ -444,14 +444,44 @@ typedef enum {
 } PE_nRF24_AddressWidth_t;
 
 typedef enum {
-    PE_nRF24_PIPE0   = PE_nRF24_REG_RX_ADDR_P0,
-    PE_nRF24_PIPE1   = PE_nRF24_REG_RX_ADDR_P1,
-    PE_nRF24_PIPE2   = PE_nRF24_REG_RX_ADDR_P2,
-    PE_nRF24_PIPE3   = PE_nRF24_REG_RX_ADDR_P3,
-    PE_nRF24_PIPE4   = PE_nRF24_REG_RX_ADDR_P4,
-    PE_nRF24_PIPE5   = PE_nRF24_REG_RX_ADDR_P5,
-    PE_nRF24_PIPE_TX = PE_nRF24_REG_TX_ADDR,
-} PE_nRF24_PipeN_t;
+    PE_nRF24_PIPE_RX0,
+    PE_nRF24_PIPE_RX1,
+    PE_nRF24_PIPE_RX2,
+    PE_nRF24_PIPE_RX3,
+    PE_nRF24_PIPE_RX4,
+    PE_nRF24_PIPE_RX5,
+    PE_nRF24_PIPE_TX,
+} PE_nRF24_Pipe_t;
+
+static const uint8_t PE_nRF24_REG_RX_PW_Pn[6] = {
+    PE_nRF24_REG_RX_PW_P0,
+    PE_nRF24_REG_RX_PW_P1,
+    PE_nRF24_REG_RX_PW_P2,
+    PE_nRF24_REG_RX_PW_P3,
+    PE_nRF24_REG_RX_PW_P4,
+    PE_nRF24_REG_RX_PW_P5,
+};
+
+// Addresses of the address registers
+static const uint8_t PE_nRF24_REG_mX_ADDR_Pn[7] = {
+    PE_nRF24_REG_RX_ADDR_P0,
+    PE_nRF24_REG_RX_ADDR_P1,
+    PE_nRF24_REG_RX_ADDR_P2,
+    PE_nRF24_REG_RX_ADDR_P3,
+    PE_nRF24_REG_RX_ADDR_P4,
+    PE_nRF24_REG_RX_ADDR_P5,
+    PE_nRF24_REG_TX_ADDR,
+};
+
+//typedef enum {
+//    PE_nRF24_PIPE0   = PE_nRF24_REG_RX_ADDR_P0,
+//    PE_nRF24_PIPE1   = PE_nRF24_REG_RX_ADDR_P1,
+//    PE_nRF24_PIPE2   = PE_nRF24_REG_RX_ADDR_P2,
+//    PE_nRF24_PIPE3   = PE_nRF24_REG_RX_ADDR_P3,
+//    PE_nRF24_PIPE4   = PE_nRF24_REG_RX_ADDR_P4,
+//    PE_nRF24_PIPE5   = PE_nRF24_REG_RX_ADDR_P5,
+//    PE_nRF24_PIPE_TX = PE_nRF24_REG_TX_ADDR,
+//} PE_nRF24_PipeN_t;
 
 typedef enum {
     PE_nRF24_TX_POWER_18dBm,

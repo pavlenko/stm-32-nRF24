@@ -202,14 +202,14 @@ uint8_t PE_nRF24_getAddressWidth(PE_nRF24_t *handle)
     return PE_nRF24_readByte(handle, PE_nRF24_REG_SETUP_AW);
 }
 
-void PE_nRF24_setAddressValue(PE_nRF24_t *handle, PE_nRF24_PipeN_t pipe, const uint8_t *address)
+void PE_nRF24_setAddressValue(PE_nRF24_t *handle, PE_nRF24_Pipe_t pipe, const uint8_t *address)
 {
     uint8_t width;
 
     switch (pipe) {
         case PE_nRF24_PIPE_TX:
-        case PE_nRF24_PIPE0:
-        case PE_nRF24_PIPE1:
+        case PE_nRF24_PIPE_RX0:
+        case PE_nRF24_PIPE_RX1:
             // Get address width
             width = PE_nRF24_getAddressWidth(handle) + 1;
 
@@ -218,7 +218,7 @@ void PE_nRF24_setAddressValue(PE_nRF24_t *handle, PE_nRF24_PipeN_t pipe, const u
 
             handle->setCS(PE_nRF24_PIN_L);
 
-            handle->RW(PE_nRF24_CMD_W_REGISTER | pipe);
+            handle->RW(PE_nRF24_CMD_W_REGISTER | PE_nRF24_REG_mX_ADDR_Pn[pipe]);
 
             do {
                 handle->RW(*address--);
@@ -226,12 +226,12 @@ void PE_nRF24_setAddressValue(PE_nRF24_t *handle, PE_nRF24_PipeN_t pipe, const u
 
             handle->setCS(PE_nRF24_PIN_H);
             break;
-        case PE_nRF24_PIPE2:
-        case PE_nRF24_PIPE3:
-        case PE_nRF24_PIPE4:
-        case PE_nRF24_PIPE5:
+        case PE_nRF24_PIPE_RX2:
+        case PE_nRF24_PIPE_RX3:
+        case PE_nRF24_PIPE_RX4:
+        case PE_nRF24_PIPE_RX5:
             // Write address LSB byte (only first byte from the addr buffer)
-            PE_nRF24_sendByte(handle, pipe, *address);
+            PE_nRF24_sendByte(handle, PE_nRF24_REG_mX_ADDR_Pn[pipe], *address);
             break;
         default:
             // Incorrect pipe number -> do nothing
@@ -261,8 +261,19 @@ void PE_nRF24_setDataRate(PE_nRF24_t *handle, PE_nRF24_DataRate_t rate)
     PE_nRF24_sendByte(handle, PE_nRF24_REG_RF_SETUP, reg);
 }
 
-void PE_nRF24_readPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t *size);
-void PE_nRF24_sendPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size);
+void PE_nRF24_readPayload(PE_nRF24_t *handle, PE_nRF24_Pipe_t pipe, uint8_t *data, uint8_t *size)
+{
+    *size = PE_nRF24_readByte(handle, PE_nRF24_REG_RX_PW_Pn[pipe]);
+
+    if (*size > 0) {
+        PE_nRF24_readData(handle, PE_nRF24_CMD_R_RX_PAYLOAD, data, *size);
+    }
+}
+
+void PE_nRF24_sendPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size)
+{
+    PE_nRF24_sendData(handle, PE_nRF24_CMD_W_TX_PAYLOAD, data, size);
+}
 
 void PE_nRF24_IRQHandler(PE_nRF24_t *handle)
 {
