@@ -120,7 +120,7 @@ void PE_nRF24_initialize(PE_nRF24_t *handle)
     PE_nRF24_clearIRQFlags(handle);
 
     // De-assert CSN pin (chip release)
-    handle->setCS(PE_nRF24_PIN_H);
+    handle->setCS(PE_nRF24_PIN_H);//TODO remove, this used in all data read/send logic
 }
 
 inline void PE_nRF24_flushRX(PE_nRF24_t *handle)
@@ -143,3 +143,55 @@ inline void PE_nRF24_clearIRQFlags(PE_nRF24_t *handle)
 
     PE_nRF24_sendByte(handle, PE_nRF24_REG_STATUS, reg);
 }
+
+inline void PE_nRF24_setPowerMode(PE_nRF24_t *handle, PE_nRF24_PowerMode_t mode)
+{
+    uint8_t reg;
+
+    reg = PE_nRF24_readByte(handle, PE_nRF24_REG_CONFIG);
+
+    if (mode == PE_nRF24_POWER_UP) {
+        reg |= PE_nRF24_CONFIG_PWR_UP;
+    } else {
+        reg &= ~PE_nRF24_CONFIG_PWR_UP;
+    }
+
+    //TODO check this instead of if
+    reg &= ~PE_nRF24_CONFIG_PWR_UP;
+    reg |= mode << PE_nRF24_CONFIG_PWR_UP_Pos;
+
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_CONFIG, reg);
+}
+
+inline void PE_nRF24_setDirection(PE_nRF24_t *handle, PE_nRF24_Direction_t dir)
+{
+    uint8_t reg;
+
+    reg  = PE_nRF24_readByte(handle, PE_nRF24_REG_CONFIG);
+
+    reg &= ~PE_nRF24_CONFIG_PRIM_RX;
+    reg |= (dir & PE_nRF24_CONFIG_PRIM_RX);
+
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_CONFIG, reg);
+}
+
+inline void PE_nRF24_setCRC(PE_nRF24_t *handle, uint8_t crc)
+{}
+
+inline void PE_nRF24_setRFChannel(PE_nRF24_t *handle, uint8_t channel)
+{}
+
+inline void PE_nRF24_setAutoRetry(PE_nRF24_t *handle, uint8_t delay, uint8_t tries)
+{}
+
+inline void PE_nRF24_setAddressWidth(PE_nRF24_t *handle, uint8_t width)
+{}
+
+inline void PE_nRF24_setAddressValue(PE_nRF24_t *handle, uint8_t pipe, const uint8_t *address)
+{}
+
+inline void PE_nRF24_setTXPower(PE_nRF24_t *handle, uint8_t level)
+{}
+
+inline void PE_nRF24_setDataRate(PE_nRF24_t *handle, uint8_t level)
+{}

@@ -399,9 +399,24 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 
 typedef enum {
+    PE_nRF24_STATUS_OK    = 0U,
+    PE_nRF24_STATUS_ERROR = 1U,
+} PE_nRF24_status_t;
+
+typedef enum {
     PE_nRF24_PIN_L = 0,
     PE_nRF24_PIN_H = 1,
 } PE_nRF24_pinState_t;
+
+typedef enum {
+    PE_nRF24_POWER_STANDBY = 0U,
+    PE_nRF24_POWER_UP      = 1U,
+} PE_nRF24_PowerMode_t;
+
+typedef enum {
+    PE_nRF24_DIRECTION_TX = 0U,
+    PE_nRF24_DIRECTION_RX = 1U,
+} PE_nRF24_Direction_t;
 
 typedef struct {
     /**
