@@ -189,7 +189,7 @@ extern "C" {
 
 // Sets the frequency channel, default 0b0000010
 #define PE_nRF24_RF_CH_Pos   (0U)
-#define PE_nRF24_RF_CH_Msk   (0x3FU << PE_nRF24_RF_CH_Pos)
+#define PE_nRF24_RF_CH_Msk   (0x7FU << PE_nRF24_RF_CH_Pos)
 #define PE_nRF24_RF_CH       PE_nRF24_RF_CH_Msk
 #define PE_nRF24_RF_CH_0     (0x01U << PE_nRF24_RF_CH_Pos)
 #define PE_nRF24_RF_CH_1     (0x02U << PE_nRF24_RF_CH_Pos)
@@ -418,6 +418,25 @@ typedef enum {
     PE_nRF24_DIRECTION_RX = 1U,
 } PE_nRF24_Direction_t;
 
+typedef enum {
+    PE_nRF24_ARD_250us  = 0x0U,
+    PE_nRF24_ARD_500us  = 0x1U,
+    PE_nRF24_ARD_750us  = 0x2U,
+    PE_nRF24_ARD_1000us = 0x3U,
+    PE_nRF24_ARD_1250us = 0x4U,
+    PE_nRF24_ARD_1500us = 0x5U,
+    PE_nRF24_ARD_1750us = 0x6U,
+    PE_nRF24_ARD_2000us = 0x7U,
+    PE_nRF24_ARD_2250us = 0x8U,
+    PE_nRF24_ARD_2500us = 0x9U,
+    PE_nRF24_ARD_2750us = 0xAU,
+    PE_nRF24_ARD_3000us = 0xBU,
+    PE_nRF24_ARD_3250us = 0xCU,
+    PE_nRF24_ARD_3500us = 0xDU,
+    PE_nRF24_ARD_3750us = 0xEU,
+    PE_nRF24_ARD_4000us = 0xFU,
+} PE_nRF24_AutoRetryDelay_t;
+
 typedef struct {
     /**
      * Chip enable, activates RX or TX mode
@@ -450,6 +469,23 @@ void PE_nRF24_initialize(PE_nRF24_t *handle);
 inline void PE_nRF24_flushRX(PE_nRF24_t *handle);
 inline void PE_nRF24_flushTX(PE_nRF24_t *handle);
 inline void PE_nRF24_clearIRQFlags(PE_nRF24_t *handle);
+
+/**
+ * Set frequency channel, frequency will be (2400 + channel) MHz
+ *
+ * @param handle  connection
+ * @param channel value in range 0...127
+ */
+inline void PE_nRF24_setRFChannel(PE_nRF24_t *handle, uint8_t channel);
+
+/**
+ * Set automatic retransmission parameters
+ *
+ * @param handle connection
+ * @param delay  one of PE_nRF24_AutoRetryDelay_t
+ * @param tries  in range 1...15 or 0 for disable
+ */
+inline void PE_nRF24_setAutoRetry(PE_nRF24_t *handle, PE_nRF24_AutoRetryDelay_t delay, uint8_t tries);
 
 #ifdef __cplusplus
 }

@@ -179,10 +179,18 @@ inline void PE_nRF24_setCRC(PE_nRF24_t *handle, uint8_t crc)
 {}
 
 inline void PE_nRF24_setRFChannel(PE_nRF24_t *handle, uint8_t channel)
-{}
+{
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_RF_CH, (channel & PE_nRF24_RF_CH));
+}
 
-inline void PE_nRF24_setAutoRetry(PE_nRF24_t *handle, uint8_t delay, uint8_t tries)
-{}
+inline void PE_nRF24_setAutoRetry(PE_nRF24_t *handle, PE_nRF24_AutoRetryDelay_t delay, uint8_t tries)
+{
+    PE_nRF24_sendByte(
+        handle,
+        PE_nRF24_REG_SETUP_RETR,
+        ((delay & PE_nRF24_SETUP_RETR_ARD) << PE_nRF24_SETUP_RETR_ARD_Pos) | ((tries & PE_nRF24_SETUP_RETR_ARC) << PE_nRF24_SETUP_RETR_ARC_Pos)
+    );
+}
 
 inline void PE_nRF24_setAddressWidth(PE_nRF24_t *handle, uint8_t width)
 {}
