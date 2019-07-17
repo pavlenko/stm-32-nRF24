@@ -95,10 +95,10 @@ uint8_t PE_nRF24_check(PE_nRF24_t *handle)
 void PE_nRF24_initialize(PE_nRF24_t *handle)
 {
     // Write registers initial values
-    PE_nRF24_sendByte(handle, PE_nRF24_REG_CONFIG, 0x08);
-    PE_nRF24_sendByte(handle, PE_nRF24_REG_EN_AA, 0x3F);
-    PE_nRF24_sendByte(handle, PE_nRF24_REG_EN_RXADDR, 0x03);
-    PE_nRF24_sendByte(handle, PE_nRF24_REG_SETUP_AW, 0x03);
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_CONFIG, PE_nRF24_CONFIG_RESET);
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_EN_AA, PE_nRF24_EN_AA_RESET);
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_EN_RXADDR, PE_nRF24_EN_RXADDR_RESET);
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_SETUP_AW, PE_nRF24_SETUP_AW_RESET);
     PE_nRF24_sendByte(handle, PE_nRF24_REG_SETUP_RETR, 0x03);
     PE_nRF24_sendByte(handle, PE_nRF24_REG_RF_CH, 0x02);
     PE_nRF24_sendByte(handle, PE_nRF24_REG_RF_SETUP, 0x0E);

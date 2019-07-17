@@ -49,24 +49,24 @@ extern "C" {
 /** CONFIG bits ***************************************************************/
 
 // 1 == PRX, 0 == PTX
-#define PE_nRF24_CONFIG_PRIM_RX_Pos (0U)
-#define PE_nRF24_CONFIG_PRIM_RX_Msk (1U << PE_nRF24_CONFIG_PRIM_RX_Pos)
-#define PE_nRF24_CONFIG_PRIM_RX     PE_nRF24_CONFIG_PRIM_RX_Msk
+#define PE_nRF24_CONFIG_PRIM_RX_Pos     (0U)
+#define PE_nRF24_CONFIG_PRIM_RX_Msk     (1U << PE_nRF24_CONFIG_PRIM_RX_Pos)
+#define PE_nRF24_CONFIG_PRIM_RX         PE_nRF24_CONFIG_PRIM_RX_Msk
 
 // 1 == POWER UP, 0 == POWER DOWN
-#define PE_nRF24_CONFIG_PWR_UP_Pos (1U)
-#define PE_nRF24_CONFIG_PWR_UP_Msk (1U << PE_nRF24_CONFIG_PWR_UP_Pos)
-#define PE_nRF24_CONFIG_PWR_UP     PE_nRF24_CONFIG_PWR_UP_Msk
+#define PE_nRF24_CONFIG_PWR_UP_Pos      (1U)
+#define PE_nRF24_CONFIG_PWR_UP_Msk      (1U << PE_nRF24_CONFIG_PWR_UP_Pos)
+#define PE_nRF24_CONFIG_PWR_UP          PE_nRF24_CONFIG_PWR_UP_Msk
 
 // CRC encoding scheme
-#define PE_nRF24_CONFIG_CRCO_Pos (2U)
-#define PE_nRF24_CONFIG_CRCO_Msk (1U << PE_nRF24_CONFIG_CRCO_Pos)
-#define PE_nRF24_CONFIG_CRCO     PE_nRF24_CONFIG_CRCO_Msk
+#define PE_nRF24_CONFIG_CRCO_Pos        (2U)
+#define PE_nRF24_CONFIG_CRCO_Msk        (1U << PE_nRF24_CONFIG_CRCO_Pos)
+#define PE_nRF24_CONFIG_CRCO            PE_nRF24_CONFIG_CRCO_Msk
 
 // Enable CRC
-#define PE_nRF24_CONFIG_EN_CRC_Pos (3U)
-#define PE_nRF24_CONFIG_EN_CRC_Msk (1U << PE_nRF24_CONFIG_EN_CRC_Pos)
-#define PE_nRF24_CONFIG_EN_CRC     PE_nRF24_CONFIG_EN_CRC_Msk
+#define PE_nRF24_CONFIG_EN_CRC_Pos      (3U)
+#define PE_nRF24_CONFIG_EN_CRC_Msk      (1U << PE_nRF24_CONFIG_EN_CRC_Pos)
+#define PE_nRF24_CONFIG_EN_CRC          PE_nRF24_CONFIG_EN_CRC_Msk
 
 // Mask interrupt caused by MAX_RT
 #define PE_nRF24_CONFIG_MASK_MAX_RT_Pos (4U)
@@ -74,73 +74,79 @@ extern "C" {
 #define PE_nRF24_CONFIG_MASK_MAX_RT     PE_nRF24_CONFIG_MASK_MAX_RT_Msk
 
 // Mask interrupt caused by TX_DS
-#define PE_nRF24_CONFIG_MASK_TX_DS_Pos (5U)
-#define PE_nRF24_CONFIG_MASK_TX_DS_Msk (1U << PE_nRF24_CONFIG_MASK_TX_DS_Pos)
-#define PE_nRF24_CONFIG_MASK_TX_DS     PE_nRF24_CONFIG_MASK_TX_DS_Msk
+#define PE_nRF24_CONFIG_MASK_TX_DS_Pos  (5U)
+#define PE_nRF24_CONFIG_MASK_TX_DS_Msk  (1U << PE_nRF24_CONFIG_MASK_TX_DS_Pos)
+#define PE_nRF24_CONFIG_MASK_TX_DS      PE_nRF24_CONFIG_MASK_TX_DS_Msk
 
 // Mask interrupt caused by RX_DR
-#define PE_nRF24_CONFIG_MASK_RX_DR_Pos (6U)
-#define PE_nRF24_CONFIG_MASK_RX_DR_Msk (1U << PE_nRF24_CONFIG_MASK_RX_DR_Pos)
-#define PE_nRF24_CONFIG_MASK_RX_DR     PE_nRF24_CONFIG_MASK_RX_DR_Msk
+#define PE_nRF24_CONFIG_MASK_RX_DR_Pos  (6U)
+#define PE_nRF24_CONFIG_MASK_RX_DR_Msk  (1U << PE_nRF24_CONFIG_MASK_RX_DR_Pos)
+#define PE_nRF24_CONFIG_MASK_RX_DR      PE_nRF24_CONFIG_MASK_RX_DR_Msk
+
+#define PE_nRF24_CONFIG_RESET           PE_nRF24_CONFIG_EN_CRC
 
 /** EN_AA bits ****************************************************************/
 
 // Enable ‘Auto Acknowledgment’ Function
-#define PE_nRF24_EN_AA_ENAA_P0_Pos (0U)
-#define PE_nRF24_EN_AA_ENAA_P0_Msk (1U << PE_nRF24_EN_AA_ENAA_P0_Pos)
-#define PE_nRF24_EN_AA_ENAA_P0     PE_nRF24_EN_AA_ENAA_P0_Msk
+#define PE_nRF24_EN_AA_P0_Pos (0U)
+#define PE_nRF24_EN_AA_P0_Msk (1U << PE_nRF24_EN_AA_P0_Pos)
+#define PE_nRF24_EN_AA_P0     PE_nRF24_EN_AA_P0_Msk
 
-#define PE_nRF24_EN_AA_ENAA_P1_Pos (1U)
-#define PE_nRF24_EN_AA_ENAA_P1_Msk (1U << PE_nRF24_EN_AA_ENAA_P1_Pos)
-#define PE_nRF24_EN_AA_ENAA_P1     PE_nRF24_EN_AA_ENAA_P1_Msk
+#define PE_nRF24_EN_AA_P1_Pos (1U)
+#define PE_nRF24_EN_AA_P1_Msk (1U << PE_nRF24_EN_AA_P1_Pos)
+#define PE_nRF24_EN_AA_P1     PE_nRF24_EN_AA_P1_Msk
 
-#define PE_nRF24_EN_AA_ENAA_P2_Pos (2U)
-#define PE_nRF24_EN_AA_ENAA_P2_Msk (1U << PE_nRF24_EN_AA_ENAA_P2_Pos)
-#define PE_nRF24_EN_AA_ENAA_P2     PE_nRF24_EN_AA_ENAA_P2_Msk
+#define PE_nRF24_EN_AA_P2_Pos (2U)
+#define PE_nRF24_EN_AA_P2_Msk (1U << PE_nRF24_EN_AA_P2_Pos)
+#define PE_nRF24_EN_AA_P2     PE_nRF24_EN_AA_P2_Msk
 
-#define PE_nRF24_EN_AA_ENAA_P3_Pos (3U)
-#define PE_nRF24_EN_AA_ENAA_P3_Msk (1U << PE_nRF24_EN_AA_ENAA_P3_Pos)
-#define PE_nRF24_EN_AA_ENAA_P3     PE_nRF24_EN_AA_ENAA_P3_Msk
+#define PE_nRF24_EN_AA_P3_Pos (3U)
+#define PE_nRF24_EN_AA_P3_Msk (1U << PE_nRF24_EN_AA_P3_Pos)
+#define PE_nRF24_EN_AA_P3     PE_nRF24_EN_AA_P3_Msk
 
-#define PE_nRF24_EN_AA_ENAA_P4_Pos (4U)
-#define PE_nRF24_EN_AA_ENAA_P4_Msk (1U << PE_nRF24_EN_AA_ENAA_P4_Pos)
-#define PE_nRF24_EN_AA_ENAA_P4     PE_nRF24_EN_AA_ENAA_P4_Msk
+#define PE_nRF24_EN_AA_P4_Pos (4U)
+#define PE_nRF24_EN_AA_P4_Msk (1U << PE_nRF24_EN_AA_P4_Pos)
+#define PE_nRF24_EN_AA_P4     PE_nRF24_EN_AA_P4_Msk
 
-#define PE_nRF24_EN_AA_ENAA_P5_Pos (5U)
-#define PE_nRF24_EN_AA_ENAA_P5_Msk (1U << PE_nRF24_EN_AA_ENAA_P5_Pos)
-#define PE_nRF24_EN_AA_ENAA_P5     PE_nRF24_EN_AA_ENAA_P5_Msk
+#define PE_nRF24_EN_AA_P5_Pos (5U)
+#define PE_nRF24_EN_AA_P5_Msk (1U << PE_nRF24_EN_AA_P5_Pos)
+#define PE_nRF24_EN_AA_P5     PE_nRF24_EN_AA_P5_Msk
+
+#define PE_nRF24_EN_AA_RESET  (PE_nRF24_EN_AA_P5|PE_nRF24_EN_AA_P4|PE_nRF24_EN_AA_P3|PE_nRF24_EN_AA_P2|PE_nRF24_EN_AA_P1|PE_nRF24_EN_AA_P0)
 
 /** EN_RXADDR bits ************************************************************/
 
 // Enable data pipe 0, default 1
-#define PE_nRF24_EN_RXADDR_ERX_P0_Pos (0U)
-#define PE_nRF24_EN_RXADDR_ERX_P0_Msk (1U << PE_nRF24_EN_RXADDR_ERX_P0_Pos)
-#define PE_nRF24_EN_RXADDR_ERX_P0     PE_nRF24_EN_RXADDR_ERX_P0_Msk
+#define PE_nRF24_EN_RXADDR_P0_Pos (0U)
+#define PE_nRF24_EN_RXADDR_P0_Msk (1U << PE_nRF24_EN_RXADDR_P0_Pos)
+#define PE_nRF24_EN_RXADDR_P0     PE_nRF24_EN_RXADDR_P0_Msk
 
 // Enable data pipe 1, default 1
-#define PE_nRF24_EN_RXADDR_ERX_P1_Pos (1U)
-#define PE_nRF24_EN_RXADDR_ERX_P1_Msk (1U << PE_nRF24_EN_RXADDR_ERX_P1_Pos)
-#define PE_nRF24_EN_RXADDR_ERX_P1     PE_nRF24_EN_RXADDR_ERX_P1_Msk
+#define PE_nRF24_EN_RXADDR_P1_Pos (1U)
+#define PE_nRF24_EN_RXADDR_P1_Msk (1U << PE_nRF24_EN_RXADDR_P1_Pos)
+#define PE_nRF24_EN_RXADDR_P1     PE_nRF24_EN_RXADDR_P1_Msk
 
 // Enable data pipe 2, default 0
-#define PE_nRF24_EN_RXADDR_ERX_P2_Pos (2U)
-#define PE_nRF24_EN_RXADDR_ERX_P2_Msk (1U << PE_nRF24_EN_RXADDR_ERX_P2_Pos)
-#define PE_nRF24_EN_RXADDR_ERX_P2     PE_nRF24_EN_RXADDR_ERX_P2_Msk
+#define PE_nRF24_EN_RXADDR_P2_Pos (2U)
+#define PE_nRF24_EN_RXADDR_P2_Msk (1U << PE_nRF24_EN_RXADDR_P2_Pos)
+#define PE_nRF24_EN_RXADDR_P2     PE_nRF24_EN_RXADDR_P2_Msk
 
 // Enable data pipe 3, default 0
-#define PE_nRF24_EN_RXADDR_ERX_P3_Pos (3U)
-#define PE_nRF24_EN_RXADDR_ERX_P3_Msk (1U << PE_nRF24_EN_RXADDR_ERX_P3_Pos)
-#define PE_nRF24_EN_RXADDR_ERX_P3     PE_nRF24_EN_RXADDR_ERX_P3_Msk
+#define PE_nRF24_EN_RXADDR_P3_Pos (3U)
+#define PE_nRF24_EN_RXADDR_P3_Msk (1U << PE_nRF24_EN_RXADDR_P3_Pos)
+#define PE_nRF24_EN_RXADDR_P3     PE_nRF24_EN_RXADDR_P3_Msk
 
 // Enable data pipe 4, default 0
-#define PE_nRF24_EN_RXADDR_ERX_P4_Pos (4U)
-#define PE_nRF24_EN_RXADDR_ERX_P4_Msk (1U << PE_nRF24_EN_RXADDR_ERX_P4_Pos)
-#define PE_nRF24_EN_RXADDR_ERX_P4     PE_nRF24_EN_RXADDR_ERX_P4_Msk
+#define PE_nRF24_EN_RXADDR_P4_Pos (4U)
+#define PE_nRF24_EN_RXADDR_P4_Msk (1U << PE_nRF24_EN_RXADDR_P4_Pos)
+#define PE_nRF24_EN_RXADDR_P4     PE_nRF24_EN_RXADDR_P4_Msk
 
 // Enable data pipe 5, default 0
-#define PE_nRF24_EN_RXADDR_ERX_P5_Pos (5U)
-#define PE_nRF24_EN_RXADDR_ERX_P5_Msk (1U << PE_nRF24_EN_RXADDR_ERX_P5_Pos)
-#define PE_nRF24_EN_RXADDR_ERX_P5     PE_nRF24_EN_RXADDR_ERX_P5_Msk
+#define PE_nRF24_EN_RXADDR_P5_Pos (5U)
+#define PE_nRF24_EN_RXADDR_P5_Msk (1U << PE_nRF24_EN_RXADDR_P5_Pos)
+#define PE_nRF24_EN_RXADDR_P5     PE_nRF24_EN_RXADDR_P5_Msk
+
+#define PE_nRF24_EN_RXADDR_RESET  (PE_nRF24_EN_RXADDR_P1|PE_nRF24_EN_RXADDR_P0)
 
 /** SETUP_AW bits *************************************************************/
 
@@ -149,11 +155,13 @@ extern "C" {
 // 0x01 == 3 bytes
 // 0x10 == 4 bytes
 // 0x11 == 5 bytes (default)
-#define PE_nRF24_SETUP_AW_AW_Pos (0U)
-#define PE_nRF24_SETUP_AW_AW_Msk (0x3U << PE_nRF24_SETUP_AW_AW_Pos)
-#define PE_nRF24_SETUP_AW_AW     PE_nRF24_SETUP_AW_AW_Msk
-#define PE_nRF24_SETUP_AW_AW_0   (0x1U << PE_nRF24_SETUP_AW_AW_Pos)
-#define PE_nRF24_SETUP_AW_AW_1   (0x2U << PE_nRF24_SETUP_AW_AW_Pos)
+#define PE_nRF24_SETUP_AW_Pos (0U)
+#define PE_nRF24_SETUP_AW_Msk (0x3U << PE_nRF24_SETUP_AW_Pos)
+#define PE_nRF24_SETUP_AW     PE_nRF24_SETUP_AW_Msk
+#define PE_nRF24_SETUP_AW_0   (0x1U << PE_nRF24_SETUP_AW_Pos)
+#define PE_nRF24_SETUP_AW_1   (0x2U << PE_nRF24_SETUP_AW_Pos)
+
+#define PE_nRF24_SETUP_AW_RESET (PE_nRF24_SETUP_AW_1|PE_nRF24_SETUP_AW_0)
 
 /** SETUP_RETR bits ***********************************************************/
 
@@ -259,8 +267,6 @@ extern "C" {
 #define PE_nRF24_OBSERVE_TX_PLOS_CNT     PE_nRF24_OBSERVE_TX_PLOS_CNT_Msk
 
 /** FIFO_STATUS bits **********************************************************/
-
-//TODO check bits
 
 // RX FIFO empty flag, default 1
 #define PE_nRF24_FIFO_STATUS_RX_EMPTY_Pos (0U)
