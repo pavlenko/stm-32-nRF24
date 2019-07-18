@@ -9,6 +9,7 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 
 #include <stdint.h>
+#include "PE_nRF24.h"
 
 /* Exported define -----------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
@@ -18,6 +19,15 @@ typedef enum {
     PE_nRF24_STATUS_ERROR   = (uint8_t) 1U,
     PE_nRF24_STATUS_TIMEOUT = (uint8_t) 2U,
 } PE_nRF24_status_t;
+
+typedef enum {
+    PE_nRF24_PIPE_0 = (uint8_t) 0U,
+    PE_nRF24_PIPE_1 = (uint8_t) 1U,
+    PE_nRF24_PIPE_2 = (uint8_t) 2U,
+    PE_nRF24_PIPE_3 = (uint8_t) 3U,
+    PE_nRF24_PIPE_4 = (uint8_t) 4U,
+    PE_nRF24_PIPE_5 = (uint8_t) 5U,
+} PE_nRF24_pipe_t;
 
 typedef struct {
     uint8_t addressWidth;
@@ -42,6 +52,7 @@ typedef struct {
 
 typedef struct {
     PE_nRF24_instance_t *instance;
+    PE_nRF24_status_t status;
     PE_nRF24_configTX_t configTX;
 } PE_nRF24_handle_t;
 
@@ -51,7 +62,7 @@ typedef struct {
 
 PE_nRF24_status_t PE_nRF24_initializeTX(PE_nRF24_handle_t *handle, PE_nRF24_configTX_t *config);
 
-PE_nRF24_status_t PE_nRF24_initializeRX(PE_nRF24_handle_t *handle, PE_nRF24_configRX_t *config, uint8_t pipe);
+PE_nRF24_status_t PE_nRF24_initializeRX(PE_nRF24_handle_t *handle, PE_nRF24_configRX_t *config, PE_nRF24_pipe_t pipe);
 
 void PE_nRF24_handleIRQ(PE_nRF24_handle_t *handle);
 

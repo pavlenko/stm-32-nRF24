@@ -401,11 +401,6 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 
 typedef enum {
-    PE_nRF24_STATUS_OK    = 0U,
-    PE_nRF24_STATUS_ERROR = 1U,
-} PE_nRF24_status_t;
-
-typedef enum {
     PE_nRF24_PIN_L = 0,
     PE_nRF24_PIN_H = 1,
 } PE_nRF24_pinState_t;
