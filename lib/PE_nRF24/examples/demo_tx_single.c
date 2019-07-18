@@ -34,7 +34,7 @@ int main()
     PE_nRF24_initialize(&PE_nRF24);
 
     // Disable ShockBurst for all RX pipes
-    //TODO nRF24_DisableAA(0xFF);
+    PE_nRF24_setAutoAcknowledgment(&PE_nRF24, 0);
 
     // Set RF channel
     PE_nRF24_setRFChannel(&PE_nRF24, 115);

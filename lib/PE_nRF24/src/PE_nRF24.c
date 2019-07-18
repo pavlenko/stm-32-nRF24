@@ -186,6 +186,17 @@ void PE_nRF24_setCRCScheme(PE_nRF24_t *handle, PE_nRF24_CRCScheme_t scheme)
     PE_nRF24_sendByte(handle, PE_nRF24_REG_CONFIG, reg);
 }
 
+void PE_nRF24_setAutoAcknowledgment(PE_nRF24_t *handle, uint8_t pipes)
+{
+    uint8_t reg = PE_nRF24_readByte(handle, PE_nRF24_REG_EN_AA);
+
+    // Set bits in EN_AA register
+    reg &= PE_nRF24_EN_AA_ALL;
+    reg |= (pipes & PE_nRF24_EN_AA_ALL);
+
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_EN_AA, reg);
+}
+
 void PE_nRF24_setRFChannel(PE_nRF24_t *handle, uint8_t channel)
 {
     PE_nRF24_sendByte(handle, PE_nRF24_REG_RF_CH, (channel & PE_nRF24_RF_CH));

@@ -112,7 +112,8 @@ extern "C" {
 #define PE_nRF24_EN_AA_P5_Msk (1U << PE_nRF24_EN_AA_P5_Pos)
 #define PE_nRF24_EN_AA_P5     PE_nRF24_EN_AA_P5_Msk
 
-#define PE_nRF24_EN_AA_RESET  (PE_nRF24_EN_AA_P5|PE_nRF24_EN_AA_P4|PE_nRF24_EN_AA_P3|PE_nRF24_EN_AA_P2|PE_nRF24_EN_AA_P1|PE_nRF24_EN_AA_P0)
+#define PE_nRF24_EN_AA_ALL    (PE_nRF24_EN_AA_P5|PE_nRF24_EN_AA_P4|PE_nRF24_EN_AA_P3|PE_nRF24_EN_AA_P2|PE_nRF24_EN_AA_P1|PE_nRF24_EN_AA_P0)
+#define PE_nRF24_EN_AA_RESET  PE_nRF24_EN_AA_ALL
 
 /** EN_RXADDR bits ************************************************************/
 
@@ -530,6 +531,8 @@ void PE_nRF24_setPowerMode(PE_nRF24_t *handle, PE_nRF24_PowerMode_t mode);
 void PE_nRF24_setDirection(PE_nRF24_t *handle, PE_nRF24_Direction_t dir);
 
 void PE_nRF24_setCRCScheme(PE_nRF24_t *handle, PE_nRF24_CRCScheme_t scheme);
+
+void PE_nRF24_setAutoAcknowledgment(PE_nRF24_t *handle, uint8_t pipes);
 
 /**
  * Set frequency channel, frequency will be (2400 + channel) MHz
