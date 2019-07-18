@@ -1,0 +1,65 @@
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef STM_32_NRF24_PE_NRF24_2_H
+#define STM_32_NRF24_PE_NRF24_2_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* Includes ------------------------------------------------------------------*/
+
+#include <stdint.h>
+
+/* Exported define -----------------------------------------------------------*/
+/* Exported types ------------------------------------------------------------*/
+
+typedef enum {
+    PE_nRF24_STATUS_OK      = (uint8_t) 0U,
+    PE_nRF24_STATUS_ERROR   = (uint8_t) 1U,
+    PE_nRF24_STATUS_TIMEOUT = (uint8_t) 2U,
+} PE_nRF24_status_t;
+
+typedef struct {
+    uint8_t addressWidth;
+    uint8_t txPower;
+    uint8_t rfChannel;
+    uint8_t dataRate;
+    uint8_t retransmitCount;
+    uint8_t retransmitDelay;
+} PE_nRF24_configTX_t;
+
+typedef struct {
+    uint8_t *address;
+    uint8_t autoACK;
+    uint8_t payloadSize;
+} PE_nRF24_configRX_t;
+
+typedef struct {
+    void (*setCE) ();
+    void (*setCS) ();
+    void (*RW) ();
+} PE_nRF24_instance_t;
+
+typedef struct {
+    PE_nRF24_instance_t *instance;
+    PE_nRF24_configTX_t configTX;
+} PE_nRF24_handle_t;
+
+
+/* Exported macro ------------------------------------------------------------*/
+/* Exported function prototypes --------------------------------------------- */
+
+PE_nRF24_status_t PE_nRF24_initializeTX(PE_nRF24_handle_t *handle, PE_nRF24_configTX_t *config);
+
+PE_nRF24_status_t PE_nRF24_initializeRX(PE_nRF24_handle_t *handle, PE_nRF24_configRX_t *config, uint8_t pipe);
+
+void PE_nRF24_handleIRQ(PE_nRF24_handle_t *handle);
+
+/* Exported variables --------------------------------------------------------*/
+/* Exported functions ------------------------------------------------------- */
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif //STM_32_NRF24_PE_NRF24_2_H
