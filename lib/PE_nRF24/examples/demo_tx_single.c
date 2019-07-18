@@ -64,8 +64,11 @@ int main()
     // Wake the transceiver
     PE_nRF24_setPowerMode(&PE_nRF24, PE_nRF24_POWER_UP);
 
-    uint32_t i = 0, j = 0;
+    uint32_t i = 0, j = 0, wait;
+    uint8_t status;
     while (1) {
+        wait = 0x000FFFFFU;
+
         // Prepare data packet
         for (i = 0; i < payloadSize; i++) {
             payloadData[i] = j++;
@@ -82,56 +85,59 @@ int main()
         //TODO maybe wrap logic to some function & put into lib
         //TODO like HAL_SPI_Transmit() & HAL_SPI_Transmit_IT()
 
-        // Deassert the CE pin (in case if it still high)
-        nRF24_CE_L();
+        // De-assert the CE pin (in case if it still high)
+        PE_nRF24.setCE(PE_nRF24_PIN_L);
 
         // Transfer a data from the specified buffer to the TX FIFO
-        nRF24_WritePayload(pBuf, length);
+        PE_nRF24_sendPayload(&PE_nRF24, payloadData, payloadSize);
 
         // Start a transmission by asserting CE pin (must be held at least 10us)
-        nRF24_CE_H();
+        PE_nRF24.setCE(PE_nRF24_PIN_H);
 
         // Poll the transceiver status register until one of the following flags will be set:
         //   TX_DS  - means the packet has been transmitted
         //   MAX_RT - means the maximum number of TX retransmits happened
         // note: this solution is far from perfect, better to use IRQ instead of polling the status
         do {
-            status = nRF24_GetStatus();
-            if (status & (nRF24_FLAG_TX_DS | nRF24_FLAG_MAX_RT)) {
+            status = PE_nRF24_getStatus(&PE_nRF24);
+            if (status & (PE_nRF24_STATUS_TX_DS | PE_nRF24_STATUS_MAX_RT)) {
                 break;
             }
         } while (wait--);
 
-        // Deassert the CE pin (Standby-II --> Standby-I)
-        nRF24_CE_L();
+        // De-assert the CE pin (Standby-II --> Standby-I)
+        PE_nRF24.setCE(PE_nRF24_PIN_L);
 
         if (!wait) {
             // Timeout
-            return nRF24_TX_TIMEOUT;
+            //return nRF24_TX_TIMEOUT;
+            continue;
         }
 
         // Check the flags in STATUS register
-        UART_SendStr("[");
-        UART_SendHex8(status);
-        UART_SendStr("] ");
+        //UART_SendStr("[");
+        //UART_SendHex8(status);
+        //UART_SendStr("] ");
 
         // Clear pending IRQ flags
-        nRF24_ClearIRQFlags();
+        PE_nRF24_clearIRQFlags(&PE_nRF24);
 
-        if (status & nRF24_FLAG_MAX_RT) {
+        if (status & PE_nRF24_STATUS_MAX_RT) {
             // Auto retransmit counter exceeds the programmed maximum limit (FIFO is not removed)
-            return nRF24_TX_MAXRT;
+            //return nRF24_TX_MAXRT;
+            continue;
         }
 
-        if (status & nRF24_FLAG_TX_DS) {
+        if (status & PE_nRF24_STATUS_TX_DS) {
             // Successful transmission
-            return nRF24_TX_SUCCESS;
+            //return nRF24_TX_SUCCESS;
+            continue;
         }
 
         // Some banana happens, a payload remains in the TX FIFO, flush it
-        nRF24_FlushTX();
+        PE_nRF24_flushTX(&PE_nRF24);
 
-        return nRF24_TX_ERROR;
+        //return nRF24_TX_ERROR;
 
         nRF24_delay_ms(500);
     }

@@ -592,9 +592,13 @@ void PE_nRF24_setTXPower(PE_nRF24_t *handle, PE_nRF24_TXPower_t level);
  */
 void PE_nRF24_setDataRate(PE_nRF24_t *handle, PE_nRF24_DataRate_t rate);
 
+uint8_t PE_nRF24_getStatus(PE_nRF24_t *handle);
+
 void PE_nRF24_attachRXPipe(PE_nRF24_t *handle, PE_nRF24_Pipe_t pipe);
 
 void PE_nRF24_detachRXPipe(PE_nRF24_t *handle, PE_nRF24_Pipe_t pipe);
+
+void PE_nRF24_sendPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size);
 
 /**
  * IRQ handler, must be called from interrupt if used

@@ -269,6 +269,11 @@ void PE_nRF24_setDataRate(PE_nRF24_t *handle, PE_nRF24_DataRate_t rate)
     PE_nRF24_sendByte(handle, PE_nRF24_REG_RF_SETUP, reg);
 }
 
+uint8_t PE_nRF24_getStatus(PE_nRF24_t *handle)
+{
+    return PE_nRF24_readByte(handle, PE_nRF24_REG_STATUS);
+}
+
 void PE_nRF24_attachRXPipe(PE_nRF24_t *handle, PE_nRF24_Pipe_t pipe)
 {
     uint8_t reg = PE_nRF24_readByte(handle, PE_nRF24_REG_EN_RXADDR);
