@@ -27,6 +27,34 @@ static PE_nRF24_status_t PE_nRF24_sendByte(PE_nRF24_handle_t *handle, uint8_t ad
     return PE_nRF24_STATUS_OK;
 }
 
+PE_nRF24_status_t PE_nRF24_setDirection2(PE_nRF24_handle_t *handle, PE_nRF24_Direction_t direction)
+{
+    uint8_t reg;
+
+    PE_nRF24_readByte(handle, PE_nRF24_REG_CONFIG, &reg);
+
+    reg &= ~PE_nRF24_CONFIG_PRIM_RX;
+    reg |= (direction << PE_nRF24_CONFIG_PRIM_RX_Pos);
+
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_CONFIG, reg);
+
+    return PE_nRF24_STATUS_OK;
+}
+
+PE_nRF24_status_t PE_nRF24_setPowerMode2(PE_nRF24_handle_t *handle, PE_nRF24_POWER_t mode)
+{
+    uint8_t reg;
+
+    PE_nRF24_readByte(handle, PE_nRF24_REG_CONFIG, &reg);
+
+    reg &= ~PE_nRF24_CONFIG_PWR_UP;
+    reg |= (mode << PE_nRF24_CONFIG_PWR_UP_Pos);
+
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_CONFIG, reg);
+
+    return PE_nRF24_STATUS_OK;
+}
+
 PE_nRF24_status_t PE_nRF24_initializeRX(PE_nRF24_handle_t *handle, PE_nRF24_configRX_t *config, PE_nRF24_pipe_t pipe)
 {
     uint8_t reg;
@@ -116,12 +144,14 @@ PE_nRF24_status_t PE_nRF24_handleIRQ(PE_nRF24_handle_t *handle)
         return PE_nRF24_STATUS_ERROR;
     }
 
+    // Process RX data ready (RX_DR bit)
     if ((status & PE_nRF24_STATUS_RX_DR) != 0U) {
         uint8_t statusFIFO;
 
         handle->instance->setCE(0);
 
         do {
+            //TODO read bytes to specific pipe
             HAL_nRF24L01P_ReadRXPayload(nRF, nRF->RX_Buffer);
 
             status |= PE_nRF24_STATUS_RX_DR;
@@ -132,55 +162,41 @@ PE_nRF24_status_t PE_nRF24_handleIRQ(PE_nRF24_handle_t *handle)
 
         handle->instance->setCE(1);
     }
-}
 
-//TODO convert to own implementation, maybe with separate methods for separate isr
-HAL_StatusTypeDef HAL_nRF24L01P_IRQ_Handler(nRF24L01P *nRF)
-{
-    /* ---- Local Vars. ---- */
-    uint8_t regStatus;
-    /* ---- Pre Process ---- */
-    if(HAL_nRF24L01P_ReadRegister(nRF, nRF_STATUS, &regStatus) != HAL_OK)
-    {
-        return HAL_ERROR;
-    }
-    /* ---- RX FIFO Int.---- */
-    if((regStatus & (1 << 6)) != 0)
-    {
-        uint8_t regFIFO_Status;
-        HAL_nRF24L01P_CE_Low(nRF);
-        do {
-            HAL_nRF24L01P_ReadRXPayload(nRF, nRF->RX_Buffer);
-            regStatus |= (1 << 6);
-            HAL_nRF24L01P_WriteRegister(nRF, nRF_STATUS, &regStatus);
-            HAL_nRF24L01P_ReadRegister(nRF, nRF_FIFO_STATUS, &regFIFO_Status);
-        } while((regFIFO_Status & 0x01) == 0x00);
-        HAL_nRF24L01P_CE_High(nRF);
-    }
-    /* ---- TX Sent Int.---- */
-    if((regStatus & (1 << 5)) != 0)
-    {
-        HAL_nRF24L01P_CE_Low(nRF);
-        regStatus |= (1 << 5);
-        HAL_nRF24L01P_TXRX(nRF, nRF_STATE_RX);
-        HAL_nRF24L01P_WriteRegister(nRF, nRF_STATUS, &regStatus);
-        HAL_nRF24L01P_CE_High(nRF);
-        nRF->Busy = 0;
-    }
-    /* ---- MAXReTX Int.---- */
-    if((regStatus & (1 << 4)) != 0)
-    {
-        regStatus |= (1 << 4);
+    // Process TX sent (TX_DS bit)
+    if ((status & PE_nRF24_STATUS_TX_DS) != 0) {
+        handle->instance->setCE(0);
 
-        HAL_nRF24L01P_FlushTX(nRF);
-        HAL_nRF24L01P_PowerUP(nRF, nRF_DISABLE);	// bi kapatip açalim da düzelsin...
-        HAL_nRF24L01P_PowerUP(nRF, nRF_ENABLE);
+        status |= PE_nRF24_STATUS_TX_DS;
 
-        HAL_nRF24L01P_CE_Low(nRF);
-        HAL_nRF24L01P_TXRX(nRF, nRF_STATE_RX);
-        HAL_nRF24L01P_WriteRegister(nRF, nRF_STATUS, &regStatus);
-        HAL_nRF24L01P_CE_High(nRF);
-        nRF->Busy = 0;
+        PE_nRF24_setDirection2(handle, PE_nRF24_DIRECTION_RX);
+        PE_nRF24_sendByte(handle, PE_nRF24_REG_STATUS, status);
+
+        handle->instance->setCE(1);
+
+        //TODO clear busy flag
+        //nRF->Busy = 0;
     }
-    return HAL_OK;
+
+    if ((status & PE_nRF24_STATUS_MAX_RT) != 0) {
+        status |= PE_nRF24_STATUS_MAX_RT;
+
+        PE_nRF24_flushTX(handle);
+
+        // Toggle RF power up bit
+        PE_nRF24_setPowerMode2(handle, PE_nRF24_POWER_OFF);
+        PE_nRF24_setPowerMode2(handle, PE_nRF24_POWER_ON);
+
+        handle->instance->setCE(0);
+
+        PE_nRF24_setDirection2(handle, PE_nRF24_DIRECTION_RX);
+        PE_nRF24_sendByte(handle, PE_nRF24_REG_STATUS, status);
+
+        handle->instance->setCE(1);
+
+        //TODO clear busy flag
+        //nRF->Busy = 0;
+    }
+
+    return PE_nRF24_STATUS_OK;
 }

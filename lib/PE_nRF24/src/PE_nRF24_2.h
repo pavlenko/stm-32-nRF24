@@ -21,6 +21,11 @@ typedef enum {
 } PE_nRF24_status_t;
 
 typedef enum {
+    PE_nRF24_POWER_OFF = 0U,
+    PE_nRF24_POWER_ON  = 1U,
+} PE_nRF24_POWER_t;
+
+typedef enum {
     PE_nRF24_PIPE_0 = (uint8_t) 0U,
     PE_nRF24_PIPE_1 = (uint8_t) 1U,
     PE_nRF24_PIPE_2 = (uint8_t) 2U,
