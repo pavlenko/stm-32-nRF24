@@ -180,6 +180,24 @@ PE_nRF24_status_t PE_nRF24_detachRX(PE_nRF24_handle_t *handle, PE_nRF24_pipe_t p
     return PE_nRF24_STATUS_OK;
 }
 
+PE_nRF24_status_t PE_nRF24_sendPacket(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size)
+{
+    if (handle->state != PE_nRF24_STATE_READY) {
+        return PE_nRF24_STATUS_ERROR;
+    }
+
+    handle->state = PE_nRF24_STATE_BUSY_TX;
+
+    HAL_nRF24L01P_CE_Low(nRF);
+    HAL_nRF24L01P_TXRX(nRF, nRF_STATE_TX);
+    HAL_nRF24L01P_WriteTXPayload(nRF, Data);
+    HAL_nRF24L01P_CE_High(nRF);
+
+    while(nRF->Busy);	// TODO: Add *timeout* functionality
+
+    return PE_nRF24_STATUS_OK;
+}
+
 PE_nRF24_status_t PE_nRF24_handleIRQ(PE_nRF24_handle_t *handle)
 {
     uint8_t status;
