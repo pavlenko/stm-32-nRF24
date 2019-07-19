@@ -64,6 +64,10 @@ PE_nRF24_status_t PE_nRF24_initializeTX(PE_nRF24_handle_t *handle, PE_nRF24_conf
 
 PE_nRF24_status_t PE_nRF24_initializeRX(PE_nRF24_handle_t *handle, PE_nRF24_configRX_t *config, PE_nRF24_pipe_t pipe);
 
+PE_nRF24_status_t PE_nRF24_attachRX(PE_nRF24_handle_t *handle, PE_nRF24_pipe_t pipe);
+
+PE_nRF24_status_t PE_nRF24_detachRX(PE_nRF24_handle_t *handle, PE_nRF24_pipe_t pipe);
+
 void PE_nRF24_handleIRQ(PE_nRF24_handle_t *handle);
 
 /* Exported variables --------------------------------------------------------*/

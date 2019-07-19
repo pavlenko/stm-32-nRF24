@@ -9,14 +9,16 @@
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
-static uint8_t PE_nRF24_readByte(uint8_t addr)
+//TODO refactor to return status & write data to ptr
+static uint8_t PE_nRF24_readByte(PE_nRF24_handle_t *handle, uint8_t addr)
 {
     //TODO
     (void) addr;
     return 0;
 }
 
-static void PE_nRF24_sendByte(uint8_t addr, uint8_t byte)
+//TODO refactor to return status
+static void PE_nRF24_sendByte(PE_nRF24_handle_t *handle, uint8_t addr, uint8_t byte)
 {
     //TODO
     (void) addr;
@@ -27,14 +29,6 @@ PE_nRF24_status_t PE_nRF24_initializeRX(PE_nRF24_handle_t *handle, PE_nRF24_conf
 {
     uint8_t reg;
 
-    // Enable specific pipe
-    reg = PE_nRF24_readByte(PE_nRF24_REG_EN_RXADDR);
-
-    reg &= ~PE_nRF24_EN_RXADDR_ALL;
-    reg |= (1U << pipe);
-
-    PE_nRF24_sendByte(PE_nRF24_REG_EN_RXADDR, reg);
-
     // Copy ptr to prevent change
     uint8_t *addressValue = config->address;
     uint8_t  addressWidth = 0;
@@ -43,7 +37,7 @@ PE_nRF24_status_t PE_nRF24_initializeRX(PE_nRF24_handle_t *handle, PE_nRF24_conf
     switch (pipe) {
         case PE_nRF24_PIPE_0:
         case PE_nRF24_PIPE_1:
-            addressWidth = PE_nRF24_readByte(PE_nRF24_REG_SETUP_AW) + 1;
+            addressWidth = PE_nRF24_readByte(handle, PE_nRF24_REG_SETUP_AW) + 1;
             addressValue += addressWidth;
 
             handle->instance->setCS(0);
@@ -62,7 +56,7 @@ PE_nRF24_status_t PE_nRF24_initializeRX(PE_nRF24_handle_t *handle, PE_nRF24_conf
         case PE_nRF24_PIPE_4:
         case PE_nRF24_PIPE_5:
             // Write address LSB byte (only first byte from the addr buffer)
-            PE_nRF24_sendByte(PE_nRF24_REG_mX_ADDR_Pn[pipe], *addressValue);
+            PE_nRF24_sendByte(handle, PE_nRF24_REG_mX_ADDR_Pn[pipe], *addressValue);
             break;
         default:
             // Incorrect pipe number -> do nothing
@@ -70,17 +64,70 @@ PE_nRF24_status_t PE_nRF24_initializeRX(PE_nRF24_handle_t *handle, PE_nRF24_conf
     }
 
     // Set RX payload length (RX_PW_Px register)
-    PE_nRF24_sendByte(PE_nRF24_REG_RX_PW_Pn[pipe], config->payloadSize & 0x3FU);
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_RX_PW_Pn[pipe], config->payloadSize & 0x3FU);
 
     // Configure Auto Acknowledgement
-    reg = PE_nRF24_readByte(PE_nRF24_REG_EN_AA);
+    reg = PE_nRF24_readByte(handle, PE_nRF24_REG_EN_AA);
 
     reg &= ~(1U << pipe);
     reg |= (uint8_t) (config->autoACK << pipe);
 
-    PE_nRF24_sendByte(PE_nRF24_REG_EN_AA, reg);
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_EN_AA, reg);
 
     return PE_nRF24_STATUS_OK;
+}
+
+PE_nRF24_status_t PE_nRF24_attachRX(PE_nRF24_handle_t *handle, PE_nRF24_pipe_t pipe)
+{
+    uint8_t reg;
+
+    // Enable specific pipe
+    reg = PE_nRF24_readByte(handle, PE_nRF24_REG_EN_RXADDR);
+
+    reg |= (1U << pipe);
+
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_EN_RXADDR, reg);
+
+    return PE_nRF24_STATUS_OK;
+}
+
+PE_nRF24_status_t PE_nRF24_detachRX(PE_nRF24_handle_t *handle, PE_nRF24_pipe_t pipe)
+{
+    uint8_t reg;
+
+    // disable specific pipe
+    reg = PE_nRF24_readByte(handle, PE_nRF24_REG_EN_RXADDR);
+
+    reg &= ~(1U << pipe);
+
+    PE_nRF24_sendByte(handle, PE_nRF24_REG_EN_RXADDR, reg);
+
+    return PE_nRF24_STATUS_OK;
+}
+
+void PE_nRF24_handleIRQ(PE_nRF24_handle_t *handle)
+{
+    uint8_t status;
+
+    status = PE_nRF24_readByte(handle, PE_nRF24_REG_STATUS);
+
+    if ((status & PE_nRF24_STATUS_RX_DR) != 0U) {
+        uint8_t FIFOStatus;
+
+        handle->instance->setCE(0);
+
+        do {
+            HAL_nRF24L01P_ReadRXPayload(nRF, nRF->RX_Buffer);
+
+            status |= PE_nRF24_STATUS_RX_DR;
+
+            PE_nRF24_sendByte(handle, PE_nRF24_REG_STATUS, status);
+
+            FIFOStatus = PE_nRF24_readByte(handle, PE_nRF24_REG_FIFO_STATUS);
+        } while ((FIFOStatus & PE_nRF24_FIFO_STATUS_RX_EMPTY) == 0x00);
+
+        handle->instance->setCE(1);
+    }
 }
 
 //TODO convert to own implementation, maybe with separate methods for separate isr
