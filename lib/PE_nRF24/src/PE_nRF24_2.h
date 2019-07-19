@@ -102,6 +102,13 @@ PE_nRF24_status_t PE_nRF24_attachRX(PE_nRF24_handle_t *handle, PE_nRF24_pipe_t p
  */
 PE_nRF24_status_t PE_nRF24_detachRX(PE_nRF24_handle_t *handle, PE_nRF24_pipe_t pipe);
 
+//TODO func to wait until event is occurred in without interrupts mode
+//TODO send/read data poll/IRQ
+PE_nRF24_status_t PE_nRF24_sendPacket(PE_nRF24_handle_t *handle);
+PE_nRF24_status_t PE_nRF24_sendPacketIRQ(PE_nRF24_handle_t *handle);
+PE_nRF24_status_t PE_nRF24_readPacket(PE_nRF24_handle_t *handle);
+PE_nRF24_status_t PE_nRF24_readPacketIRQ(PE_nRF24_handle_t *handle);
+
 /**
  * Handle IRQ triggered by transmitter (if enabled)
  *
