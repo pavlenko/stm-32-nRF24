@@ -224,10 +224,10 @@ PE_nRF24_status_t PE_nRF24_handleIRQ(PE_nRF24_handle_t *handle)
 
         handle->instance->setCE(1);
 
-        //TODO clear busy flag
-        //nRF->Busy = 0;
+        handle->state = PE_nRF24_STATE_READY;
     }
 
+    // Process reach retransmission count (MAX_RT bit)
     if ((status & PE_nRF24_STATUS_MAX_RT) != 0) {
         status |= PE_nRF24_STATUS_MAX_RT;
 
@@ -244,8 +244,7 @@ PE_nRF24_status_t PE_nRF24_handleIRQ(PE_nRF24_handle_t *handle)
 
         handle->instance->setCE(1);
 
-        //TODO clear busy flag
-        //nRF->Busy = 0;
+        handle->state = PE_nRF24_STATE_READY;
     }
 
     return PE_nRF24_STATUS_OK;

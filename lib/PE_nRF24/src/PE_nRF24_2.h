@@ -21,6 +21,12 @@ typedef enum {
 } PE_nRF24_status_t;
 
 typedef enum {
+    PE_nRF24_STATE_READY   = 0x00U,
+    PE_nRF24_STATE_BUSY_RX = 0x01U,
+    PE_nRF24_STATE_BUSY_TX = 0x02U,
+} PE_nRF24_STATE_t;
+
+typedef enum {
     PE_nRF24_POWER_OFF = 0U,
     PE_nRF24_POWER_ON  = 1U,
 } PE_nRF24_POWER_t;
@@ -57,7 +63,7 @@ typedef struct {
 
 typedef struct {
     PE_nRF24_instance_t *instance;
-    PE_nRF24_status_t status;
+    PE_nRF24_STATE_t state;
     PE_nRF24_configTX_t configTX;
 } PE_nRF24_handle_t;
 
