@@ -82,3 +82,54 @@ PE_nRF24_status_t PE_nRF24_initializeRX(PE_nRF24_handle_t *handle, PE_nRF24_conf
 
     return PE_nRF24_STATUS_OK;
 }
+
+//TODO convert to own implementation, maybe with separate methods for separate isr
+HAL_StatusTypeDef HAL_nRF24L01P_IRQ_Handler(nRF24L01P *nRF)
+{
+    /* ---- Local Vars. ---- */
+    uint8_t regStatus;
+    /* ---- Pre Process ---- */
+    if(HAL_nRF24L01P_ReadRegister(nRF, nRF_STATUS, &regStatus) != HAL_OK)
+    {
+        return HAL_ERROR;
+    }
+    /* ---- RX FIFO Int.---- */
+    if((regStatus & (1 << 6)) != 0)
+    {
+        uint8_t regFIFO_Status;
+        HAL_nRF24L01P_CE_Low(nRF);
+        do {
+            HAL_nRF24L01P_ReadRXPayload(nRF, nRF->RX_Buffer);
+            regStatus |= (1 << 6);
+            HAL_nRF24L01P_WriteRegister(nRF, nRF_STATUS, &regStatus);
+            HAL_nRF24L01P_ReadRegister(nRF, nRF_FIFO_STATUS, &regFIFO_Status);
+        } while((regFIFO_Status & 0x01) == 0x00);
+        HAL_nRF24L01P_CE_High(nRF);
+    }
+    /* ---- TX Sent Int.---- */
+    if((regStatus & (1 << 5)) != 0)
+    {
+        HAL_nRF24L01P_CE_Low(nRF);
+        regStatus |= (1 << 5);
+        HAL_nRF24L01P_TXRX(nRF, nRF_STATE_RX);
+        HAL_nRF24L01P_WriteRegister(nRF, nRF_STATUS, &regStatus);
+        HAL_nRF24L01P_CE_High(nRF);
+        nRF->Busy = 0;
+    }
+    /* ---- MAXReTX Int.---- */
+    if((regStatus & (1 << 4)) != 0)
+    {
+        regStatus |= (1 << 4);
+
+        HAL_nRF24L01P_FlushTX(nRF);
+        HAL_nRF24L01P_PowerUP(nRF, nRF_DISABLE);	// bi kapatip açalim da düzelsin...
+        HAL_nRF24L01P_PowerUP(nRF, nRF_ENABLE);
+
+        HAL_nRF24L01P_CE_Low(nRF);
+        HAL_nRF24L01P_TXRX(nRF, nRF_STATE_RX);
+        HAL_nRF24L01P_WriteRegister(nRF, nRF_STATUS, &regStatus);
+        HAL_nRF24L01P_CE_High(nRF);
+        nRF->Busy = 0;
+    }
+    return HAL_OK;
+}
