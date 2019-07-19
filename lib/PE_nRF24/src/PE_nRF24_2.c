@@ -27,6 +27,50 @@ static PE_nRF24_status_t PE_nRF24_sendByte(PE_nRF24_handle_t *handle, uint8_t ad
     return PE_nRF24_STATUS_OK;
 }
 
+static PE_nRF24_status_t PE_nRF24_readData(PE_nRF24_handle_t *handle, uint8_t addr, uint8_t *data, uint8_t size)
+{
+    //TODO
+    (void) handle;
+    (void) addr;
+    (void) data;
+    (void) size;
+    return PE_nRF24_STATUS_OK;
+}
+
+static PE_nRF24_status_t PE_nRF24_sendData(PE_nRF24_handle_t *handle, uint8_t addr, uint8_t *data, uint8_t size)
+{
+    //TODO
+    (void) handle;
+    (void) addr;
+    (void) data;
+    (void) size;
+    return PE_nRF24_STATUS_OK;
+}
+
+PE_nRF24_status_t _PE_nRF24_readPayload(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t *size, uint8_t *pipe)
+{
+    PE_nRF24_readByte(handle, PE_nRF24_REG_STATUS, pipe);
+
+    *pipe &= ~PE_nRF24_STATUS_RX_P_NO;
+
+    if (*pipe > PE_nRF24_PIPE_5) {
+        return PE_nRF24_STATUS_ERROR;
+    }
+
+    PE_nRF24_readByte(handle, PE_nRF24_REG_RX_PW_Pn[*pipe], size);
+
+    if (*size > 0) {
+        PE_nRF24_readData(handle, PE_nRF24_CMD_R_RX_PAYLOAD, data, *size);
+    }
+
+    return PE_nRF24_STATUS_OK;
+}
+
+PE_nRF24_status_t _PE_nRF24_sendPayload(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size)
+{
+    return PE_nRF24_sendData(handle, PE_nRF24_CMD_W_TX_PAYLOAD, data, size);
+}
+
 PE_nRF24_status_t PE_nRF24_setDirection2(PE_nRF24_handle_t *handle, PE_nRF24_Direction_t direction)
 {
     uint8_t reg;
@@ -152,7 +196,13 @@ PE_nRF24_status_t PE_nRF24_handleIRQ(PE_nRF24_handle_t *handle)
 
         do {
             //TODO read bytes to specific pipe
-            HAL_nRF24L01P_ReadRXPayload(nRF, nRF->RX_Buffer);
+            uint8_t data[32];
+            uint8_t size;
+            uint8_t pipe;
+
+            _PE_nRF24_readPayload(handle, data, &size, &pipe);
+
+            //TODO execute callback
 
             status |= PE_nRF24_STATUS_RX_DR;
 
