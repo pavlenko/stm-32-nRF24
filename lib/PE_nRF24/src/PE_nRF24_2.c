@@ -9,20 +9,22 @@
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
-//TODO refactor to return status & write data to ptr
-static uint8_t PE_nRF24_readByte(PE_nRF24_handle_t *handle, uint8_t addr)
+static PE_nRF24_status_t PE_nRF24_readByte(PE_nRF24_handle_t *handle, uint8_t addr, uint8_t *byte)
 {
     //TODO
-    (void) addr;
-    return 0;
-}
-
-//TODO refactor to return status
-static void PE_nRF24_sendByte(PE_nRF24_handle_t *handle, uint8_t addr, uint8_t byte)
-{
-    //TODO
+    (void) handle;
     (void) addr;
     (void) byte;
+    return PE_nRF24_STATUS_OK;
+}
+
+static PE_nRF24_status_t PE_nRF24_sendByte(PE_nRF24_handle_t *handle, uint8_t addr, uint8_t byte)
+{
+    //TODO
+    (void) handle;
+    (void) addr;
+    (void) byte;
+    return PE_nRF24_STATUS_OK;
 }
 
 PE_nRF24_status_t PE_nRF24_initializeRX(PE_nRF24_handle_t *handle, PE_nRF24_configRX_t *config, PE_nRF24_pipe_t pipe)
@@ -37,8 +39,9 @@ PE_nRF24_status_t PE_nRF24_initializeRX(PE_nRF24_handle_t *handle, PE_nRF24_conf
     switch (pipe) {
         case PE_nRF24_PIPE_0:
         case PE_nRF24_PIPE_1:
-            addressWidth = PE_nRF24_readByte(handle, PE_nRF24_REG_SETUP_AW) + 1;
-            addressValue += addressWidth;
+            PE_nRF24_readByte(handle, PE_nRF24_REG_SETUP_AW, &addressWidth);
+
+            addressValue += (addressWidth + 1);
 
             handle->instance->setCS(0);
 
@@ -47,7 +50,7 @@ PE_nRF24_status_t PE_nRF24_initializeRX(PE_nRF24_handle_t *handle, PE_nRF24_conf
             // Write address in reverse order
             do {
                 handle->instance->RW(*addressValue--);
-            } while (addressWidth--);
+            } while (addressWidth-- >= 0);
 
             handle->instance->setCS(1);
             break;
@@ -67,7 +70,7 @@ PE_nRF24_status_t PE_nRF24_initializeRX(PE_nRF24_handle_t *handle, PE_nRF24_conf
     PE_nRF24_sendByte(handle, PE_nRF24_REG_RX_PW_Pn[pipe], config->payloadSize & 0x3FU);
 
     // Configure Auto Acknowledgement
-    reg = PE_nRF24_readByte(handle, PE_nRF24_REG_EN_AA);
+    PE_nRF24_readByte(handle, PE_nRF24_REG_EN_AA, &reg);
 
     reg &= ~(1U << pipe);
     reg |= (uint8_t) (config->autoACK << pipe);
@@ -82,7 +85,7 @@ PE_nRF24_status_t PE_nRF24_attachRX(PE_nRF24_handle_t *handle, PE_nRF24_pipe_t p
     uint8_t reg;
 
     // Enable specific pipe
-    reg = PE_nRF24_readByte(handle, PE_nRF24_REG_EN_RXADDR);
+    PE_nRF24_readByte(handle, PE_nRF24_REG_EN_RXADDR, &reg);
 
     reg |= (1U << pipe);
 
@@ -96,7 +99,7 @@ PE_nRF24_status_t PE_nRF24_detachRX(PE_nRF24_handle_t *handle, PE_nRF24_pipe_t p
     uint8_t reg;
 
     // disable specific pipe
-    reg = PE_nRF24_readByte(handle, PE_nRF24_REG_EN_RXADDR);
+    PE_nRF24_readByte(handle, PE_nRF24_REG_EN_RXADDR, &reg);
 
     reg &= ~(1U << pipe);
 
@@ -105,14 +108,16 @@ PE_nRF24_status_t PE_nRF24_detachRX(PE_nRF24_handle_t *handle, PE_nRF24_pipe_t p
     return PE_nRF24_STATUS_OK;
 }
 
-void PE_nRF24_handleIRQ(PE_nRF24_handle_t *handle)
+PE_nRF24_status_t PE_nRF24_handleIRQ(PE_nRF24_handle_t *handle)
 {
     uint8_t status;
 
-    status = PE_nRF24_readByte(handle, PE_nRF24_REG_STATUS);
+    if (PE_nRF24_readByte(handle, PE_nRF24_REG_STATUS, &status) != PE_nRF24_STATUS_OK) {
+        return PE_nRF24_STATUS_ERROR;
+    }
 
     if ((status & PE_nRF24_STATUS_RX_DR) != 0U) {
-        uint8_t FIFOStatus;
+        uint8_t statusFIFO;
 
         handle->instance->setCE(0);
 
@@ -122,9 +127,8 @@ void PE_nRF24_handleIRQ(PE_nRF24_handle_t *handle)
             status |= PE_nRF24_STATUS_RX_DR;
 
             PE_nRF24_sendByte(handle, PE_nRF24_REG_STATUS, status);
-
-            FIFOStatus = PE_nRF24_readByte(handle, PE_nRF24_REG_FIFO_STATUS);
-        } while ((FIFOStatus & PE_nRF24_FIFO_STATUS_RX_EMPTY) == 0x00);
+            PE_nRF24_readByte(handle, PE_nRF24_REG_FIFO_STATUS, &statusFIFO);
+        } while ((statusFIFO & PE_nRF24_FIFO_STATUS_RX_EMPTY) == 0x00);
 
         handle->instance->setCE(1);
     }
