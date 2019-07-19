@@ -67,12 +67,50 @@ typedef struct {
 
 PE_nRF24_status_t PE_nRF24_initializeTX(PE_nRF24_handle_t *handle, PE_nRF24_configTX_t *config);
 
+/**
+ * Configure RX pipe
+ *
+ * Set address
+ * Set payload length
+ * Enable or disable Auto Acknowledgement
+ *
+ * @param handle
+ * @param config
+ * @param pipe
+ *
+ * @return
+ */
 PE_nRF24_status_t PE_nRF24_initializeRX(PE_nRF24_handle_t *handle, PE_nRF24_configRX_t *config, PE_nRF24_pipe_t pipe);
 
+/**
+ * Enable RX pipe
+ *
+ * @param handle
+ * @param pipe
+ *
+ * @return
+ */
 PE_nRF24_status_t PE_nRF24_attachRX(PE_nRF24_handle_t *handle, PE_nRF24_pipe_t pipe);
 
+/**
+ * Disable RX pipe
+ *
+ * @param handle
+ * @param pipe
+ *
+ * @return
+ */
 PE_nRF24_status_t PE_nRF24_detachRX(PE_nRF24_handle_t *handle, PE_nRF24_pipe_t pipe);
 
+/**
+ * Handle IRQ triggered by transmitter (if enabled)
+ *
+ * Must be called inside of concrete CPU external pin IRQ handler
+ *
+ * @param handle
+ *
+ * @return
+ */
 PE_nRF24_status_t PE_nRF24_handleIRQ(PE_nRF24_handle_t *handle);
 
 /* Exported variables --------------------------------------------------------*/
