@@ -98,6 +98,16 @@ PE_nRF24_status_t PE_nRF24_setPowerMode2(PE_nRF24_handle_t *handle, PE_nRF24_POW
 
     return PE_nRF24_STATUS_OK;
 }
+PE_nRF24_status_t PE_nRF24_initializeTX(PE_nRF24_handle_t *handle, PE_nRF24_configTX_t *config)
+{
+    //TODO configure tx power
+    //TODO channel
+    //TODO address width
+    //TODO address
+    //TODO crc scheme
+    //TODO data rate
+    //TODO retransmit
+}
 
 PE_nRF24_status_t PE_nRF24_initializeRX(PE_nRF24_handle_t *handle, PE_nRF24_configRX_t *config, PE_nRF24_pipe_t pipe)
 {
