@@ -8,6 +8,39 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
+
+typedef enum {
+    PE_nRF24_STATUS_OK      = 0x00U,
+    PE_nRF24_STATUS_ERROR   = 0x01U,
+    PE_nRF24_STATUS_BUSY    = 0x02U,
+    PE_nRF24_STATUS_TIMEOUT = 0x03U,
+} PE_nRF24_STATUS_t;
+
+typedef struct {
+    PE_nRF24_STATUS_t status;
+
+    /**
+     * Chip enable, activates RX or TX mode
+     *
+     * @param state
+     */
+    void (*setCE) (uint8_t state);
+
+    /**
+     * SPI Chip select
+     *
+     * @param state
+     */
+    void (*setCS) (uint8_t state);
+
+    /**
+     * SPI transceive data
+     *
+     * @param data
+     */
+    uint8_t (*RW) (uint8_t data);
+} PE_nRF24_t;
+
 /* Exported constants --------------------------------------------------------*/
 
 // Fake address to test transceiver presence (5 bytes long)

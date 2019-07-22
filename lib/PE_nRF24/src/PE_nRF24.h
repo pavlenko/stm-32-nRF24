@@ -103,29 +103,6 @@ typedef enum {
     PE_nRF24_DR_2000kbps = PE_nRF24_RF_SETUP_RF_DR_HIGH,
 } PE_nRF24_DataRate_t;
 
-typedef struct {
-    /**
-     * Chip enable, activates RX or TX mode
-     *
-     * @param state
-     */
-    void (*setCE) (PE_nRF24_pinState_t state);
-
-    /**
-     * SPI Chip select
-     *
-     * @param state
-     */
-    void (*setCS) (PE_nRF24_pinState_t state);
-
-    /**
-     * SPI transceive data
-     *
-     * @param data
-     */
-    uint8_t (*RW) (uint8_t data);
-} PE_nRF24_t;
-
 /* Exported function prototypes --------------------------------------------- */
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
