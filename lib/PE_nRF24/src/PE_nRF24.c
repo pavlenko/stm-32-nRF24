@@ -31,8 +31,6 @@ static PE_nRF24_STATUS_t PE_nRF24_sendByte(PE_nRF24_t *handle, uint8_t addr, uin
 
 static PE_nRF24_STATUS_t PE_nRF24_getRegister(PE_nRF24_t *handle, uint8_t addr, uint8_t *byte)
 {
-    uint8_t value;
-
     handle->setCS(PE_nRF24_BIT_CLR);
 
     if (handle->send(&addr, 1) != PE_nRF24_STATUS_OK) {
@@ -50,6 +48,18 @@ static PE_nRF24_STATUS_t PE_nRF24_getRegister(PE_nRF24_t *handle, uint8_t addr, 
 
 static PE_nRF24_STATUS_t PE_nRF24_setRegister(PE_nRF24_t *handle, uint8_t addr, uint8_t *byte)
 {
+    handle->setCS(PE_nRF24_BIT_CLR);
+
+    if (handle->send(&addr, 1) != PE_nRF24_STATUS_OK) {
+        return PE_nRF24_STATUS_ERROR;
+    }
+
+    if (handle->send(byte, 1) != PE_nRF24_STATUS_OK) {
+        return PE_nRF24_STATUS_ERROR;
+    }
+
+    handle->setCS(PE_nRF24_BIT_SET);
+
     return PE_nRF24_STATUS_OK;
 }
 
