@@ -15,12 +15,12 @@ PE_nRF24_t PE_nRF24;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
-static void nRF24_setCE(PE_nRF24_pinState_t state)
+static void nRF24_setCE(PE_nRF24_BIT_t state)
 {
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, (GPIO_PinState) state);
 }
 
-static void nRF24_setCS(PE_nRF24_pinState_t state)
+static void nRF24_setCS(PE_nRF24_BIT_t state)
 {
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, (GPIO_PinState) state);
 }

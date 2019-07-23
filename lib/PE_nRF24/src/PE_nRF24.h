@@ -24,6 +24,16 @@ typedef enum {
     PE_nRF24_BIT_SET = 0x1U,
 } PE_nRF24_BIT_t;
 
+typedef enum {
+    PE_nRF24_DIRECTION_TX = 0U,
+    PE_nRF24_DIRECTION_RX = 1U,
+} PE_nRF24_Direction_t;
+
+typedef enum {
+    PE_nRF24_POWER_OFF = 0U,
+    PE_nRF24_POWER_ON  = 1U,
+} PE_nRF24_POWER_t;
+
 typedef void (*PE_nRF24_setPin_t) (PE_nRF24_BIT_t state);
 
 typedef struct {
