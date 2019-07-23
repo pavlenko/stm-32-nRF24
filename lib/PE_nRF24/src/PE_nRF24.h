@@ -19,6 +19,13 @@ typedef enum {
     PE_nRF24_STATUS_TIMEOUT = 0x03U,
 } PE_nRF24_STATUS_t;
 
+typedef enum {
+    PE_nRF24_BIT_CLR = 0x0U,
+    PE_nRF24_BIT_SET = 0x1U,
+} PE_nRF24_BIT_t;
+
+typedef void (*PE_nRF24_setPin_t) (PE_nRF24_BIT_t state);
+
 typedef struct {
     PE_nRF24_STATUS_t status;
 
@@ -42,6 +49,9 @@ typedef struct {
      * @param data
      */
     uint8_t (*RW) (uint8_t data);
+
+    PE_nRF24_STATUS_t (*read) (uint8_t *data, uint8_t size);
+    PE_nRF24_STATUS_t (*send) (uint8_t *data, uint8_t size);
 } PE_nRF24_t;
 
 /* Exported constants --------------------------------------------------------*/
