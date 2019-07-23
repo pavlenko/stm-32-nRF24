@@ -433,6 +433,18 @@ typedef struct {
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported function prototypes --------------------------------------------- */
+
+/**
+ * Handle IRQ triggered by transmitter (if enabled)
+ *
+ * Must be called inside of concrete CPU external pin IRQ handler
+ *
+ * @param handle
+ *
+ * @return
+ */
+PE_nRF24_STATUS_t PE_nRF24_handleIRQ(PE_nRF24_t *handle);
+
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 

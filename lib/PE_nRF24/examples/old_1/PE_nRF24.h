@@ -1,6 +1,6 @@
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef PE_NRF24_H
-#define PE_NRF24_H
+#ifndef PE_NRF24_1_H
+#define PE_NRF24_1_H
 
 #ifdef __cplusplus
 extern "C" {
