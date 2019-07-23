@@ -7,6 +7,9 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
+
+PE_nRF24_STATUS_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_t *handle);
+
 /* Private functions ---------------------------------------------------------*/
 
 //TODO create functions like i2c_mem_read, i2c_mem_write
@@ -145,6 +148,8 @@ PE_nRF24_STATUS_t PE_nRF24_handleIRQ(PE_nRF24_t *handle)
 
     // Process reach retransmission count (MAX_RT bit)
     if ((status & PE_nRF24_STATUS_MAX_RT) != 0) {
+        PE_nRF24_handleIRQ_MAX_RT(handle);
+        /*
         status |= PE_nRF24_STATUS_MAX_RT;
 
         __PE_nRF24_flushTX(handle);
@@ -161,7 +166,28 @@ PE_nRF24_STATUS_t PE_nRF24_handleIRQ(PE_nRF24_t *handle)
         handle->setCE(1);
 
         handle->status = PE_nRF24_STATUS_OK;
+        */
     }
+
+    return PE_nRF24_STATUS_OK;
+}
+
+PE_nRF24_STATUS_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_t *handle)
+{
+    __PE_nRF24_flushTX(handle);
+
+    // Toggle RF power up bit
+    __PE_nRF24_setPowerMode(handle, PE_nRF24_POWER_OFF);
+    __PE_nRF24_setPowerMode(handle, PE_nRF24_POWER_ON);
+
+    handle->setCE(0);
+
+    // Set direction to RX
+    __PE_nRF24_setDirection(handle, PE_nRF24_DIRECTION_RX);
+
+    handle->setCE(1);
+
+    handle->status = PE_nRF24_STATUS_OK;
 
     return PE_nRF24_STATUS_OK;
 }
