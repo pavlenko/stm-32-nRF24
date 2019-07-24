@@ -437,6 +437,18 @@ typedef enum {
 } PE_nRF24_BIT_t;
 
 typedef enum {
+    PE_nRF24_ADDR_WIDTH_3BIT = PE_nRF24_SETUP_AW_0,
+    PE_nRF24_ADDR_WIDTH_4BIT = PE_nRF24_SETUP_AW_1,
+    PE_nRF24_ADDR_WIDTH_5BIT = PE_nRF24_SETUP_AW_1|PE_nRF24_SETUP_AW_0,
+} PE_nRF24_ADDR_WIDTH_t;
+
+typedef enum {
+    PE_nRF24_DATA_RATE__250KBPS = PE_nRF24_RF_SETUP_RF_DR_LOW,
+    PE_nRF24_DATA_RATE_1000KBPS = 0x00U,
+    PE_nRF24_DATA_RATE_2000KBPS = PE_nRF24_RF_SETUP_RF_DR_HIGH,
+} PE_nRF24_DATA_RATE_t;
+
+typedef enum {
     PE_nRF24_CRC_SCHEME_OFF   = 0x00U,
     PE_nRF24_CRC_SCHEME_1BYTE = PE_nRF24_CONFIG_EN_CRC,
     PE_nRF24_CRC_SCHEME_2BYTE = PE_nRF24_CONFIG_EN_CRC|PE_nRF24_CONFIG_CRCO,
@@ -478,8 +490,8 @@ typedef enum {
 } PE_nRF24_PIPE_t;
 
 typedef struct {
-    uint8_t addressWidth;
-    uint8_t dataRate;
+    PE_nRF24_ADDR_WIDTH_t addressWidth;
+    PE_nRF24_DATA_RATE_t dataRate;
     uint8_t rfChannel;
     PE_nRF24_CRC_SCHEME_t crcScheme;
 } PE_nRF24_configRF_t;
