@@ -39,29 +39,10 @@ typedef void (*PE_nRF24_setPin_t) (PE_nRF24_BIT_t state);
 typedef struct {
     PE_nRF24_STATUS_t status;
 
-    /**
-     * Chip enable, activates RX or TX mode
-     *
-     * @param state
-     */
-    void (*setCE) (uint8_t state);
-
-    /**
-     * SPI Chip select
-     *
-     * @param state
-     */
-    void (*setCS) (uint8_t state);
-
-    /**
-     * SPI transceive data
-     *
-     * @param data
-     */
-    uint8_t (*RW) (uint8_t data);
-
-    PE_nRF24_STATUS_t (*read) (uint8_t addr, uint8_t *data, uint8_t size);
-    PE_nRF24_STATUS_t (*send) (uint8_t addr, uint8_t *data, uint8_t size);
+    void (*setCE) (PE_nRF24_BIT_t state);                                  // Toggle chip enable pin
+    void (*setCS) (PE_nRF24_BIT_t state);                                  // Toggle SPI chip select pin
+    PE_nRF24_STATUS_t (*read) (uint8_t addr, uint8_t *data, uint8_t size); // Read register byte/data
+    PE_nRF24_STATUS_t (*send) (uint8_t addr, uint8_t *data, uint8_t size); // Send register byte/data
 } PE_nRF24_t;
 
 /* Exported constants --------------------------------------------------------*/
