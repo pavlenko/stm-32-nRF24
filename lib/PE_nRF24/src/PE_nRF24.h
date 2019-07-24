@@ -406,6 +406,13 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 
 typedef enum {
+    PE_nRF24_RESULT_OK      = 0x00U,
+    PE_nRF24_RESULT_ERROR   = 0x01U,
+    PE_nRF24_RESULT_BUSY    = 0x01U,
+    PE_nRF24_RESULT_TIMEOUT = 0x03U,
+} PE_nRF24_RESULT_t;
+
+typedef enum {
     PE_nRF24_STATUS_OK      = 0x00U,
     PE_nRF24_STATUS_ERROR   = 0x01U,
     PE_nRF24_STATUS_BUSY    = 0x02U,
@@ -458,8 +465,8 @@ typedef struct {
 
     void (*setCE) (PE_nRF24_BIT_t state);                                  // Toggle chip enable pin
     void (*setCS) (PE_nRF24_BIT_t state);                                  // Toggle SPI chip select pin
-    PE_nRF24_STATUS_t (*read) (uint8_t addr, uint8_t *data, uint8_t size); // Read register byte/data
-    PE_nRF24_STATUS_t (*send) (uint8_t addr, uint8_t *data, uint8_t size); // Send register byte/data
+    PE_nRF24_RESULT_t (*read) (uint8_t addr, uint8_t *data, uint8_t size); // Read register byte/data
+    PE_nRF24_RESULT_t (*send) (uint8_t addr, uint8_t *data, uint8_t size); // Send register byte/data
 } PE_nRF24_t;
 
 /* Exported function prototypes --------------------------------------------- */
@@ -473,7 +480,7 @@ typedef struct {
  *
  * @return
  */
-PE_nRF24_STATUS_t PE_nRF24_handleIRQ(PE_nRF24_t *handle);
+PE_nRF24_RESULT_t PE_nRF24_handleIRQ(PE_nRF24_t *handle);
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
