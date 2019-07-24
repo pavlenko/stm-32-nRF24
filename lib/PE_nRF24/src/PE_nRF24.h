@@ -425,10 +425,9 @@ typedef enum {
 } PE_nRF24_RESULT_t;
 
 typedef enum {
-    PE_nRF24_STATUS_OK      = 0x00U,
-    PE_nRF24_STATUS_ERROR   = 0x01U,
-    PE_nRF24_STATUS_BUSY    = 0x02U,
-    PE_nRF24_STATUS_TIMEOUT = 0x03U,
+    PE_nRF24_STATUS_READY   = 0x00U,
+    PE_nRF24_STATUS_BUSY_TX = 0x01U,
+    PE_nRF24_STATUS_BUSY_RX = 0x02U,
 } PE_nRF24_STATUS_t;
 
 typedef enum {
