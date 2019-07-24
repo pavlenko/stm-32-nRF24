@@ -11,7 +11,9 @@ static uint8_t PE_nRF24_NONE;
 
 /* Private function prototypes -----------------------------------------------*/
 
-PE_nRF24_STATUS_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_t *handle);
+static PE_nRF24_STATUS_t PE_nRF24_flushTX(PE_nRF24_t *handle);
+static PE_nRF24_STATUS_t PE_nRF24_flushRX(PE_nRF24_t *handle);
+static PE_nRF24_STATUS_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_t *handle);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -59,19 +61,15 @@ static PE_nRF24_STATUS_t PE_nRF24_setRegister(PE_nRF24_t *handle, uint8_t addr, 
         } \
     } while (0U);
 
-#define __PE_nRF24_flushTX(handle) \
-    do { \
-        if (handle->send(PE_nRF24_CMD_FLUSH_TX, &PE_nRF24_NONE, 0) != PE_nRF24_STATUS_OK) { \
-            handle->status = PE_nRF24_STATUS_ERROR; \
-        } \
-    } while (0U);
+static PE_nRF24_STATUS_t PE_nRF24_flushTX(PE_nRF24_t *handle)
+{
+    return handle->send(PE_nRF24_CMD_FLUSH_TX, &PE_nRF24_NONE, 0);
+}
 
-#define __PE_nRF24_flushRX(handle) \
-    do { \
-        if (handle->send(PE_nRF24_CMD_FLUSH_RX, &PE_nRF24_NONE, 0) != PE_nRF24_STATUS_OK) { \
-            handle->status = PE_nRF24_STATUS_ERROR; \
-        } \
-    } while (0U);
+static PE_nRF24_STATUS_t PE_nRF24_flushRX(PE_nRF24_t *handle)
+{
+    return handle->send(PE_nRF24_CMD_FLUSH_RX, &PE_nRF24_NONE, 0);
+}
 
 #define __PE_nRF24_setDirection(handle, value) \
     do { \
@@ -167,9 +165,9 @@ PE_nRF24_STATUS_t PE_nRF24_handleIRQ(PE_nRF24_t *handle)
     return PE_nRF24_STATUS_OK;
 }
 
-PE_nRF24_STATUS_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_t *handle)
+static PE_nRF24_STATUS_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_t *handle)
 {
-    __PE_nRF24_flushTX(handle);
+    PE_nRF24_flushTX(handle);
 
     // Toggle RF power up bit
     __PE_nRF24_setPowerMode(handle, PE_nRF24_POWER_OFF);
