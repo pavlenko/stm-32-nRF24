@@ -452,6 +452,15 @@ typedef enum {
     PE_nRF24_IRQ_RX_DR  = PE_nRF24_IRQ_MASK_RX_DR,
 } PE_nRF24_IRQ_t;
 
+typedef enum {
+    PE_nRF24_PIPE_RX0,
+    PE_nRF24_PIPE_RX1,
+    PE_nRF24_PIPE_RX2,
+    PE_nRF24_PIPE_RX3,
+    PE_nRF24_PIPE_RX4,
+    PE_nRF24_PIPE_RX5,
+} PE_nRF24_PIPE_t;
+
 typedef struct {
     uint8_t addressWidth;
     uint8_t dataRate;
@@ -487,7 +496,7 @@ PE_nRF24_RESULT_t PE_nRF24_configureRF(PE_nRF24_t *handle, PE_nRF24_configRF_t *
 
 PE_nRF24_RESULT_t PE_nRF24_configureTX(PE_nRF24_t *handle, PE_nRF24_configTX_t *config);
 
-PE_nRF24_RESULT_t PE_nRF24_configureRX(PE_nRF24_t *handle, PE_nRF24_configRX_t *config, uint8_t pipe);
+PE_nRF24_RESULT_t PE_nRF24_configureRX(PE_nRF24_t *handle, PE_nRF24_configRX_t *config, PE_nRF24_PIPE_t pipe);
 
 /**
  * Handle IRQ triggered by transmitter (if enabled)
@@ -501,6 +510,16 @@ PE_nRF24_RESULT_t PE_nRF24_configureRX(PE_nRF24_t *handle, PE_nRF24_configRX_t *
 PE_nRF24_RESULT_t PE_nRF24_handleIRQ(PE_nRF24_t *handle);
 
 /* Exported variables --------------------------------------------------------*/
+
+static const uint8_t PE_nRF24_REG_RX_PW[6] = {
+    PE_nRF24_REG_RX_PW_P0,
+    PE_nRF24_REG_RX_PW_P1,
+    PE_nRF24_REG_RX_PW_P2,
+    PE_nRF24_REG_RX_PW_P3,
+    PE_nRF24_REG_RX_PW_P4,
+    PE_nRF24_REG_RX_PW_P5,
+};
+
 /* Exported functions ------------------------------------------------------- */
 
 #ifdef __cplusplus
