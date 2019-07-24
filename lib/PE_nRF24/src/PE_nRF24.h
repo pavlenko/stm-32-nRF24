@@ -465,6 +465,13 @@ typedef enum {
 } PE_nRF24_CRC_WIDTH_t;
 
 typedef enum {
+    PE_nRF24_TX_POWER_18dBm = 0x00U,
+    PE_nRF24_TX_POWER_12dBm = 0x01U,
+    PE_nRF24_TX_POWER__6dBm = 0x02U,
+    PE_nRF24_TX_POWER__0dBm = 0x03U,
+} PE_nRF24_TX_POWER_t;
+
+typedef enum {
     PE_nRF24_DIRECTION_TX = 0U,
     PE_nRF24_DIRECTION_RX = 1U,
 } PE_nRF24_DIRECTION_t;
@@ -498,7 +505,7 @@ typedef struct {
 
 typedef struct {
     uint8_t *address;
-    uint8_t txPower;
+    PE_nRF24_TX_POWER_t txPower;
     uint8_t retransmitCount;
     uint8_t retransmitDelay;
 } PE_nRF24_configTX_t;
