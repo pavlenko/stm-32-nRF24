@@ -52,5 +52,5 @@ void MX_nRF24_Init()
     // Configure callbacks
     PE_nRF24.setCE = nRF24_setCE;
     PE_nRF24.setCS = nRF24_setCS;
-    PE_nRF24.RW    = nRF24_RW;
+    //PE_nRF24.RW    = nRF24_RW;
 }

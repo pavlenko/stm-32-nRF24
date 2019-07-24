@@ -41,6 +41,24 @@ static PE_nRF24_STATUS_t PE_nRF24_setRegister(PE_nRF24_t *handle, uint8_t addr, 
     return PE_nRF24_STATUS_OK;
 }
 
+#define __PE_nRF24_attachIRQ(handle)
+
+#define __PE_nRF24_detachIRQ(handle)
+
+#define __PE_nRF24_clearIRQ(handle, mask) \
+    do { \
+        uint8_t reg; \
+        if (PE_nRF24_getRegister(handle, PE_nRF24_REG_STATUS, &reg) != PE_nRF24_STATUS_OK) { \
+            handle->status = PE_nRF24_STATUS_ERROR; \
+            break; \
+        } \
+        reg |= mask; \
+        if (PE_nRF24_setRegister(handle, PE_nRF24_REG_STATUS, &reg) != PE_nRF24_STATUS_OK) { \
+            handle->status = PE_nRF24_STATUS_ERROR; \
+            break; \
+        } \
+    } while (0U);
+
 #define __PE_nRF24_flushTX(handle) \
     do { \
         if (handle->send(PE_nRF24_CMD_FLUSH_TX, &PE_nRF24_NONE, 0) != PE_nRF24_STATUS_OK) { \
@@ -144,24 +162,6 @@ PE_nRF24_STATUS_t PE_nRF24_handleIRQ(PE_nRF24_t *handle)
     // Process reach retransmission count (MAX_RT bit)
     if ((status & PE_nRF24_STATUS_MAX_RT) != 0) {
         PE_nRF24_handleIRQ_MAX_RT(handle);
-        /*
-        status |= PE_nRF24_STATUS_MAX_RT;
-
-        __PE_nRF24_flushTX(handle);
-
-        // Toggle RF power up bit
-        __PE_nRF24_setPowerMode(handle, PE_nRF24_POWER_OFF);
-        __PE_nRF24_setPowerMode(handle, PE_nRF24_POWER_ON);
-
-        handle->setCE(0);
-
-        __PE_nRF24_setDirection(handle, PE_nRF24_DIRECTION_RX);
-        PE_nRF24_setRegister(handle, PE_nRF24_REG_STATUS, &status);
-
-        handle->setCE(1);
-
-        handle->status = PE_nRF24_STATUS_OK;
-        */
     }
 
     return PE_nRF24_STATUS_OK;
@@ -179,6 +179,9 @@ PE_nRF24_STATUS_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_t *handle)
 
     // Set direction to RX
     __PE_nRF24_setDirection(handle, PE_nRF24_DIRECTION_RX);
+
+    // Clear pending IRQ
+    __PE_nRF24_clearIRQ(handle, PE_nRF24_STATUS_MAX_RT);
 
     handle->setCE(1);
 
