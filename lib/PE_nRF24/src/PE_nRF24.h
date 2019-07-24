@@ -34,7 +34,25 @@ typedef enum {
     PE_nRF24_POWER_ON  = 1U,
 } PE_nRF24_POWER_t;
 
-typedef void (*PE_nRF24_setPin_t) (PE_nRF24_BIT_t state);
+typedef struct {
+    uint8_t addressWidth;
+    uint8_t dataRate;
+    uint8_t rfChannel;
+    uint8_t crcScheme;
+} PE_nRF24_configRF_t;
+
+typedef struct {
+    uint8_t *address;
+    uint8_t txPower;
+    uint8_t retransmitCount;
+    uint8_t retransmitDelay;
+} PE_nRF24_configTX_t;
+
+typedef struct {
+    uint8_t *address;
+    uint8_t autoACK;
+    uint8_t payloadSize;
+} PE_nRF24_configRX_t;
 
 typedef struct {
     PE_nRF24_STATUS_t status;

@@ -85,6 +85,14 @@ static PE_nRF24_STATUS_t PE_nRF24_setRegister(PE_nRF24_t *handle, uint8_t addr, 
         } \
     } while (0U);
 
+#define __PE_nRF24_setRFChannel(handle, value) \
+    do { \
+        uint8_t reg = (value & PE_nRF24_RF_CH); \
+        if (PE_nRF24_setRegister(handle, PE_nRF24_REG_RF_CH, &reg) != PE_nRF24_STATUS_OK) { \
+            handle->status = PE_nRF24_STATUS_ERROR; \
+            break; \
+        } \
+    } while (0U);
 
 PE_nRF24_STATUS_t PE_nRF24_handleIRQ(PE_nRF24_t *handle)
 {
