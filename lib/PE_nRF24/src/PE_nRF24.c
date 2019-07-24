@@ -16,6 +16,7 @@ static PE_nRF24_RESULT_t PE_nRF24_detachIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t m
 static PE_nRF24_RESULT_t PE_nRF24_clearIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t mask);
 static PE_nRF24_RESULT_t PE_nRF24_flushTX(PE_nRF24_t *handle);
 static PE_nRF24_RESULT_t PE_nRF24_flushRX(PE_nRF24_t *handle);
+static PE_nRF24_RESULT_t PE_nRF24_setDirection(PE_nRF24_t *handle, PE_nRF24_DIRECTION_t direction);
 static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_RX_DR(PE_nRF24_t *handle);
 static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_TX_DS(PE_nRF24_t *handle);
 static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_t *handle);
@@ -109,20 +110,22 @@ static PE_nRF24_RESULT_t PE_nRF24_flushRX(PE_nRF24_t *handle)
     return handle->send(PE_nRF24_CMD_FLUSH_RX, &PE_nRF24_NONE, 0);
 }
 
-#define __PE_nRF24_setDirection(handle, value) \
-    do { \
-        uint8_t reg; \
-        if (PE_nRF24_getRegister(handle, PE_nRF24_REG_CONFIG, &reg) != PE_nRF24_STATUS_OK) { \
-            handle->status = PE_nRF24_STATUS_ERROR; \
-            break; \
-        } \
-        reg &= ~PE_nRF24_CONFIG_PRIM_RX; \
-        reg |= ((value & 0x1U) << PE_nRF24_CONFIG_PRIM_RX_Pos); \
-        if (PE_nRF24_setRegister(handle, PE_nRF24_REG_CONFIG, &reg) != PE_nRF24_STATUS_OK) { \
-            handle->status = PE_nRF24_STATUS_ERROR; \
-            break; \
-        } \
-    } while (0U);
+static PE_nRF24_RESULT_t PE_nRF24_setDirection(PE_nRF24_t *handle, PE_nRF24_DIRECTION_t direction)
+{
+    uint8_t reg;
+    if (PE_nRF24_getRegister(handle, PE_nRF24_REG_CONFIG, &reg) != PE_nRF24_STATUS_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    reg &= ~PE_nRF24_CONFIG_PRIM_RX;
+    reg |= (direction << PE_nRF24_CONFIG_PRIM_RX_Pos);
+
+    if (PE_nRF24_setRegister(handle, PE_nRF24_REG_CONFIG, &reg) != PE_nRF24_STATUS_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    return PE_nRF24_RESULT_OK;
+}
 
 #define __PE_nRF24_setPowerMode(handle, value) \
     do { \
@@ -206,7 +209,7 @@ static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_TX_DS(PE_nRF24_t *handle)
     handle->setCE(0);
 
     // Set direction to RX
-    __PE_nRF24_setDirection(handle, PE_nRF24_DIRECTION_RX);
+    PE_nRF24_setDirection(handle, PE_nRF24_DIRECTION_RX);
 
     // Clear pending IRQ
     PE_nRF24_clearIRQ(handle, PE_nRF24_STATUS_TX_DS);
@@ -229,7 +232,7 @@ static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_t *handle)
     handle->setCE(0);
 
     // Set direction to RX
-    __PE_nRF24_setDirection(handle, PE_nRF24_DIRECTION_RX);
+    PE_nRF24_setDirection(handle, PE_nRF24_DIRECTION_RX);
 
     // Clear pending IRQ
     PE_nRF24_clearIRQ(handle, PE_nRF24_STATUS_MAX_RT);

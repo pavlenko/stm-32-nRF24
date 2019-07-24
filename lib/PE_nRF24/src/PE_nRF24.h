@@ -427,7 +427,7 @@ typedef enum {
 typedef enum {
     PE_nRF24_DIRECTION_TX = 0U,
     PE_nRF24_DIRECTION_RX = 1U,
-} PE_nRF24_Direction_t;
+} PE_nRF24_DIRECTION_t;
 
 typedef enum {
     PE_nRF24_POWER_OFF = 0U,
