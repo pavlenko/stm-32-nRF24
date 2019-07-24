@@ -16,6 +16,8 @@ static PE_nRF24_STATUS_t PE_nRF24_detachIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t m
 static PE_nRF24_STATUS_t PE_nRF24_clearIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t mask);
 static PE_nRF24_STATUS_t PE_nRF24_flushTX(PE_nRF24_t *handle);
 static PE_nRF24_STATUS_t PE_nRF24_flushRX(PE_nRF24_t *handle);
+static PE_nRF24_STATUS_t PE_nRF24_handleIRQ_RX_DR(PE_nRF24_t *handle);
+static PE_nRF24_STATUS_t PE_nRF24_handleIRQ_TX_DS(PE_nRF24_t *handle);
 static PE_nRF24_STATUS_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_t *handle);
 
 /* Private functions ---------------------------------------------------------*/
@@ -156,47 +158,62 @@ PE_nRF24_STATUS_t PE_nRF24_handleIRQ(PE_nRF24_t *handle)
 
     // Process RX data ready (RX_DR bit)
     if ((status & PE_nRF24_STATUS_RX_DR) != 0U) {
-        uint8_t statusFIFO;
-
-        handle->setCE(0);
-
-        do {
-            //TODO read bytes to specific pipe
-            uint8_t data[32];
-            uint8_t size;
-            uint8_t pipe;
-
-            //TODO PE_nRF24_readPayload(handle, data, &size, &pipe);
-
-            //TODO execute callback
-
-            status |= PE_nRF24_STATUS_RX_DR;
-
-            PE_nRF24_setRegister(handle, PE_nRF24_REG_STATUS, &status);
-            PE_nRF24_getRegister(handle, PE_nRF24_REG_FIFO_STATUS, &statusFIFO);
-        } while ((statusFIFO & PE_nRF24_FIFO_STATUS_RX_EMPTY) == 0x00);
-
-        handle->setCE(1);
+        PE_nRF24_handleIRQ_RX_DR(handle);
     }
 
     // Process TX sent (TX_DS bit)
     if ((status & PE_nRF24_STATUS_TX_DS) != 0) {
-        handle->setCE(0);
-
-        status |= PE_nRF24_STATUS_TX_DS;
-
-        __PE_nRF24_setDirection(handle, PE_nRF24_DIRECTION_RX);
-        PE_nRF24_setRegister(handle, PE_nRF24_REG_STATUS, &status);
-
-        handle->setCE(1);
-
-        handle->status = PE_nRF24_STATUS_OK;
+        PE_nRF24_handleIRQ_TX_DS(handle);
     }
 
     // Process reach retransmission count (MAX_RT bit)
     if ((status & PE_nRF24_STATUS_MAX_RT) != 0) {
         PE_nRF24_handleIRQ_MAX_RT(handle);
     }
+
+    return PE_nRF24_STATUS_OK;
+}
+
+static PE_nRF24_STATUS_t PE_nRF24_handleIRQ_RX_DR(PE_nRF24_t *handle)
+{
+    uint8_t statusFIFO;
+
+    handle->setCE(0);
+
+    do {
+        //TODO read bytes to specific pipe
+        uint8_t data[32];
+        uint8_t size;
+        uint8_t pipe;
+
+        //TODO PE_nRF24_readPayload(handle, data, &size, &pipe);
+
+        //TODO execute callback
+
+        // Clear pending IRQ
+        PE_nRF24_clearIRQ(handle, PE_nRF24_STATUS_RX_DR);
+
+        PE_nRF24_getRegister(handle, PE_nRF24_REG_FIFO_STATUS, &statusFIFO);
+    } while ((statusFIFO & PE_nRF24_FIFO_STATUS_RX_EMPTY) == 0x00);
+
+    handle->setCE(1);
+
+    return PE_nRF24_STATUS_OK;
+}
+
+static PE_nRF24_STATUS_t PE_nRF24_handleIRQ_TX_DS(PE_nRF24_t *handle)
+{
+    handle->setCE(0);
+
+    // Set direction to RX
+    __PE_nRF24_setDirection(handle, PE_nRF24_DIRECTION_RX);
+
+    // Clear pending IRQ
+    PE_nRF24_clearIRQ(handle, PE_nRF24_STATUS_TX_DS);
+
+    handle->setCE(1);
+
+    handle->status = PE_nRF24_STATUS_OK;
 
     return PE_nRF24_STATUS_OK;
 }
@@ -215,7 +232,7 @@ static PE_nRF24_STATUS_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_t *handle)
     __PE_nRF24_setDirection(handle, PE_nRF24_DIRECTION_RX);
 
     // Clear pending IRQ
-    PE_nRF24_clearIRQ(handle, PE_nRF24_STATUS_MAX_RT|PE_nRF24_STATUS_TX_DS);
+    PE_nRF24_clearIRQ(handle, PE_nRF24_STATUS_MAX_RT);
 
     handle->setCE(1);
 
