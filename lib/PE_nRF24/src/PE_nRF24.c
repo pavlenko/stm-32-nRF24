@@ -6,25 +6,20 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+
+static volatile uint8_t PE_nRF24_NONE;
+
 /* Private function prototypes -----------------------------------------------*/
 
 PE_nRF24_STATUS_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_t *handle);
 
 /* Private functions ---------------------------------------------------------*/
 
-//TODO create functions like i2c_mem_read, i2c_mem_write
-
 static PE_nRF24_STATUS_t PE_nRF24_getRegister(PE_nRF24_t *handle, uint8_t addr, uint8_t *byte)
 {
     handle->setCS(PE_nRF24_BIT_CLR);
 
-    addr |= PE_nRF24_CMD_R_REGISTER;
-
-    if (handle->send(&addr, 1) != PE_nRF24_STATUS_OK) {
-        return PE_nRF24_STATUS_ERROR;
-    }
-
-    if (handle->read(byte, 1) != PE_nRF24_STATUS_OK) {
+    if (handle->read(PE_nRF24_CMD_R_REGISTER | addr, byte, 1) != PE_nRF24_STATUS_OK) {
         return PE_nRF24_STATUS_ERROR;
     }
 
@@ -37,13 +32,7 @@ static PE_nRF24_STATUS_t PE_nRF24_setRegister(PE_nRF24_t *handle, uint8_t addr, 
 {
     handle->setCS(PE_nRF24_BIT_CLR);
 
-    addr |= PE_nRF24_CMD_W_REGISTER;
-
-    if (handle->send(&addr, 1) != PE_nRF24_STATUS_OK) {
-        return PE_nRF24_STATUS_ERROR;
-    }
-
-    if (handle->send(byte, 1) != PE_nRF24_STATUS_OK) {
+    if (handle->send(PE_nRF24_CMD_W_REGISTER | addr, byte, 1) != PE_nRF24_STATUS_OK) {
         return PE_nRF24_STATUS_ERROR;
     }
 
@@ -54,16 +43,14 @@ static PE_nRF24_STATUS_t PE_nRF24_setRegister(PE_nRF24_t *handle, uint8_t addr, 
 
 #define __PE_nRF24_flushTX(handle) \
     do { \
-        uint8_t addr = PE_nRF24_CMD_FLUSH_TX; \
-        if (handle->send(&addr, 1) != PE_nRF24_STATUS_OK) { \
+        if (handle->send(PE_nRF24_CMD_FLUSH_TX, &PE_nRF24_NONE, 0) != PE_nRF24_STATUS_OK) { \
             handle->status = PE_nRF24_STATUS_ERROR; \
         } \
     } while (0U);
 
 #define __PE_nRF24_flushRX(handle) \
     do { \
-        uint8_t addr = PE_nRF24_CMD_FLUSH_RX; \
-        if (handle->send(&addr, 1) != PE_nRF24_STATUS_OK) { \
+        if (handle->send(PE_nRF24_CMD_FLUSH_RX, &PE_nRF24_NONE, 0) != PE_nRF24_STATUS_OK) { \
             handle->status = PE_nRF24_STATUS_ERROR; \
         } \
     } while (0U);

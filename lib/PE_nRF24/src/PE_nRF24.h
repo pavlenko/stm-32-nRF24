@@ -60,8 +60,8 @@ typedef struct {
      */
     uint8_t (*RW) (uint8_t data);
 
-    PE_nRF24_STATUS_t (*read) (uint8_t *data, uint8_t size);
-    PE_nRF24_STATUS_t (*send) (uint8_t *data, uint8_t size);
+    PE_nRF24_STATUS_t (*read) (uint8_t addr, uint8_t *data, uint8_t size);
+    PE_nRF24_STATUS_t (*send) (uint8_t addr, uint8_t *data, uint8_t size);
 } PE_nRF24_t;
 
 /* Exported constants --------------------------------------------------------*/
