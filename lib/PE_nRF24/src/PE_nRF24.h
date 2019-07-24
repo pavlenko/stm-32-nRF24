@@ -88,6 +88,22 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 
+/** IRQ bits mask *************************************************************/
+
+#define PE_nRF24_IRQ_MASK_MAX_RT_Pos (4U)
+#define PE_nRF24_IRQ_MASK_MAX_RT_Msk (1U << PE_nRF24_IRQ_MASK_MAX_RT_Pos)
+#define PE_nRF24_IRQ_MASK_MAX_RT     PE_nRF24_IRQ_MASK_MAX_RT_Msk
+
+#define PE_nRF24_IRQ_MASK_TX_DS_Pos (5U)
+#define PE_nRF24_IRQ_MASK_TX_DS_Msk (1U << PE_nRF24_IRQ_MASK_TX_DS_Pos)
+#define PE_nRF24_IRQ_MASK_TX_DS     PE_nRF24_IRQ_MASK_TX_DS_Msk
+
+#define PE_nRF24_IRQ_MASK_RX_DR_Pos (6U)
+#define PE_nRF24_IRQ_MASK_RX_DR_Msk (1U << PE_nRF24_IRQ_MASK_RX_DR_Pos)
+#define PE_nRF24_IRQ_MASK_RX_DR     PE_nRF24_IRQ_MASK_RX_DR_Msk
+
+#define PE_nRF24_IRQ_MASK_ALL (PE_nRF24_IRQ_MASK_MAX_RT|PE_nRF24_IRQ_MASK_TX_DS|PE_nRF24_IRQ_MASK_RX_DR)
+
 /** CONFIG bits ***************************************************************/
 
 // 1 == PRX, 0 == PTX
@@ -111,17 +127,17 @@ extern "C" {
 #define PE_nRF24_CONFIG_EN_CRC          PE_nRF24_CONFIG_EN_CRC_Msk
 
 // Mask interrupt caused by MAX_RT
-#define PE_nRF24_CONFIG_MASK_MAX_RT_Pos (4U)
+#define PE_nRF24_CONFIG_MASK_MAX_RT_Pos PE_nRF24_IRQ_MASK_MAX_RT_Pos
 #define PE_nRF24_CONFIG_MASK_MAX_RT_Msk (1U << PE_nRF24_CONFIG_MASK_MAX_RT_Pos)
 #define PE_nRF24_CONFIG_MASK_MAX_RT     PE_nRF24_CONFIG_MASK_MAX_RT_Msk
 
 // Mask interrupt caused by TX_DS
-#define PE_nRF24_CONFIG_MASK_TX_DS_Pos  (5U)
+#define PE_nRF24_CONFIG_MASK_TX_DS_Pos  PE_nRF24_IRQ_MASK_TX_DS_Pos
 #define PE_nRF24_CONFIG_MASK_TX_DS_Msk  (1U << PE_nRF24_CONFIG_MASK_TX_DS_Pos)
 #define PE_nRF24_CONFIG_MASK_TX_DS      PE_nRF24_CONFIG_MASK_TX_DS_Msk
 
 // Mask interrupt caused by RX_DR
-#define PE_nRF24_CONFIG_MASK_RX_DR_Pos  (6U)
+#define PE_nRF24_CONFIG_MASK_RX_DR_Pos  PE_nRF24_IRQ_MASK_RX_DR_Pos
 #define PE_nRF24_CONFIG_MASK_RX_DR_Msk  (1U << PE_nRF24_CONFIG_MASK_RX_DR_Pos)
 #define PE_nRF24_CONFIG_MASK_RX_DR      PE_nRF24_CONFIG_MASK_RX_DR_Msk
 
@@ -297,17 +313,17 @@ extern "C" {
 #define PE_nRF24_STATUS_RX_P_NO     PE_nRF24_STATUS_RX_P_NO_Msk
 
 // Maximum number of TX retries interrupt, default 0
-#define PE_nRF24_STATUS_MAX_RT_Pos (4U)
+#define PE_nRF24_STATUS_MAX_RT_Pos PE_nRF24_IRQ_MASK_MAX_RT_Pos
 #define PE_nRF24_STATUS_MAX_RT_Msk (1U << PE_nRF24_STATUS_MAX_RT_Pos)
 #define PE_nRF24_STATUS_MAX_RT     PE_nRF24_STATUS_MAX_RT_Msk
 
 // Data Sent TX FIFO interrupt, default 0
-#define PE_nRF24_STATUS_TX_DS_Pos (5U)
+#define PE_nRF24_STATUS_TX_DS_Pos PE_nRF24_IRQ_MASK_TX_DS_Pos
 #define PE_nRF24_STATUS_TX_DS_Msk (1U << PE_nRF24_STATUS_TX_DS_Pos)
 #define PE_nRF24_STATUS_TX_DS     PE_nRF24_STATUS_TX_DS_Msk
 
 // Data Ready RX FIFO interrupt, default 0
-#define PE_nRF24_STATUS_RX_DR_Pos (6U)
+#define PE_nRF24_STATUS_RX_DR_Pos PE_nRF24_IRQ_MASK_RX_DR_Pos
 #define PE_nRF24_STATUS_RX_DR_Msk (1U << PE_nRF24_STATUS_RX_DR_Pos)
 #define PE_nRF24_STATUS_RX_DR     PE_nRF24_STATUS_RX_DR_Msk
 
@@ -399,10 +415,6 @@ extern "C" {
 #define PE_nRF24_FEATURE_EN_DPL_Msk (1U << PE_nRF24_FEATURE_EN_DPL_Pos)
 #define PE_nRF24_FEATURE_EN_DPL     PE_nRF24_FEATURE_EN_DPL_Msk
 
-/** IRQ bits mask *************************************************************/
-
-#define PE_nRF24_IRQ_MASK (PE_nRF24_CONFIG_MASK_MAX_RT|PE_nRF24_CONFIG_MASK_TX_DS|PE_nRF24_CONFIG_MASK_RX_DR)
-
 /* Exported types ------------------------------------------------------------*/
 
 typedef enum {
@@ -435,9 +447,9 @@ typedef enum {
 } PE_nRF24_POWER_t;
 
 typedef enum {
-    PE_nRF24_IRQ_MAX_RT = PE_nRF24_CONFIG_MASK_MAX_RT,
-    PE_nRF24_IRQ_TX_DS  = PE_nRF24_CONFIG_MASK_TX_DS,
-    PE_nRF24_IRQ_RX_DR  = PE_nRF24_CONFIG_MASK_RX_DR,
+    PE_nRF24_IRQ_MAX_RT = PE_nRF24_IRQ_MASK_MAX_RT,
+    PE_nRF24_IRQ_TX_DS  = PE_nRF24_IRQ_MASK_TX_DS,
+    PE_nRF24_IRQ_RX_DR  = PE_nRF24_IRQ_MASK_RX_DR,
 } PE_nRF24_IRQ_t;
 
 typedef struct {

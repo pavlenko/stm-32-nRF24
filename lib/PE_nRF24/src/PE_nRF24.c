@@ -59,7 +59,7 @@ static PE_nRF24_RESULT_t PE_nRF24_attachIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t m
         return PE_nRF24_RESULT_ERROR;
     }
 
-    reg &= ~(mask & PE_nRF24_IRQ_MASK);
+    reg &= ~(mask & PE_nRF24_IRQ_MASK_ALL);
 
     if (PE_nRF24_setRegister(handle, PE_nRF24_REG_CONFIG, &reg) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
@@ -76,7 +76,7 @@ static PE_nRF24_RESULT_t PE_nRF24_detachIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t m
         return PE_nRF24_RESULT_ERROR;
     }
 
-    reg |= (mask & PE_nRF24_IRQ_MASK);
+    reg |= (mask & PE_nRF24_IRQ_MASK_ALL);
 
     if (PE_nRF24_setRegister(handle, PE_nRF24_REG_CONFIG, &reg) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
@@ -93,7 +93,7 @@ static PE_nRF24_RESULT_t PE_nRF24_clearIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t ma
         return PE_nRF24_RESULT_ERROR;
     }
 
-    reg |= (mask & PE_nRF24_IRQ_MASK);
+    reg |= (mask & PE_nRF24_IRQ_MASK_ALL);
 
     if (PE_nRF24_setRegister(handle, PE_nRF24_REG_STATUS, &reg) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
@@ -201,7 +201,7 @@ static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_RX_DR(PE_nRF24_t *handle)
         //TODO execute callback
 
         // Clear pending IRQ
-        PE_nRF24_clearIRQ(handle, PE_nRF24_STATUS_RX_DR);
+        PE_nRF24_clearIRQ(handle, PE_nRF24_IRQ_RX_DR);
 
         PE_nRF24_getRegister(handle, PE_nRF24_REG_FIFO_STATUS, &statusFIFO);
     } while ((statusFIFO & PE_nRF24_FIFO_STATUS_RX_EMPTY) == 0x00);
@@ -219,7 +219,7 @@ static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_TX_DS(PE_nRF24_t *handle)
     PE_nRF24_setDirection(handle, PE_nRF24_DIRECTION_RX);
 
     // Clear pending IRQ
-    PE_nRF24_clearIRQ(handle, PE_nRF24_STATUS_TX_DS);
+    PE_nRF24_clearIRQ(handle, PE_nRF24_IRQ_TX_DS);
 
     handle->setCE(1);
 
@@ -242,7 +242,7 @@ static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_t *handle)
     PE_nRF24_setDirection(handle, PE_nRF24_DIRECTION_RX);
 
     // Clear pending IRQ
-    PE_nRF24_clearIRQ(handle, PE_nRF24_STATUS_MAX_RT);
+    PE_nRF24_clearIRQ(handle, PE_nRF24_IRQ_MAX_RT);
 
     handle->setCE(1);
 
