@@ -17,6 +17,8 @@ static PE_nRF24_RESULT_t PE_nRF24_clearIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t ma
 static PE_nRF24_RESULT_t PE_nRF24_flushTX(PE_nRF24_t *handle);
 static PE_nRF24_RESULT_t PE_nRF24_flushRX(PE_nRF24_t *handle);
 static PE_nRF24_RESULT_t PE_nRF24_setDirection(PE_nRF24_t *handle, PE_nRF24_DIRECTION_t direction);
+static PE_nRF24_RESULT_t PE_nRF24_setPowerMode(PE_nRF24_t *handle, PE_nRF24_POWER_t value);
+static PE_nRF24_RESULT_t PE_nRF24_setRFChannel(PE_nRF24_t *handle, uint8_t value);
 static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_RX_DR(PE_nRF24_t *handle);
 static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_TX_DS(PE_nRF24_t *handle);
 static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_t *handle);
@@ -127,29 +129,34 @@ static PE_nRF24_RESULT_t PE_nRF24_setDirection(PE_nRF24_t *handle, PE_nRF24_DIRE
     return PE_nRF24_RESULT_OK;
 }
 
-#define __PE_nRF24_setPowerMode(handle, value) \
-    do { \
-        uint8_t reg; \
-        if (PE_nRF24_getRegister(handle, PE_nRF24_REG_CONFIG, &reg) != PE_nRF24_STATUS_OK) { \
-            handle->status = PE_nRF24_STATUS_ERROR; \
-            break; \
-        } \
-        reg &= ~PE_nRF24_CONFIG_PWR_UP; \
-        reg |= ((value & 0x1U) << PE_nRF24_CONFIG_PWR_UP_Pos); \
-        if (PE_nRF24_setRegister(handle, PE_nRF24_REG_CONFIG, &reg) != PE_nRF24_STATUS_OK) { \
-            handle->status = PE_nRF24_STATUS_ERROR; \
-            break; \
-        } \
-    } while (0U);
+static PE_nRF24_RESULT_t PE_nRF24_setPowerMode(PE_nRF24_t *handle, PE_nRF24_POWER_t value)
+{
+    uint8_t reg;
 
-#define __PE_nRF24_setRFChannel(handle, value) \
-    do { \
-        uint8_t reg = (value & PE_nRF24_RF_CH); \
-        if (PE_nRF24_setRegister(handle, PE_nRF24_REG_RF_CH, &reg) != PE_nRF24_STATUS_OK) { \
-            handle->status = PE_nRF24_STATUS_ERROR; \
-            break; \
-        } \
-    } while (0U);
+    if (PE_nRF24_getRegister(handle, PE_nRF24_REG_CONFIG, &reg) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    reg &= ~PE_nRF24_CONFIG_PWR_UP;
+    reg |= (value << PE_nRF24_CONFIG_PWR_UP_Pos);
+
+    if (PE_nRF24_setRegister(handle, PE_nRF24_REG_CONFIG, &reg) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    return PE_nRF24_RESULT_OK;
+}
+
+static PE_nRF24_RESULT_t PE_nRF24_setRFChannel(PE_nRF24_t *handle, uint8_t value)
+{
+    uint8_t reg = (value & PE_nRF24_RF_CH);
+
+    if (PE_nRF24_setRegister(handle, PE_nRF24_REG_RF_CH, &reg) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    return PE_nRF24_RESULT_OK;
+}
 
 PE_nRF24_RESULT_t PE_nRF24_handleIRQ(PE_nRF24_t *handle)
 {
@@ -226,8 +233,8 @@ static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_t *handle)
     PE_nRF24_flushTX(handle);
 
     // Toggle RF power up bit
-    __PE_nRF24_setPowerMode(handle, PE_nRF24_POWER_OFF);
-    __PE_nRF24_setPowerMode(handle, PE_nRF24_POWER_ON);
+    PE_nRF24_setPowerMode(handle, PE_nRF24_POWER_OFF);
+    PE_nRF24_setPowerMode(handle, PE_nRF24_POWER_ON);
 
     handle->setCE(0);
 
