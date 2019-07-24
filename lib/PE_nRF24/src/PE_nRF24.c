@@ -18,6 +18,7 @@ static PE_nRF24_RESULT_t PE_nRF24_detachIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t m
 static PE_nRF24_RESULT_t PE_nRF24_clearIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t mask);
 static PE_nRF24_RESULT_t PE_nRF24_flushTX(PE_nRF24_t *handle);
 static PE_nRF24_RESULT_t PE_nRF24_flushRX(PE_nRF24_t *handle);
+static PE_nRF24_RESULT_t PE_nRF24_setCRCScheme(PE_nRF24_t *handle, PE_nRF24_CRC_SCHEME_t scheme);
 static PE_nRF24_RESULT_t PE_nRF24_setDirection(PE_nRF24_t *handle, PE_nRF24_DIRECTION_t direction);
 static PE_nRF24_RESULT_t PE_nRF24_setPowerMode(PE_nRF24_t *handle, PE_nRF24_POWER_t value);
 static PE_nRF24_RESULT_t PE_nRF24_setRFChannel(PE_nRF24_t *handle, uint8_t value);
@@ -29,11 +30,31 @@ static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_t *handle);
 
 PE_nRF24_RESULT_t PE_nRF24_configureRF(PE_nRF24_t *handle, PE_nRF24_configRF_t *config)
 {
+    //TODO Configure address width
+
+    //TODO Configure data rate
+
+    // Configure RF channel
+    if (PE_nRF24_setRFChannel(handle, config->rfChannel) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    // Configure CRC
+    if (PE_nRF24_setCRCScheme(handle, config->crcScheme) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
     return PE_nRF24_RESULT_OK;//TODO
 }
 
 PE_nRF24_RESULT_t PE_nRF24_configureTX(PE_nRF24_t *handle, PE_nRF24_configTX_t *config)
 {
+    //TODO Configure tx address
+
+    //TODO Configure tx out power
+
+    //TODO Configure tx retransmit
+
     return PE_nRF24_RESULT_OK;//TODO
 }
 
@@ -162,6 +183,23 @@ static PE_nRF24_RESULT_t PE_nRF24_flushTX(PE_nRF24_t *handle)
 static PE_nRF24_RESULT_t PE_nRF24_flushRX(PE_nRF24_t *handle)
 {
     return handle->send(PE_nRF24_CMD_FLUSH_RX, &PE_nRF24_NONE, 0);
+}
+
+static PE_nRF24_RESULT_t PE_nRF24_setCRCScheme(PE_nRF24_t *handle, PE_nRF24_CRC_SCHEME_t scheme)
+{
+    uint8_t reg;
+    if (PE_nRF24_getRegister(handle, PE_nRF24_REG_CONFIG, &reg) != PE_nRF24_STATUS_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    reg &= ~(PE_nRF24_CONFIG_EN_CRC|PE_nRF24_CONFIG_CRCO);
+    reg |= (scheme << PE_nRF24_CONFIG_CRCO_Pos);
+
+    if (PE_nRF24_setRegister(handle, PE_nRF24_REG_CONFIG, &reg) != PE_nRF24_STATUS_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    return PE_nRF24_RESULT_OK;
 }
 
 static PE_nRF24_RESULT_t PE_nRF24_setDirection(PE_nRF24_t *handle, PE_nRF24_DIRECTION_t direction)

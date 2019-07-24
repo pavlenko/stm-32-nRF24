@@ -437,6 +437,22 @@ typedef enum {
 } PE_nRF24_BIT_t;
 
 typedef enum {
+    PE_nRF24_CRC_SCHEME_OFF   = 0x00U,
+    PE_nRF24_CRC_SCHEME_1BYTE = PE_nRF24_CONFIG_EN_CRC,
+    PE_nRF24_CRC_SCHEME_2BYTE = PE_nRF24_CONFIG_EN_CRC|PE_nRF24_CONFIG_CRCO,
+} PE_nRF24_CRC_SCHEME_t;
+
+typedef enum {
+    PE_nRF24_CRC_STATE_OFF = 0U,
+    PE_nRF24_CRC_STATE_ON  = 1U,
+} PE_nRF24_CRC_STATE_t;
+
+typedef enum {
+    PE_nRF24_CRC_WIDTH_1BYTE = 0U,
+    PE_nRF24_CRC_WIDTH_2BYTE = 1U,
+} PE_nRF24_CRC_WIDTH_t;
+
+typedef enum {
     PE_nRF24_DIRECTION_TX = 0U,
     PE_nRF24_DIRECTION_RX = 1U,
 } PE_nRF24_DIRECTION_t;
@@ -465,7 +481,7 @@ typedef struct {
     uint8_t addressWidth;
     uint8_t dataRate;
     uint8_t rfChannel;
-    uint8_t crcScheme;
+    PE_nRF24_CRC_SCHEME_t crcScheme;
 } PE_nRF24_configRF_t;
 
 typedef struct {
