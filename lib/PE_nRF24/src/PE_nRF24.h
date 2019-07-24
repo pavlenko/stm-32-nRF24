@@ -471,6 +471,12 @@ typedef struct {
 
 /* Exported function prototypes --------------------------------------------- */
 
+PE_nRF24_RESULT_t PE_nRF24_configureRF(PE_nRF24_t *handle, PE_nRF24_configRF_t *config);
+
+PE_nRF24_RESULT_t PE_nRF24_configureTX(PE_nRF24_t *handle, PE_nRF24_configTX_t *config);
+
+PE_nRF24_RESULT_t PE_nRF24_configureRX(PE_nRF24_t *handle, PE_nRF24_configRX_t *config, uint8_t pipe);
+
 /**
  * Handle IRQ triggered by transmitter (if enabled)
  *
