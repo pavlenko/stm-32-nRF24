@@ -10,59 +10,6 @@ extern "C" {
 
 #include <stdint.h>
 
-/* Exported types ------------------------------------------------------------*/
-
-typedef enum {
-    PE_nRF24_STATUS_OK      = 0x00U,
-    PE_nRF24_STATUS_ERROR   = 0x01U,
-    PE_nRF24_STATUS_BUSY    = 0x02U,
-    PE_nRF24_STATUS_TIMEOUT = 0x03U,
-} PE_nRF24_STATUS_t;
-
-typedef enum {
-    PE_nRF24_BIT_CLR = 0x0U,
-    PE_nRF24_BIT_SET = 0x1U,
-} PE_nRF24_BIT_t;
-
-typedef enum {
-    PE_nRF24_DIRECTION_TX = 0U,
-    PE_nRF24_DIRECTION_RX = 1U,
-} PE_nRF24_Direction_t;
-
-typedef enum {
-    PE_nRF24_POWER_OFF = 0U,
-    PE_nRF24_POWER_ON  = 1U,
-} PE_nRF24_POWER_t;
-
-typedef struct {
-    uint8_t addressWidth;
-    uint8_t dataRate;
-    uint8_t rfChannel;
-    uint8_t crcScheme;
-} PE_nRF24_configRF_t;
-
-typedef struct {
-    uint8_t *address;
-    uint8_t txPower;
-    uint8_t retransmitCount;
-    uint8_t retransmitDelay;
-} PE_nRF24_configTX_t;
-
-typedef struct {
-    uint8_t *address;
-    uint8_t autoACK;
-    uint8_t payloadSize;
-} PE_nRF24_configRX_t;
-
-typedef struct {
-    PE_nRF24_STATUS_t status;
-
-    void (*setCE) (PE_nRF24_BIT_t state);                                  // Toggle chip enable pin
-    void (*setCS) (PE_nRF24_BIT_t state);                                  // Toggle SPI chip select pin
-    PE_nRF24_STATUS_t (*read) (uint8_t addr, uint8_t *data, uint8_t size); // Read register byte/data
-    PE_nRF24_STATUS_t (*send) (uint8_t addr, uint8_t *data, uint8_t size); // Send register byte/data
-} PE_nRF24_t;
-
 /* Exported constants --------------------------------------------------------*/
 
 // Fake address to test transceiver presence (5 bytes long)
@@ -98,6 +45,48 @@ typedef struct {
 #define PE_nRF24_REG_FEATURE     0x1DU // Feature Register
 
 #define PE_nRF24_REG_MASK        0x1FU
+
+/** Instructions **************************************************************/
+
+// Register read
+#define PE_nRF24_CMD_R_REGISTER 0x00U
+#define PE_nRF24_CMD_R_REGISTER_(_reg_) ((0x00U) | ((PE_nRF24_REG_MASK) & (_reg_)))
+
+// Register write
+#define PE_nRF24_CMD_W_REGISTER 0x20U
+#define PE_nRF24_CMD_W_REGISTER_(_reg_) ((0x20U) | ((PE_nRF24_REG_MASK) & (_reg_)))
+
+// Read RX payload
+#define PE_nRF24_CMD_R_RX_PAYLOAD 0x61U
+
+// Write TX payload
+#define PE_nRF24_CMD_W_TX_PAYLOAD 0xA0U
+
+// Flush TX FIFO
+#define PE_nRF24_CMD_FLUSH_TX 0xE1U
+
+// Flush RX FIFO
+#define PE_nRF24_CMD_FLUSH_RX 0xE2U
+
+// Reuse TX payload
+#define PE_nRF24_CMD_REUSE_TX_PL 0xE3U
+
+// ONLY FOR nRF24L01+
+// Read RX payload width for the top R_RX_PAYLOAD in the RX FIFO
+#define PE_nRF24_R_RX_PL_WID 0x60U
+
+// ONLY FOR nRF24L01+
+// Write Payload to be transmitted together with ACK packet on PIPE
+#define PE_nRF24_W_ACK_PAYLOAD(_pipe_) ((0xA8U) | ((0x7U) & (_pipe_)))
+
+// ONLY FOR nRF24L01+
+// Disables AUTO ACK on this specific packet.
+#define PE_nRF24_W_TX_PAYLOAD_NO_ACK 0xB0U
+
+// No operation (used for reading status register)
+#define PE_nRF24_CMD_NOP 0xFFU
+
+/* Exported macro ------------------------------------------------------------*/
 
 /** CONFIG bits ***************************************************************/
 
@@ -410,47 +399,69 @@ typedef struct {
 #define PE_nRF24_FEATURE_EN_DPL_Msk (1U << PE_nRF24_FEATURE_EN_DPL_Pos)
 #define PE_nRF24_FEATURE_EN_DPL     PE_nRF24_FEATURE_EN_DPL_Msk
 
-/** Instructions **************************************************************/
+/** IRQ bits mask *************************************************************/
 
-// Register read
-#define PE_nRF24_CMD_R_REGISTER 0x00U
-#define PE_nRF24_CMD_R_REGISTER_(_reg_) ((0x00U) | ((PE_nRF24_REG_MASK) & (_reg_)))
+#define PE_nRF24_IRQ_MASK (PE_nRF24_CONFIG_MASK_MAX_RT|PE_nRF24_CONFIG_MASK_TX_DS|PE_nRF24_CONFIG_MASK_RX_DR)
 
-// Register write
-#define PE_nRF24_CMD_W_REGISTER 0x20U
-#define PE_nRF24_CMD_W_REGISTER_(_reg_) ((0x20U) | ((PE_nRF24_REG_MASK) & (_reg_)))
+/* Exported types ------------------------------------------------------------*/
 
-// Read RX payload
-#define PE_nRF24_CMD_R_RX_PAYLOAD 0x61U
+typedef enum {
+    PE_nRF24_STATUS_OK      = 0x00U,
+    PE_nRF24_STATUS_ERROR   = 0x01U,
+    PE_nRF24_STATUS_BUSY    = 0x02U,
+    PE_nRF24_STATUS_TIMEOUT = 0x03U,
+} PE_nRF24_STATUS_t;
 
-// Write TX payload
-#define PE_nRF24_CMD_W_TX_PAYLOAD 0xA0U
+typedef enum {
+    PE_nRF24_BIT_CLR = 0x0U,
+    PE_nRF24_BIT_SET = 0x1U,
+} PE_nRF24_BIT_t;
 
-// Flush TX FIFO
-#define PE_nRF24_CMD_FLUSH_TX 0xE1U
+typedef enum {
+    PE_nRF24_DIRECTION_TX = 0U,
+    PE_nRF24_DIRECTION_RX = 1U,
+} PE_nRF24_Direction_t;
 
-// Flush RX FIFO
-#define PE_nRF24_CMD_FLUSH_RX 0xE2U
+typedef enum {
+    PE_nRF24_POWER_OFF = 0U,
+    PE_nRF24_POWER_ON  = 1U,
+} PE_nRF24_POWER_t;
 
-// Reuse TX payload
-#define PE_nRF24_CMD_REUSE_TX_PL 0xE3U
+typedef enum {
+    PE_nRF24_IRQ_MAX_RT = PE_nRF24_CONFIG_MASK_MAX_RT,
+    PE_nRF24_IRQ_TX_DS  = PE_nRF24_CONFIG_MASK_TX_DS,
+    PE_nRF24_IRQ_RX_DR  = PE_nRF24_CONFIG_MASK_RX_DR,
+} PE_nRF24_IRQ_t;
 
-// ONLY FOR nRF24L01+
-// Read RX payload width for the top R_RX_PAYLOAD in the RX FIFO
-#define PE_nRF24_R_RX_PL_WID 0x60U
+typedef struct {
+    uint8_t addressWidth;
+    uint8_t dataRate;
+    uint8_t rfChannel;
+    uint8_t crcScheme;
+} PE_nRF24_configRF_t;
 
-// ONLY FOR nRF24L01+
-// Write Payload to be transmitted together with ACK packet on PIPE
-#define PE_nRF24_W_ACK_PAYLOAD(_pipe_) ((0xA8U) | ((0x7U) & (_pipe_)))
+typedef struct {
+    uint8_t *address;
+    uint8_t txPower;
+    uint8_t retransmitCount;
+    uint8_t retransmitDelay;
+} PE_nRF24_configTX_t;
 
-// ONLY FOR nRF24L01+
-// Disables AUTO ACK on this specific packet.
-#define PE_nRF24_W_TX_PAYLOAD_NO_ACK 0xB0U
+typedef struct {
+    uint8_t *address;
+    uint8_t autoACK;
+    uint8_t payloadSize;
+} PE_nRF24_configRX_t;
 
-// No operation (used for reading status register)
-#define PE_nRF24_CMD_NOP 0xFFU
+typedef struct {
+    PE_nRF24_STATUS_t status;
 
-/* Exported macro ------------------------------------------------------------*/
+    void (*setCE) (PE_nRF24_BIT_t state);                                  // Toggle chip enable pin
+    void (*setCS) (PE_nRF24_BIT_t state);                                  // Toggle SPI chip select pin
+    PE_nRF24_STATUS_t (*read) (uint8_t addr, uint8_t *data, uint8_t size); // Read register byte/data
+    PE_nRF24_STATUS_t (*send) (uint8_t addr, uint8_t *data, uint8_t size); // Send register byte/data
+} PE_nRF24_t;
+
 /* Exported function prototypes --------------------------------------------- */
 
 /**
