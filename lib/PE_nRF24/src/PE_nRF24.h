@@ -508,6 +508,11 @@ typedef enum {
 } PE_nRF24_RETRY_COUNT_t;
 
 typedef enum {
+    PE_nRF24_AUTO_ACK_OFF = 0x00U,
+    PE_nRF24_AUTO_ACK_ON  = 0x01U,
+} PE_nRF24_AUTO_ACK_t;
+
+typedef enum {
     PE_nRF24_DIRECTION_TX = 0U,
     PE_nRF24_DIRECTION_RX = 1U,
 } PE_nRF24_DIRECTION_t;
@@ -548,7 +553,7 @@ typedef struct {
 
 typedef struct {
     uint8_t *address;
-    uint8_t autoACK;
+    PE_nRF24_AUTO_ACK_t autoACK;
     uint8_t payloadSize;
 } PE_nRF24_configRX_t;
 
