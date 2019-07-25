@@ -129,6 +129,77 @@ PE_nRF24_RESULT_t PE_nRF24_sendPayload(PE_nRF24_t *handle, uint8_t *data, uint8_
     return handle->read(PE_nRF24_CMD_W_TX_PAYLOAD, data, size);
 }
 
+PE_nRF24_RESULT_t PE_nRF24_readPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t size, uint16_t timeout)
+{
+    handle->status = PE_nRF24_STATUS_BUSY_RX;
+
+    handle->setCE(0);
+
+    PE_nRF24_setDirection(handle, PE_nRF24_DIRECTION_RX);
+
+    handle->setCE(1);
+
+    while (handle->status != PE_nRF24_STATUS_READY) {
+        if (timeout == 0) {
+            handle->status = PE_nRF24_STATUS_READY;
+            return PE_nRF24_RESULT_TIMEOUT;
+        }
+
+        PE_nRF24_delay(1);
+        timeout--;
+    }
+
+    PE_nRF24_pullPacket(handle, data, size);
+
+    return PE_nRF24_RESULT_OK;
+}
+
+PE_nRF24_RESULT_t PE_nRF24_sendPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t size, uint16_t timeout)
+{
+    PE_nRF24_pushPacket(handle, data, size);
+
+    while (handle->status != PE_nRF24_STATUS_READY) {
+        if (timeout == 0) {
+            handle->status = PE_nRF24_STATUS_READY;
+            return PE_nRF24_RESULT_TIMEOUT;
+        }
+
+        PE_nRF24_delay(1);
+        timeout--;
+    }
+
+    return PE_nRF24_RESULT_OK;
+}
+
+PE_nRF24_RESULT_t PE_nRF24_pullPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t size)
+{
+    uint8_t index;
+
+    for (index = 0; index < size; index++) {
+        *(data + index) = handle->bufferData[index];
+    }
+
+    return PE_nRF24_RESULT_OK;
+}
+
+PE_nRF24_RESULT_t PE_nRF24_pushPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t size)
+{
+    if (handle->status != PE_nRF24_STATUS_READY) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    handle->status = PE_nRF24_STATUS_BUSY_TX;
+
+    handle->setCE(0);
+
+    PE_nRF24_setDirection(handle, PE_nRF24_DIRECTION_TX);
+    PE_nRF24_sendPayload(handle, data, size);
+
+    handle->setCE(1);
+
+    return PE_nRF24_RESULT_OK;
+}
+
 PE_nRF24_RESULT_t PE_nRF24_handleIRQ(PE_nRF24_t *handle)
 {
     uint8_t status;
@@ -153,6 +224,11 @@ PE_nRF24_RESULT_t PE_nRF24_handleIRQ(PE_nRF24_t *handle)
     }
 
     return PE_nRF24_RESULT_OK;
+}
+
+__attribute__((weak)) void PE_nRF24_delay(uint16_t ms)
+{
+    for (uint32_t i = ms * 1000; i > 0; i--);
 }
 
 static PE_nRF24_RESULT_t PE_nRF24_getRegister(PE_nRF24_t *handle, uint8_t addr, uint8_t *byte)

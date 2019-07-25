@@ -599,15 +599,66 @@ PE_nRF24_RESULT_t PE_nRF24_readPayload(PE_nRF24_t *handle, uint8_t *data, uint8_
 PE_nRF24_RESULT_t PE_nRF24_sendPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size);
 
 /**
+ * Read packet in blocking mode
+ *
+ * @param handle
+ * @param data
+ * @param size
+ * @param timeout
+ *
+ * @return Operation status
+ */
+PE_nRF24_RESULT_t PE_nRF24_readPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t size, uint16_t timeout);
+
+/**
+ * Send packet in blocking mode
+ *
+ * @param handle
+ * @param data
+ * @param size
+ * @param timeout
+ *
+ * @return Operation status
+ */
+PE_nRF24_RESULT_t PE_nRF24_sendPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t size, uint16_t timeout);
+
+/**
+ * Read packet in non-blocking mode (from internal buffer)
+ *
+ * @param handle
+ * @param data
+ * @param size
+ * @return Operation status
+ */
+PE_nRF24_RESULT_t PE_nRF24_pullPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t size);
+
+/**
+ * Send packet in non-blocking mode (without check success)
+ *
+ * @param handle
+ * @param data
+ * @param size
+ * @return Operation status
+ */
+PE_nRF24_RESULT_t PE_nRF24_pushPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t size);
+
+/**
  * Handle IRQ triggered by transmitter (if enabled)
  *
  * Must be called inside of concrete CPU external pin IRQ handler
  *
  * @param handle
  *
- * @return
+ * @return Operation status
  */
 PE_nRF24_RESULT_t PE_nRF24_handleIRQ(PE_nRF24_t *handle);
+
+/**
+ * Platform independent delay
+ *
+ * @param ms
+ */
+void PE_nRF24_delay(uint16_t ms);
 
 /* Exported variables --------------------------------------------------------*/
 
