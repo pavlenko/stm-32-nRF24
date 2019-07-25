@@ -50,11 +50,9 @@ extern "C" {
 
 // Register read
 #define PE_nRF24_CMD_R_REGISTER 0x00U
-#define PE_nRF24_CMD_R_REGISTER_(_reg_) ((0x00U) | ((PE_nRF24_REG_MASK) & (_reg_)))
 
 // Register write
 #define PE_nRF24_CMD_W_REGISTER 0x20U
-#define PE_nRF24_CMD_W_REGISTER_(_reg_) ((0x20U) | ((PE_nRF24_REG_MASK) & (_reg_)))
 
 // Read RX payload
 #define PE_nRF24_CMD_R_RX_PAYLOAD 0x61U
@@ -471,6 +469,44 @@ typedef enum {
 } PE_nRF24_TX_POWER_t;
 
 typedef enum {
+    PE_nRF24_RETRY_DELAY__250us  = 0x0U,
+    PE_nRF24_RETRY_DELAY__500us  = 0x1U,
+    PE_nRF24_RETRY_DELAY__750us  = 0x2U,
+    PE_nRF24_RETRY_DELAY_1000us = 0x3U,
+    PE_nRF24_RETRY_DELAY_1250us = 0x4U,
+    PE_nRF24_RETRY_DELAY_1500us = 0x5U,
+    PE_nRF24_RETRY_DELAY_1750us = 0x6U,
+    PE_nRF24_RETRY_DELAY_2000us = 0x7U,
+    PE_nRF24_RETRY_DELAY_2250us = 0x8U,
+    PE_nRF24_RETRY_DELAY_2500us = 0x9U,
+    PE_nRF24_RETRY_DELAY_2750us = 0xAU,
+    PE_nRF24_RETRY_DELAY_3000us = 0xBU,
+    PE_nRF24_RETRY_DELAY_3250us = 0xCU,
+    PE_nRF24_RETRY_DELAY_3500us = 0xDU,
+    PE_nRF24_RETRY_DELAY_3750us = 0xEU,
+    PE_nRF24_RETRY_DELAY_4000us = 0xFU,
+} PE_nRF24_RETRY_DELAY_t;
+
+typedef enum {
+    PE_nRF24_RETRY_COUNT__0 = 0x0U,
+    PE_nRF24_RETRY_COUNT__1 = 0x1U,
+    PE_nRF24_RETRY_COUNT__2 = 0x2U,
+    PE_nRF24_RETRY_COUNT__3 = 0x3U,
+    PE_nRF24_RETRY_COUNT__4 = 0x4U,
+    PE_nRF24_RETRY_COUNT__5 = 0x5U,
+    PE_nRF24_RETRY_COUNT__6 = 0x6U,
+    PE_nRF24_RETRY_COUNT__7 = 0x7U,
+    PE_nRF24_RETRY_COUNT__8 = 0x8U,
+    PE_nRF24_RETRY_COUNT__9 = 0x9U,
+    PE_nRF24_RETRY_COUNT_10 = 0xAU,
+    PE_nRF24_RETRY_COUNT_11 = 0xBU,
+    PE_nRF24_RETRY_COUNT_12 = 0xCU,
+    PE_nRF24_RETRY_COUNT_13 = 0xDU,
+    PE_nRF24_RETRY_COUNT_14 = 0xEU,
+    PE_nRF24_RETRY_COUNT_15 = 0xFU,
+} PE_nRF24_RETRY_COUNT_t;
+
+typedef enum {
     PE_nRF24_DIRECTION_TX = 0U,
     PE_nRF24_DIRECTION_RX = 1U,
 } PE_nRF24_DIRECTION_t;
@@ -505,8 +541,8 @@ typedef struct {
 typedef struct {
     uint8_t *address;
     PE_nRF24_TX_POWER_t txPower;
-    uint8_t retransmitCount;
-    uint8_t retransmitDelay;
+    PE_nRF24_RETRY_COUNT_t retryCount;
+    PE_nRF24_RETRY_DELAY_t retryDelay;
 } PE_nRF24_configTX_t;
 
 typedef struct {
