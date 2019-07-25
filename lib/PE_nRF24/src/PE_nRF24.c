@@ -112,6 +112,22 @@ PE_nRF24_RESULT_t PE_nRF24_configureRX(PE_nRF24_t *handle, PE_nRF24_configRX_t *
     return PE_nRF24_RESULT_OK;
 }
 
+/**
+ * @inherit
+ */
+PE_nRF24_RESULT_t PE_nRF24_readPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size)
+{
+    return handle->read(PE_nRF24_CMD_R_RX_PAYLOAD, data, size);
+}
+
+/**
+ * @inherit
+ */
+PE_nRF24_RESULT_t PE_nRF24_sendPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size)
+{
+    return handle->read(PE_nRF24_CMD_W_TX_PAYLOAD, data, size);
+}
+
 PE_nRF24_RESULT_t PE_nRF24_handleIRQ(PE_nRF24_t *handle)
 {
     uint8_t status;

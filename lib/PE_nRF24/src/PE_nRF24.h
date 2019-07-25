@@ -575,6 +575,27 @@ PE_nRF24_RESULT_t PE_nRF24_configureTX(PE_nRF24_t *handle, PE_nRF24_configTX_t *
 PE_nRF24_RESULT_t PE_nRF24_configureRX(PE_nRF24_t *handle, PE_nRF24_configRX_t *config, PE_nRF24_PIPE_t pipe);
 
 /**
+ * Read rx payload register
+ *
+ * @param handle
+ * @param data
+ * @param size
+ * @return
+ */
+PE_nRF24_RESULT_t PE_nRF24_readPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size);
+
+/**
+ * Sent tx payload register
+ *
+ * @param handle
+ * @param data
+ * @param size
+ *
+ * @return Operation status
+ */
+PE_nRF24_RESULT_t PE_nRF24_sendPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size);
+
+/**
  * Handle IRQ triggered by transmitter (if enabled)
  *
  * Must be called inside of concrete CPU external pin IRQ handler
