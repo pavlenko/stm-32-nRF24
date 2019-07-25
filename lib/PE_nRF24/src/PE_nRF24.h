@@ -434,9 +434,10 @@ typedef enum {
 } PE_nRF24_BIT_t;
 
 typedef enum {
-    PE_nRF24_ADDR_WIDTH_3BIT = PE_nRF24_SETUP_AW_0,
-    PE_nRF24_ADDR_WIDTH_4BIT = PE_nRF24_SETUP_AW_1,
-    PE_nRF24_ADDR_WIDTH_5BIT = PE_nRF24_SETUP_AW_1|PE_nRF24_SETUP_AW_0,
+    PE_nRF24_ADDR_WIDTH_ILLEGAL = 0x00U,
+    PE_nRF24_ADDR_WIDTH_3BIT    = PE_nRF24_SETUP_AW_0,
+    PE_nRF24_ADDR_WIDTH_4BIT    = PE_nRF24_SETUP_AW_1,
+    PE_nRF24_ADDR_WIDTH_5BIT    = PE_nRF24_SETUP_AW_1|PE_nRF24_SETUP_AW_0,
 } PE_nRF24_ADDR_WIDTH_t;
 
 typedef enum {
@@ -588,6 +589,15 @@ static const uint8_t PE_nRF24_REG_RX_PW[6] = {
     PE_nRF24_REG_RX_PW_P3,
     PE_nRF24_REG_RX_PW_P4,
     PE_nRF24_REG_RX_PW_P5,
+};
+
+static const uint8_t PE_nRF24_REG_RX_ADDR[7] = {
+    PE_nRF24_REG_RX_ADDR_P0,
+    PE_nRF24_REG_RX_ADDR_P1,
+    PE_nRF24_REG_RX_ADDR_P2,
+    PE_nRF24_REG_RX_ADDR_P3,
+    PE_nRF24_REG_RX_ADDR_P4,
+    PE_nRF24_REG_RX_ADDR_P5,
 };
 
 /* Exported functions ------------------------------------------------------- */
