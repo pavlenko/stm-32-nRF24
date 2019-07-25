@@ -471,14 +471,8 @@ static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_RX_DR(PE_nRF24_t *handle)
     handle->setCE(0);
 
     do {
-        //TODO read bytes to specific pipe
-        uint8_t data[32];
-        uint8_t size;
-        uint8_t pipe;
-
-        //TODO PE_nRF24_readPayload(handle, data, &size, &pipe);
-
-        //TODO execute callback
+        // Read payload to internal buffer
+        PE_nRF24_readPayload(handle, handle->bufferData, handle->bufferSize);
 
         // Clear pending IRQ
         PE_nRF24_clearIRQ(handle, PE_nRF24_IRQ_RX_DR);
