@@ -37,6 +37,8 @@ static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_t *handle);
 
 PE_nRF24_RESULT_t PE_nRF24_configureRF(PE_nRF24_t *handle, PE_nRF24_configRF_t *config)
 {
+    PE_nRF24_RESULT_t result = PE_nRF24_RESULT_OK;
+
     // Configure address width
     if (PE_nRF24_setAddressWidth(handle, config->addressWidth) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
@@ -54,6 +56,14 @@ PE_nRF24_RESULT_t PE_nRF24_configureRF(PE_nRF24_t *handle, PE_nRF24_configRF_t *
 
     // Configure CRC
     if (PE_nRF24_setCRCScheme(handle, config->crcScheme) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    result |= PE_nRF24_clearIRQ(handle, PE_nRF24_IRQ_MAX_RT|PE_nRF24_IRQ_TX_DS|PE_nRF24_IRQ_RX_DR);
+    result |= PE_nRF24_flushTX(handle);
+    result |= PE_nRF24_flushRX(handle);
+
+    if (result != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
     }
 
