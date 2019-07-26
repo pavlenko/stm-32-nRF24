@@ -190,18 +190,32 @@ PE_nRF24_RESULT_t PE_nRF24_readPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t
     return PE_nRF24_RESULT_OK;
 }
 
-PE_nRF24_RESULT_t PE_nRF24_sendPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t size, uint16_t timeout)
+PE_nRF24_RESULT_t PE_nRF24_sendPacket(PE_nRF24_t *handle, uint8_t *addr, uint8_t *data, uint8_t size, uint16_t timeout)
 {
-    PE_nRF24_pushPacket(handle, data, size);
+    if (handle->status != PE_nRF24_STATUS_READY) {
+        return PE_nRF24_RESULT_ERROR;
+    }
 
-    while (handle->status != PE_nRF24_STATUS_READY) {
-        if (timeout == 0) {
+    if (PE_nRF24_setTXAddress(handle, addr) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    handle->status = PE_nRF24_STATUS_BUSY_TX;
+
+    handle->setCE(0);
+
+    PE_nRF24_setDirection(handle, PE_nRF24_DIRECTION_TX);
+    PE_nRF24_sendPayload(handle, data, size);
+
+    handle->setCE(1);
+
+    uint32_t start = PE_nRF24_clock();
+
+    while (PE_nRF24_checkIRQ(handle, PE_nRF24_IRQ_TX_DS) != PE_nRF24_RESULT_OK) {
+        if (timeout == 0 || (PE_nRF24_clock() - start) > timeout) {
             handle->status = PE_nRF24_STATUS_READY;
             return PE_nRF24_RESULT_TIMEOUT;
         }
-
-        PE_nRF24_delay(1);
-        timeout--;
     }
 
     return PE_nRF24_RESULT_OK;
@@ -275,6 +289,11 @@ __attribute__((weak)) void PE_nRF24_TXComplete(PE_nRF24_t *handle)
 __attribute__((weak)) void PE_nRF24_delay(uint16_t ms)
 {
     for (uint32_t i = ms * 1000; i > 0; i--);
+}
+
+__attribute__((weak)) uint32_t PE_nRF24_clock(void)
+{
+    return 0;
 }
 
 static PE_nRF24_RESULT_t PE_nRF24_getRegister(PE_nRF24_t *handle, uint8_t addr, uint8_t *byte)

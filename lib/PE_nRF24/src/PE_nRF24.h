@@ -415,61 +415,61 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 
-typedef enum: uint8_t {
+typedef enum {
     PE_nRF24_RESULT_OK      = 0x00U,
     PE_nRF24_RESULT_ERROR   = 0x01U,
     PE_nRF24_RESULT_BUSY    = 0x01U,
     PE_nRF24_RESULT_TIMEOUT = 0x03U,
 } PE_nRF24_RESULT_t;
 
-typedef enum: uint8_t {
+typedef enum {
     PE_nRF24_STATUS_READY   = 0x00U,
     PE_nRF24_STATUS_BUSY_TX = 0x01U,
     PE_nRF24_STATUS_BUSY_RX = 0x02U,
 } PE_nRF24_STATUS_t;
 
-typedef enum: uint8_t {
+typedef enum {
     PE_nRF24_BIT_CLR = 0x00U,
     PE_nRF24_BIT_SET = 0x01U,
 } PE_nRF24_BIT_t;
 
-typedef enum: uint8_t {
+typedef enum {
     PE_nRF24_ADDR_WIDTH_ILLEGAL = 0x00U,
     PE_nRF24_ADDR_WIDTH_3BIT    = PE_nRF24_SETUP_AW_0,
     PE_nRF24_ADDR_WIDTH_4BIT    = PE_nRF24_SETUP_AW_1,
     PE_nRF24_ADDR_WIDTH_5BIT    = PE_nRF24_SETUP_AW_1|PE_nRF24_SETUP_AW_0,
 } PE_nRF24_ADDR_WIDTH_t;
 
-typedef enum: uint8_t {
+typedef enum {
     PE_nRF24_DATA_RATE__250KBPS = PE_nRF24_RF_SETUP_RF_DR_LOW,
     PE_nRF24_DATA_RATE_1000KBPS = 0x00U,
     PE_nRF24_DATA_RATE_2000KBPS = PE_nRF24_RF_SETUP_RF_DR_HIGH,
 } PE_nRF24_DATA_RATE_t;
 
-typedef enum: uint8_t {
+typedef enum {
     PE_nRF24_CRC_SCHEME_OFF   = 0x00U,
     PE_nRF24_CRC_SCHEME_1BYTE = PE_nRF24_CONFIG_EN_CRC,
     PE_nRF24_CRC_SCHEME_2BYTE = PE_nRF24_CONFIG_EN_CRC|PE_nRF24_CONFIG_CRCO,
 } PE_nRF24_CRC_SCHEME_t;
 
-typedef enum: uint8_t {
+typedef enum {
     PE_nRF24_CRC_STATE_OFF = 0x00U,
     PE_nRF24_CRC_STATE_ON  = 0x01U,
 } PE_nRF24_CRC_STATE_t;
 
-typedef enum: uint8_t {
+typedef enum {
     PE_nRF24_CRC_WIDTH_1BYTE = 0x00U,
     PE_nRF24_CRC_WIDTH_2BYTE = 0x01U,
 } PE_nRF24_CRC_WIDTH_t;
 
-typedef enum: uint8_t {
+typedef enum {
     PE_nRF24_TX_POWER_18dBm = 0x00U,
     PE_nRF24_TX_POWER_12dBm = 0x01U,
     PE_nRF24_TX_POWER__6dBm = 0x02U,
     PE_nRF24_TX_POWER__0dBm = 0x03U,
 } PE_nRF24_TX_POWER_t;
 
-typedef enum: uint8_t {
+typedef enum {
     PE_nRF24_RETRY_DELAY__250us = 0x00U,
     PE_nRF24_RETRY_DELAY__500us = 0x01U,
     PE_nRF24_RETRY_DELAY__750us = 0x02U,
@@ -488,7 +488,7 @@ typedef enum: uint8_t {
     PE_nRF24_RETRY_DELAY_4000us = 0x0FU,
 } PE_nRF24_RETRY_DELAY_t;
 
-typedef enum: uint8_t {
+typedef enum {
     PE_nRF24_RETRY_COUNT__0 = 0x00U,
     PE_nRF24_RETRY_COUNT__1 = 0x01U,
     PE_nRF24_RETRY_COUNT__2 = 0x02U,
@@ -507,29 +507,29 @@ typedef enum: uint8_t {
     PE_nRF24_RETRY_COUNT_15 = 0x0FU,
 } PE_nRF24_RETRY_COUNT_t;
 
-typedef enum: uint8_t {
+typedef enum {
     PE_nRF24_AUTO_ACK_OFF = 0x00U,
     PE_nRF24_AUTO_ACK_ON  = 0x01U,
 } PE_nRF24_AUTO_ACK_t;
 
-typedef enum: uint8_t {
+typedef enum {
     PE_nRF24_DIRECTION_TX = 0x00U,
     PE_nRF24_DIRECTION_RX = 0x01U,
 } PE_nRF24_DIRECTION_t;
 
-typedef enum: uint8_t {
+typedef enum {
     PE_nRF24_POWER_OFF = 0x00U,
     PE_nRF24_POWER_ON  = 0x01U,
 } PE_nRF24_POWER_t;
 
-typedef enum: uint8_t {
+typedef enum {
     PE_nRF24_IRQ_MAX_RT = PE_nRF24_IRQ_MASK_MAX_RT,
     PE_nRF24_IRQ_TX_DS  = PE_nRF24_IRQ_MASK_TX_DS,
     PE_nRF24_IRQ_RX_DR  = PE_nRF24_IRQ_MASK_RX_DR,
     PE_nRF24_IRQ_ALL    = PE_nRF24_IRQ_MASK_MAX_RT|PE_nRF24_IRQ_MASK_TX_DS|PE_nRF24_IRQ_MASK_RX_DR,
 } PE_nRF24_IRQ_t;
 
-typedef enum: uint8_t {
+typedef enum {
     PE_nRF24_PIPE_RX0,
     PE_nRF24_PIPE_RX1,
     PE_nRF24_PIPE_RX2,
@@ -641,7 +641,7 @@ PE_nRF24_RESULT_t PE_nRF24_readPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t
  *
  * @return Operation status
  */
-PE_nRF24_RESULT_t PE_nRF24_sendPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t size, uint16_t timeout);
+PE_nRF24_RESULT_t PE_nRF24_sendPacket(PE_nRF24_t *handle, uint8_t *addr, uint8_t *data, uint8_t size, uint16_t timeout);
 
 /**
  * Read packet in non-blocking mode (from internal buffer)
@@ -694,6 +694,13 @@ void PE_nRF24_TXComplete(PE_nRF24_t *handle);
  * @param ms
  */
 void PE_nRF24_delay(uint16_t ms);
+
+/**
+ * Platform dependent get clock ms
+ *
+ * @return
+ */
+uint32_t PE_nRF24_clock(void);
 
 /* Exported variables --------------------------------------------------------*/
 

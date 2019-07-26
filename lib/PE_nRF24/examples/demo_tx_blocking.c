@@ -39,12 +39,13 @@ int main(void)
         Error_Handler(__FILE__, __LINE__);
     }
 
+    const char addr[] = PE_nRF24_TEST_ADDRESS;
     const char data[] = "Hello";
 
     // Main loop
     while (1) {
         // Send demo packet in blocking mode
-        if (PE_nRF24_sendPacket(&nRF24_handle, (uint8_t *) data, strlen(data), 10) != PE_nRF24_RESULT_OK) {
+        if (PE_nRF24_sendPacket(&nRF24_handle, (uint8_t *) addr, (uint8_t *) data, strlen(data), 10) != PE_nRF24_RESULT_OK) {
             Error_Handler(__FILE__, __LINE__);
         }
 
