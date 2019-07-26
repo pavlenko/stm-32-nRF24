@@ -42,21 +42,22 @@ int main(void)
 
     uint8_t data[32];
 
+    uint32_t start = 0;
+
     // Main loop
     while (1) {
+        // Wait for timeout
+        if (start > 0 && PE_nRF24_clock() - start < 500) {
+            continue;
+        }
+
+        start = PE_nRF24_clock();
+
         // Try read packet
         if (PE_nRF24_readPacket(&nRF24_handle, data, 32, 10) == PE_nRF24_RESULT_OK) {
             // Do something with data
         }
-
-        // Wait next iteration
-        PE_nRF24_delay(500);
     }
-}
-
-void PE_nRF24_delay(uint16_t ms)
-{
-    (void) ms;
 }
 
 void Error_Handler(const char *file, int line)
