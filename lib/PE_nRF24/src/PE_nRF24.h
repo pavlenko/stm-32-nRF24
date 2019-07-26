@@ -526,6 +526,7 @@ typedef enum {
     PE_nRF24_IRQ_MAX_RT = PE_nRF24_IRQ_MASK_MAX_RT,
     PE_nRF24_IRQ_TX_DS  = PE_nRF24_IRQ_MASK_TX_DS,
     PE_nRF24_IRQ_RX_DR  = PE_nRF24_IRQ_MASK_RX_DR,
+    PE_nRF24_IRQ_ALL    = PE_nRF24_IRQ_MASK_MAX_RT|PE_nRF24_IRQ_MASK_TX_DS|PE_nRF24_IRQ_MASK_RX_DR,
 } PE_nRF24_IRQ_t;
 
 typedef enum {
@@ -576,6 +577,26 @@ PE_nRF24_RESULT_t PE_nRF24_configureRF(PE_nRF24_t *handle, PE_nRF24_configRF_t *
 PE_nRF24_RESULT_t PE_nRF24_configureTX(PE_nRF24_t *handle, PE_nRF24_configTX_t *config);
 
 PE_nRF24_RESULT_t PE_nRF24_configureRX(PE_nRF24_t *handle, PE_nRF24_configRX_t *config, PE_nRF24_PIPE_t pipe);
+
+/**
+ * Clear pending IRQ bit(s)
+ *
+ * @param handle
+ * @param mask
+ *
+ * @return Operation result
+ */
+PE_nRF24_RESULT_t PE_nRF24_clearIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t mask);
+
+/**
+ * Check if IRQ occurred
+ *
+ * @param handle
+ * @param mask
+ *
+ * @return If IRQ bit set return PE_nRF24_RESULT_OK, else return PE_nRF24_RESULT_ERROR
+ */
+PE_nRF24_RESULT_t PE_nRF24_checkIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t mask);
 
 /**
  * Read rx payload register
