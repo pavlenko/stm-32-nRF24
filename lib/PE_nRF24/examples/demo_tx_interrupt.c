@@ -7,7 +7,7 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 
-uint8_t completed;
+uint8_t transmitted;
 
 /* Private function prototypes -----------------------------------------------*/
 
@@ -46,7 +46,7 @@ int main(void)
     const char addr[] = PE_nRF24_TEST_ADDRESS;
     const char data[] = "Hello";
 
-    uint32_t start = PE_nRF24_clock();
+    uint32_t start = 0;
 
     // Main loop
     while (1) {
@@ -62,22 +62,17 @@ int main(void)
             Error_Handler(__FILE__, __LINE__);
         }
 
-        completed = 0;
+        transmitted = 0;
 
         // Wait for complete
-        while (completed == 0);
+        while (transmitted == 0);
     }
 }
 
 void PE_nRF24_TXComplete(PE_nRF24_t *handle)
 {
     (void) handle;
-    completed = 1;
-}
-
-void PE_nRF24_delay(uint16_t ms)
-{
-    (void) ms;
+    transmitted = 1;
 }
 
 void Error_Handler(const char *file, int line)

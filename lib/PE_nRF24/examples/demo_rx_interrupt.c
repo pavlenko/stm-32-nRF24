@@ -6,6 +6,9 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+
+uint8_t received;
+
 /* Private function prototypes -----------------------------------------------*/
 
 void Error_Handler(const char *file, int line);
@@ -41,21 +44,38 @@ int main(void)
         Error_Handler(__FILE__, __LINE__);
     }
 
+    uint8_t data[5];
+    uint8_t size = 5;
+
+    uint32_t start = 0;
+
     // Main loop
     while (1) {
-        // Do some work
+        // Wait for timeout
+        if (start > 0 && PE_nRF24_clock() - start < 500) {
+            continue;
+        }
+
+        start = PE_nRF24_clock();
+
+        // Read
+        if (PE_nRF24_readPacket(&nRF24_handle, (uint8_t *) data, size, 0) != PE_nRF24_RESULT_OK) {
+            Error_Handler(__FILE__, __LINE__);
+        }
+
+        received = 0;
+
+        // Wait for complete
+        while (received == 0);
+
+        // Do some work with data[5]
     }
 }
 
 void PE_nRF24_RXComplete(PE_nRF24_t *handle)
 {
-    // Do some work with received data
     (void) handle;
-}
-
-void PE_nRF24_delay(uint16_t ms)
-{
-    (void) ms;
+    received = 1;
 }
 
 void Error_Handler(const char *file, int line)
