@@ -6,6 +6,9 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+
+uint8_t completed;
+
 /* Private function prototypes -----------------------------------------------*/
 
 void Error_Handler(const char *file, int line);
@@ -40,18 +43,36 @@ int main(void)
         Error_Handler(__FILE__, __LINE__);
     }
 
+    const char addr[] = PE_nRF24_TEST_ADDRESS;
     const char data[] = "Hello";
+
+    uint32_t start = PE_nRF24_clock();
 
     // Main loop
     while (1) {
-        // Send demo packet in blocking mode
-        if (PE_nRF24_pushPacket(&nRF24_handle, (uint8_t *) data, strlen(data)) != PE_nRF24_RESULT_OK) {
+        // Wait for timeout
+        if (start > 0 && PE_nRF24_clock() - start < 500) {
+            continue;
+        }
+
+        start = PE_nRF24_clock();
+
+        // Send
+        if (PE_nRF24_sendPacket(&nRF24_handle, (uint8_t *) addr, (uint8_t *) data, strlen(data), 0) != PE_nRF24_RESULT_OK) {
             Error_Handler(__FILE__, __LINE__);
         }
 
-        // Wait next iteration
-        PE_nRF24_delay(5000);
+        completed = 0;
+
+        // Wait for complete
+        while (completed == 0);
     }
+}
+
+void PE_nRF24_TXComplete(PE_nRF24_t *handle)
+{
+    (void) handle;
+    completed = 1;
 }
 
 void PE_nRF24_delay(uint16_t ms)

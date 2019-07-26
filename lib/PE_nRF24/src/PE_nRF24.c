@@ -209,13 +209,17 @@ PE_nRF24_RESULT_t PE_nRF24_sendPacket(PE_nRF24_t *handle, uint8_t *addr, uint8_t
 
     handle->setCE(1);
 
-    uint32_t start = PE_nRF24_clock();
+    if (timeout > 0) {
+        uint32_t start = PE_nRF24_clock();
 
-    while (PE_nRF24_checkIRQ(handle, PE_nRF24_IRQ_TX_DS) != PE_nRF24_RESULT_OK) {
-        if (timeout == 0 || (PE_nRF24_clock() - start) > timeout) {
-            handle->status = PE_nRF24_STATUS_READY;
-            return PE_nRF24_RESULT_TIMEOUT;
+        while (PE_nRF24_checkIRQ(handle, PE_nRF24_IRQ_TX_DS) != PE_nRF24_RESULT_OK) {
+            if (timeout == 0 || (PE_nRF24_clock() - start) > timeout) {
+                handle->status = PE_nRF24_STATUS_READY;
+                return PE_nRF24_RESULT_TIMEOUT;
+            }
         }
+
+        handle->status = PE_nRF24_STATUS_READY;
     }
 
     return PE_nRF24_RESULT_OK;
@@ -259,17 +263,17 @@ PE_nRF24_RESULT_t PE_nRF24_handleIRQ(PE_nRF24_t *handle)
     }
 
     // Process RX data ready (RX_DR bit)
-    if ((status & PE_nRF24_IRQ_RX_DR) != 0U) {
+    if ((status & (uint8_t) PE_nRF24_IRQ_RX_DR) != 0U) {
         PE_nRF24_handleIRQ_RX_DR(handle);
     }
 
     // Process TX sent (TX_DS bit)
-    if ((status & PE_nRF24_IRQ_TX_DS) != 0) {
+    if ((status & (uint8_t) PE_nRF24_IRQ_TX_DS) != 0) {
         PE_nRF24_handleIRQ_TX_DS(handle);
     }
 
     // Process reach retransmission count (MAX_RT bit)
-    if ((status & PE_nRF24_IRQ_MAX_RT) != 0) {
+    if ((status & (uint8_t) PE_nRF24_IRQ_MAX_RT) != 0) {
         PE_nRF24_handleIRQ_MAX_RT(handle);
     }
 
@@ -330,7 +334,7 @@ static PE_nRF24_RESULT_t PE_nRF24_attachIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t m
         return PE_nRF24_RESULT_ERROR;
     }
 
-    reg &= ~(mask & PE_nRF24_IRQ_MASK_ALL);
+    reg &= ~(mask & (uint8_t) PE_nRF24_IRQ_ALL);
 
     if (PE_nRF24_setRegister(handle, PE_nRF24_REG_CONFIG, &reg) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
@@ -347,7 +351,7 @@ static PE_nRF24_RESULT_t PE_nRF24_detachIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t m
         return PE_nRF24_RESULT_ERROR;
     }
 
-    reg |= (mask & PE_nRF24_IRQ_MASK_ALL);
+    reg |= (mask & (uint8_t) PE_nRF24_IRQ_ALL);
 
     if (PE_nRF24_setRegister(handle, PE_nRF24_REG_CONFIG, &reg) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;

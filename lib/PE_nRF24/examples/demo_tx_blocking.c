@@ -42,15 +42,21 @@ int main(void)
     const char addr[] = PE_nRF24_TEST_ADDRESS;
     const char data[] = "Hello";
 
+    uint32_t start = PE_nRF24_clock();
+
     // Main loop
     while (1) {
-        // Send demo packet in blocking mode
+        // Wait for timeout
+        if (start > 0 && PE_nRF24_clock() - start < 500) {
+            continue;
+        }
+
+        start = PE_nRF24_clock();
+
+        // Send
         if (PE_nRF24_sendPacket(&nRF24_handle, (uint8_t *) addr, (uint8_t *) data, strlen(data), 10) != PE_nRF24_RESULT_OK) {
             Error_Handler(__FILE__, __LINE__);
         }
-
-        // Wait next iteration
-        PE_nRF24_delay(5000);
     }
 }
 
