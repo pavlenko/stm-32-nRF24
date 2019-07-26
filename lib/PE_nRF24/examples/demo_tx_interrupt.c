@@ -1,23 +1,15 @@
 /* Includes ------------------------------------------------------------------*/
 
-#include <PE_nRF24.h>
-#include <string.h>
+#include "demo_common.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-
-PE_nRF24_t nRF24_handle;
-PE_nRF24_configRF_t nRF24_configRF;
-PE_nRF24_configTX_t nRF24_configTX;
-
 /* Private function prototypes -----------------------------------------------*/
 
-static void nRF24_setCE(PE_nRF24_BIT_t state);
-static void nRF24_setCS(PE_nRF24_BIT_t state);
-PE_nRF24_RESULT_t nRF24_read(uint8_t addr, uint8_t *data, uint8_t size);
-PE_nRF24_RESULT_t nRF24_send(uint8_t addr, uint8_t *data, uint8_t size);
+void Error_Handler(const char *file, int line);
+void EXTIRQ_Handler(void);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -37,7 +29,7 @@ int main(void)
 
     // Configure RF
     if (PE_nRF24_configureRF(&nRF24_handle, &nRF24_configRF) != PE_nRF24_RESULT_OK) {
-        return 1;// Error
+        Error_Handler(__FILE__, __LINE__);
     }
 
     // Initialize TX
@@ -46,7 +38,7 @@ int main(void)
 
     // Configure RF
     if (PE_nRF24_configureTX(&nRF24_handle, &nRF24_configTX) != PE_nRF24_RESULT_OK) {
-        return 1;// Error
+        Error_Handler(__FILE__, __LINE__);
     }
 
     const char data[] = "Hello";
@@ -54,8 +46,8 @@ int main(void)
     // Main loop
     while (1) {
         // Send demo packet in blocking mode
-        if (PE_nRF24_sendPacket(&nRF24_handle, (uint8_t *) data, strlen(data), 10) != PE_nRF24_RESULT_OK) {
-            return 1;// Error
+        if (PE_nRF24_pushPacket(&nRF24_handle, (uint8_t *) data, strlen(data)) != PE_nRF24_RESULT_OK) {
+            Error_Handler(__FILE__, __LINE__);
         }
 
         // Wait next iteration
@@ -68,12 +60,17 @@ void PE_nRF24_delay(uint16_t ms)
     (void) ms;
 }
 
-static void nRF24_setCE(PE_nRF24_BIT_t state)
+void Error_Handler(const char *file, int line)
 {
-    (void) state;
+    (void) file;
+    (void) line;
+
+    while (1);
 }
 
-static void nRF24_setCS(PE_nRF24_BIT_t state)
+void EXTIRQ_Handler(void)
 {
-    (void) state;
+    if (PE_nRF24_handleIRQ(&nRF24_handle) != PE_nRF24_RESULT_OK) {
+        Error_Handler(__FILE__, __LINE__);
+    }
 }
