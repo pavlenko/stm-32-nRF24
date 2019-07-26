@@ -10,7 +10,7 @@
 
 extern SPI_HandleTypeDef SPI_Handle;
 
-PE_nRF24_t PE_nRF24;
+PE_nRF24_handle_t PE_nRF24;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/

@@ -21,13 +21,13 @@ int main(void)
     nRF24_handle.send  = nRF24_send;
 
     // Initialize RF
-    nRF24_configRF.addressWidth = PE_nRF24_ADDR_WIDTH_5BIT;
-    nRF24_configRF.dataRate     = PE_nRF24_DATA_RATE_1000KBPS;
-    nRF24_configRF.crcScheme    = PE_nRF24_CRC_SCHEME_2BYTE;
-    nRF24_configRF.rfChannel    = 100;
+    nRF24_handle.config.addressWidth = PE_nRF24_ADDR_WIDTH_5BIT;
+    nRF24_handle.config.dataRate     = PE_nRF24_DATA_RATE_1000KBPS;
+    nRF24_handle.config.crcScheme    = PE_nRF24_CRC_SCHEME_2BYTE;
+    nRF24_handle.config.rfChannel    = 100;
 
     // Configure RF
-    if (PE_nRF24_configureRF(&nRF24_handle, &nRF24_configRF) != PE_nRF24_RESULT_OK) {
+    if (PE_nRF24_configureRF(&nRF24_handle) != PE_nRF24_RESULT_OK) {
         Error_Handler(__FILE__, __LINE__);
     }
 

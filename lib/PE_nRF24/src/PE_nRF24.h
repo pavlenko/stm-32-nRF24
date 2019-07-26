@@ -543,14 +543,10 @@ typedef struct {
     PE_nRF24_DATA_RATE_t dataRate;
     uint8_t rfChannel;
     PE_nRF24_CRC_SCHEME_t crcScheme;
-} PE_nRF24_configRF_t;
-
-typedef struct {
-    uint8_t *address;
     PE_nRF24_TX_POWER_t txPower;
     PE_nRF24_RETRY_COUNT_t retryCount;
     PE_nRF24_RETRY_DELAY_t retryDelay;
-} PE_nRF24_configTX_t;
+} PE_nRF24_configRF_t;
 
 typedef struct {
     uint8_t *address;
@@ -560,6 +556,7 @@ typedef struct {
 
 typedef struct {
     PE_nRF24_STATUS_t status;
+    PE_nRF24_configRF_t config;
 
     uint8_t *bufferData;
     uint8_t bufferSize;
@@ -568,15 +565,13 @@ typedef struct {
     void (*setCS) (PE_nRF24_BIT_t state);                                  // Toggle SPI chip select pin
     PE_nRF24_RESULT_t (*read) (uint8_t addr, uint8_t *data, uint8_t size); // Read register byte/data
     PE_nRF24_RESULT_t (*send) (uint8_t addr, uint8_t *data, uint8_t size); // Send register byte/data
-} PE_nRF24_t;
+} PE_nRF24_handle_t;
 
 /* Exported function prototypes --------------------------------------------- */
 
-PE_nRF24_RESULT_t PE_nRF24_configureRF(PE_nRF24_t *handle, PE_nRF24_configRF_t *config);
+PE_nRF24_RESULT_t PE_nRF24_configureRF(PE_nRF24_handle_t *handle);
 
-PE_nRF24_RESULT_t PE_nRF24_configureTX(PE_nRF24_t *handle, PE_nRF24_configTX_t *config);
-
-PE_nRF24_RESULT_t PE_nRF24_configureRX(PE_nRF24_t *handle, PE_nRF24_configRX_t *config, PE_nRF24_PIPE_t pipe);
+PE_nRF24_RESULT_t PE_nRF24_configureRX(PE_nRF24_handle_t *handle, PE_nRF24_configRX_t *config, PE_nRF24_PIPE_t pipe);
 
 /**
  * Clear pending IRQ bit(s)
@@ -586,7 +581,7 @@ PE_nRF24_RESULT_t PE_nRF24_configureRX(PE_nRF24_t *handle, PE_nRF24_configRX_t *
  *
  * @return Operation result
  */
-PE_nRF24_RESULT_t PE_nRF24_clearIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t mask);
+PE_nRF24_RESULT_t PE_nRF24_clearIRQ(PE_nRF24_handle_t *handle, PE_nRF24_IRQ_t mask);
 
 /**
  * Check if IRQ occurred
@@ -596,7 +591,7 @@ PE_nRF24_RESULT_t PE_nRF24_clearIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t mask);
  *
  * @return If IRQ bit set return PE_nRF24_RESULT_OK, else return PE_nRF24_RESULT_ERROR
  */
-PE_nRF24_RESULT_t PE_nRF24_checkIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t mask);
+PE_nRF24_RESULT_t PE_nRF24_checkIRQ(PE_nRF24_handle_t *handle, PE_nRF24_IRQ_t mask);
 
 /**
  * Read rx payload register
@@ -606,7 +601,7 @@ PE_nRF24_RESULT_t PE_nRF24_checkIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t mask);
  * @param size
  * @return
  */
-PE_nRF24_RESULT_t PE_nRF24_getPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size);
+PE_nRF24_RESULT_t PE_nRF24_getPayload(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size);
 
 /**
  * Sent tx payload register
@@ -617,7 +612,7 @@ PE_nRF24_RESULT_t PE_nRF24_getPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t
  *
  * @return Operation status
  */
-PE_nRF24_RESULT_t PE_nRF24_setPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size);
+PE_nRF24_RESULT_t PE_nRF24_setPayload(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size);
 
 /**
  * Read packet in blocking mode
@@ -629,7 +624,7 @@ PE_nRF24_RESULT_t PE_nRF24_setPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t
  *
  * @return Operation status
  */
-PE_nRF24_RESULT_t PE_nRF24_readPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t size, uint16_t timeout);
+PE_nRF24_RESULT_t PE_nRF24_readPacket(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size, uint16_t timeout);
 
 /**
  * Send packet in blocking mode
@@ -641,7 +636,7 @@ PE_nRF24_RESULT_t PE_nRF24_readPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t
  *
  * @return Operation status
  */
-PE_nRF24_RESULT_t PE_nRF24_sendPacket(PE_nRF24_t *handle, uint8_t *addr, uint8_t *data, uint8_t size, uint16_t timeout);
+PE_nRF24_RESULT_t PE_nRF24_sendPacket(PE_nRF24_handle_t *handle, uint8_t *addr, uint8_t *data, uint8_t size, uint16_t timeout);
 
 /**
  * Handle IRQ triggered by transmitter (if enabled)
@@ -652,21 +647,21 @@ PE_nRF24_RESULT_t PE_nRF24_sendPacket(PE_nRF24_t *handle, uint8_t *addr, uint8_t
  *
  * @return Operation status
  */
-PE_nRF24_RESULT_t PE_nRF24_handleIRQ(PE_nRF24_t *handle);
+PE_nRF24_RESULT_t PE_nRF24_handleIRQ(PE_nRF24_handle_t *handle);
 
 /**
  * Callback for handle reception completed IRQ
  *
  * @param handle
  */
-void PE_nRF24_RXComplete(PE_nRF24_t *handle);
+void PE_nRF24_RXComplete(PE_nRF24_handle_t *handle);
 
 /**
  * Callback for handle transmission completed IRQ
  *
  * @param handle
  */
-void PE_nRF24_TXComplete(PE_nRF24_t *handle);
+void PE_nRF24_TXComplete(PE_nRF24_handle_t *handle);
 
 /**
  * Platform independent delay
