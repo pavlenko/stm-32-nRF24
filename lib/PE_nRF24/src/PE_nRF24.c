@@ -262,6 +262,16 @@ PE_nRF24_RESULT_t PE_nRF24_handleIRQ(PE_nRF24_t *handle)
     return PE_nRF24_RESULT_OK;
 }
 
+__attribute__((weak)) void PE_nRF24_RXComplete(PE_nRF24_t *handle)
+{
+    (void) handle;
+}
+
+__attribute__((weak)) void PE_nRF24_TXComplete(PE_nRF24_t *handle)
+{
+    (void) handle;
+}
+
 __attribute__((weak)) void PE_nRF24_delay(uint16_t ms)
 {
     for (uint32_t i = ms * 1000; i > 0; i--);
@@ -574,6 +584,8 @@ static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_RX_DR(PE_nRF24_t *handle)
         PE_nRF24_clearIRQ(handle, PE_nRF24_IRQ_RX_DR);
 
         PE_nRF24_getRegister(handle, PE_nRF24_REG_FIFO_STATUS, &statusFIFO);
+
+        PE_nRF24_RXComplete(handle);
     } while ((statusFIFO & PE_nRF24_FIFO_STATUS_RX_EMPTY) == 0x00);
 
     handle->setCE(1);
@@ -594,6 +606,8 @@ static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_TX_DS(PE_nRF24_t *handle)
     handle->setCE(1);
 
     handle->status = PE_nRF24_STATUS_READY;
+
+    PE_nRF24_TXComplete(handle);
 
     return PE_nRF24_RESULT_OK;
 }

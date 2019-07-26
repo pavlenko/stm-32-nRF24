@@ -675,6 +675,20 @@ PE_nRF24_RESULT_t PE_nRF24_pushPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t
 PE_nRF24_RESULT_t PE_nRF24_handleIRQ(PE_nRF24_t *handle);
 
 /**
+ * Callback for handle reception completed IRQ
+ *
+ * @param handle
+ */
+void PE_nRF24_RXComplete(PE_nRF24_t *handle);
+
+/**
+ * Callback for handle transmission completed IRQ
+ *
+ * @param handle
+ */
+void PE_nRF24_TXComplete(PE_nRF24_t *handle);
+
+/**
  * Platform independent delay
  *
  * @param ms
