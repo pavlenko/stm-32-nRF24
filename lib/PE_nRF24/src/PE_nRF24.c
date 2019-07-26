@@ -2,6 +2,8 @@
 
 #include "PE_nRF24.h"
 
+#include <stddef.h>
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -152,7 +154,7 @@ PE_nRF24_RESULT_t PE_nRF24_checkIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t mask)
 /**
  * @inherit
  */
-PE_nRF24_RESULT_t PE_nRF24_readPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size)
+PE_nRF24_RESULT_t PE_nRF24_getPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size)
 {
     return handle->read(PE_nRF24_CMD_R_RX_PAYLOAD, data, size);
 }
@@ -160,13 +162,17 @@ PE_nRF24_RESULT_t PE_nRF24_readPayload(PE_nRF24_t *handle, uint8_t *data, uint8_
 /**
  * @inherit
  */
-PE_nRF24_RESULT_t PE_nRF24_sendPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size)
+PE_nRF24_RESULT_t PE_nRF24_setPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size)
 {
     return handle->read(PE_nRF24_CMD_W_TX_PAYLOAD, data, size);
 }
 
 PE_nRF24_RESULT_t PE_nRF24_readPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t size, uint16_t timeout)
 {
+    if (handle->status != PE_nRF24_STATUS_READY) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
     handle->status = PE_nRF24_STATUS_BUSY_RX;
 
     handle->setCE(0);
@@ -175,17 +181,25 @@ PE_nRF24_RESULT_t PE_nRF24_readPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t
 
     handle->setCE(1);
 
-    while (handle->status != PE_nRF24_STATUS_READY) {
-        if (timeout == 0) {
-            handle->status = PE_nRF24_STATUS_READY;
-            return PE_nRF24_RESULT_TIMEOUT;
+    if (timeout > 0) {
+        uint32_t start = PE_nRF24_clock();
+
+        while (PE_nRF24_checkIRQ(handle, PE_nRF24_IRQ_TX_DS) != PE_nRF24_RESULT_OK) {
+            if ((PE_nRF24_clock() - start) > timeout) {
+                handle->status = PE_nRF24_STATUS_READY;
+                return PE_nRF24_RESULT_TIMEOUT;
+            }
         }
 
-        PE_nRF24_delay(1);
-        timeout--;
-    }
+        PE_nRF24_getPayload(handle, data, size);
 
-    PE_nRF24_pullPacket(handle, data, size);
+        handle->status = PE_nRF24_STATUS_READY;
+    } else {
+        PE_nRF24_attachIRQ(handle, PE_nRF24_IRQ_RX_DR);
+
+        handle->bufferData = data;
+        handle->bufferSize = size;
+    }
 
     return PE_nRF24_RESULT_OK;
 }
@@ -205,7 +219,7 @@ PE_nRF24_RESULT_t PE_nRF24_sendPacket(PE_nRF24_t *handle, uint8_t *addr, uint8_t
     handle->setCE(0);
 
     PE_nRF24_setDirection(handle, PE_nRF24_DIRECTION_TX);
-    PE_nRF24_sendPayload(handle, data, size);
+    PE_nRF24_setPayload(handle, data, size);
 
     handle->setCE(1);
 
@@ -213,43 +227,16 @@ PE_nRF24_RESULT_t PE_nRF24_sendPacket(PE_nRF24_t *handle, uint8_t *addr, uint8_t
         uint32_t start = PE_nRF24_clock();
 
         while (PE_nRF24_checkIRQ(handle, PE_nRF24_IRQ_TX_DS) != PE_nRF24_RESULT_OK) {
-            if (timeout == 0 || (PE_nRF24_clock() - start) > timeout) {
+            if ((PE_nRF24_clock() - start) > timeout) {
                 handle->status = PE_nRF24_STATUS_READY;
                 return PE_nRF24_RESULT_TIMEOUT;
             }
         }
 
         handle->status = PE_nRF24_STATUS_READY;
+    } else {
+        PE_nRF24_attachIRQ(handle, PE_nRF24_IRQ_TX_DS);
     }
-
-    return PE_nRF24_RESULT_OK;
-}
-
-PE_nRF24_RESULT_t PE_nRF24_pullPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t size)
-{
-    uint8_t index;
-
-    for (index = 0; index < size; index++) {
-        *(data + index) = handle->bufferData[index];
-    }
-
-    return PE_nRF24_RESULT_OK;
-}
-
-PE_nRF24_RESULT_t PE_nRF24_pushPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t size)
-{
-    if (handle->status != PE_nRF24_STATUS_READY) {
-        return PE_nRF24_RESULT_ERROR;
-    }
-
-    handle->status = PE_nRF24_STATUS_BUSY_TX;
-
-    handle->setCE(0);
-
-    PE_nRF24_setDirection(handle, PE_nRF24_DIRECTION_TX);
-    PE_nRF24_sendPayload(handle, data, size);
-
-    handle->setCE(1);
 
     return PE_nRF24_RESULT_OK;
 }
@@ -601,7 +588,9 @@ static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_RX_DR(PE_nRF24_t *handle)
 
     do {
         // Read payload to internal buffer
-        PE_nRF24_readPayload(handle, handle->bufferData, handle->bufferSize);
+        if (handle->bufferData != NULL && handle->bufferSize > 0) {
+            PE_nRF24_getPayload(handle, handle->bufferData, handle->bufferSize);
+        }
 
         // Clear pending IRQ
         PE_nRF24_clearIRQ(handle, PE_nRF24_IRQ_RX_DR);

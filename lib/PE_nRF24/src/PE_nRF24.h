@@ -561,7 +561,7 @@ typedef struct {
 typedef struct {
     PE_nRF24_STATUS_t status;
 
-    uint8_t bufferData[32];
+    uint8_t *bufferData;
     uint8_t bufferSize;
 
     void (*setCE) (PE_nRF24_BIT_t state);                                  // Toggle chip enable pin
@@ -606,7 +606,7 @@ PE_nRF24_RESULT_t PE_nRF24_checkIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t mask);
  * @param size
  * @return
  */
-PE_nRF24_RESULT_t PE_nRF24_readPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size);
+PE_nRF24_RESULT_t PE_nRF24_getPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size);
 
 /**
  * Sent tx payload register
@@ -617,7 +617,7 @@ PE_nRF24_RESULT_t PE_nRF24_readPayload(PE_nRF24_t *handle, uint8_t *data, uint8_
  *
  * @return Operation status
  */
-PE_nRF24_RESULT_t PE_nRF24_sendPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size);
+PE_nRF24_RESULT_t PE_nRF24_setPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size);
 
 /**
  * Read packet in blocking mode
@@ -642,26 +642,6 @@ PE_nRF24_RESULT_t PE_nRF24_readPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t
  * @return Operation status
  */
 PE_nRF24_RESULT_t PE_nRF24_sendPacket(PE_nRF24_t *handle, uint8_t *addr, uint8_t *data, uint8_t size, uint16_t timeout);
-
-/**
- * Read packet in non-blocking mode (from internal buffer)
- *
- * @param handle
- * @param data
- * @param size
- * @return Operation status
- */
-PE_nRF24_RESULT_t PE_nRF24_pullPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t size);
-
-/**
- * Send packet in non-blocking mode (without check success)
- *
- * @param handle
- * @param data
- * @param size
- * @return Operation status
- */
-PE_nRF24_RESULT_t PE_nRF24_pushPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t size);
 
 /**
  * Handle IRQ triggered by transmitter (if enabled)

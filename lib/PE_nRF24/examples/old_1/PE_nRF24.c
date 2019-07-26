@@ -317,7 +317,7 @@ void PE_nRF24_readPayload(PE_nRF24_t *handle, PE_nRF24_Pipe_t pipe, uint8_t *dat
     }
 }
 
-void PE_nRF24_sendPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size)
+void PE_nRF24_setPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size)
 {
     PE_nRF24_sendData(handle, PE_nRF24_CMD_W_TX_PAYLOAD, data, size);
 }

@@ -188,7 +188,7 @@ void PE_nRF24_attachRXPipe(PE_nRF24_t *handle, PE_nRF24_Pipe_t pipe);
 
 void PE_nRF24_detachRXPipe(PE_nRF24_t *handle, PE_nRF24_Pipe_t pipe);
 
-void PE_nRF24_sendPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size);
+void PE_nRF24_setPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size);
 
 /**
  * IRQ handler, must be called from interrupt if used
