@@ -35,7 +35,6 @@ int main(void)
     nRF24_configTX.address = (uint8_t *) PE_nRF24_TEST_ADDRESS;
     nRF24_configTX.txPower = PE_nRF24_TX_POWER__0dBm;
 
-    // Configure RF
     if (PE_nRF24_configureTX(&nRF24_handle, &nRF24_configTX) != PE_nRF24_RESULT_OK) {
         Error_Handler(__FILE__, __LINE__);
     }

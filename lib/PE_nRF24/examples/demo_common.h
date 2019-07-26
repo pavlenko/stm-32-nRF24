@@ -25,6 +25,7 @@ PE_nRF24_RESULT_t nRF24_send(uint8_t addr, uint8_t *data, uint8_t size);
 PE_nRF24_t nRF24_handle;
 PE_nRF24_configRF_t nRF24_configRF;
 PE_nRF24_configTX_t nRF24_configTX;
+PE_nRF24_configRX_t nRF24_configRX;
 
 /* Exported functions ------------------------------------------------------- */
 

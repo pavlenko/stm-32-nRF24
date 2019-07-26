@@ -9,7 +9,6 @@
 /* Private function prototypes -----------------------------------------------*/
 
 void Error_Handler(const char *file, int line);
-void EXTIRQ_Handler(void);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -32,25 +31,26 @@ int main(void)
         Error_Handler(__FILE__, __LINE__);
     }
 
-    // Initialize TX
-    nRF24_configTX.address = (uint8_t *) PE_nRF24_TEST_ADDRESS;
-    nRF24_configTX.txPower = PE_nRF24_TX_POWER__0dBm;
+    // Initialize RX
+    nRF24_configRX.address     = (uint8_t *) PE_nRF24_TEST_ADDRESS;
+    nRF24_configRX.autoACK     = PE_nRF24_AUTO_ACK_OFF;
+    nRF24_configRX.payloadSize = 32;
 
-    if (PE_nRF24_configureTX(&nRF24_handle, &nRF24_configTX) != PE_nRF24_RESULT_OK) {
+    if (PE_nRF24_configureRX(&nRF24_handle, &nRF24_configRX, PE_nRF24_PIPE_RX0) != PE_nRF24_RESULT_OK) {
         Error_Handler(__FILE__, __LINE__);
     }
 
-    const char data[] = "Hello";
+    uint8_t data[32];
 
     // Main loop
     while (1) {
-        // Send demo packet in blocking mode
-        if (PE_nRF24_pushPacket(&nRF24_handle, (uint8_t *) data, strlen(data)) != PE_nRF24_RESULT_OK) {
-            Error_Handler(__FILE__, __LINE__);
+        // Try read packet
+        if (PE_nRF24_readPacket(&nRF24_handle, data, 32, 10) == PE_nRF24_RESULT_OK) {
+            // Do something with data
         }
 
         // Wait next iteration
-        PE_nRF24_delay(5000);
+        PE_nRF24_delay(500);
     }
 }
 
@@ -65,11 +65,4 @@ void Error_Handler(const char *file, int line)
     (void) line;
 
     while (1);
-}
-
-void EXTIRQ_Handler(void)
-{
-    if (PE_nRF24_handleIRQ(&nRF24_handle) != PE_nRF24_RESULT_OK) {
-        Error_Handler(__FILE__, __LINE__);
-    }
 }
