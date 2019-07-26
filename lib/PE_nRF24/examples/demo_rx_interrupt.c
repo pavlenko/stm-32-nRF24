@@ -41,18 +41,16 @@ int main(void)
         Error_Handler(__FILE__, __LINE__);
     }
 
-    uint8_t data[32];
-
     // Main loop
     while (1) {
-        // Try read packet
-        if (PE_nRF24_readPacket(&nRF24_handle, data, 32, 10) == PE_nRF24_RESULT_OK) {
-            // Do something with data
-        }
-
-        // Wait next iteration
-        PE_nRF24_delay(500);
+        // Do some work
     }
+}
+
+void PE_nRF24_RXComplete(PE_nRF24_t *handle)
+{
+    // Do some work with received data
+    (void) handle;
 }
 
 void PE_nRF24_delay(uint16_t ms)
