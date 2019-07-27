@@ -26,7 +26,7 @@ extern "C" {
 #define PE_nRF24_REG_RF_SETUP    0x06U
 #define PE_nRF24_REG_STATUS      0x07U
 #define PE_nRF24_REG_OBSERVE_TX  0x08U
-#define PE_nRF24_REG_RPD         0x09U
+#define PE_nRF24_REG_CD          0x09U
 #define PE_nRF24_REG_RX_ADDR_P0  0x0AU
 #define PE_nRF24_REG_RX_ADDR_P1  0x0BU
 #define PE_nRF24_REG_RX_ADDR_P2  0x0CU
@@ -336,6 +336,13 @@ extern "C" {
 #define PE_nRF24_OBSERVE_TX_PLOS_CNT_Pos (4U)
 #define PE_nRF24_OBSERVE_TX_PLOS_CNT_Msk (0xFU << PE_nRF24_OBSERVE_TX_PLOS_CNT_Pos)
 #define PE_nRF24_OBSERVE_TX_PLOS_CNT     PE_nRF24_OBSERVE_TX_PLOS_CNT_Msk
+
+/** CD bits *******************************************************************/
+
+// Count resent packets, read only
+#define PE_nRF24_CD_BIT_Pos (0U)
+#define PE_nRF24_CD_BIT_Msk (0x1U << PE_nRF24_CD_BIT_Pos)
+#define PE_nRF24_CD_BIT     PE_nRF24_CD_BIT_Msk
 
 /** FIFO_STATUS bits **********************************************************/
 

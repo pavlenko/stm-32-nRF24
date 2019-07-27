@@ -340,6 +340,27 @@ PE_nRF24_RESULT_t PE_nRF24_getRetryCount(PE_nRF24_handle_t *handle, PE_nRF24_RET
 }
 
 /**
+ * Get carrier detect bit value
+ *
+ * @param handle
+ * @param value
+ *
+ * @return Operation result
+ */
+PE_nRF24_RESULT_t PE_nRF24_getCarrierDetect(PE_nRF24_handle_t *handle, PE_nRF24_BIT_t *value)
+{
+    uint8_t reg;
+
+    if (PE_nRF24_getRegister(handle, PE_nRF24_REG_CD, &reg) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    *value = (PE_nRF24_BIT_t) (reg & PE_nRF24_CD_BIT);
+
+    return PE_nRF24_RESULT_OK;
+}
+
+/**
  * Handle IRQ triggered by transmitter (if enabled)
  *
  * Must be called inside of concrete CPU external pin IRQ handler
