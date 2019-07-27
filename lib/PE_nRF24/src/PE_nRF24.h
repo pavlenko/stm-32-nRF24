@@ -570,86 +570,16 @@ typedef struct {
 /* Exported function prototypes --------------------------------------------- */
 
 PE_nRF24_RESULT_t PE_nRF24_configureRF(PE_nRF24_handle_t *handle);
-
 PE_nRF24_RESULT_t PE_nRF24_configureRX(PE_nRF24_handle_t *handle, PE_nRF24_configRX_t *config, PE_nRF24_PIPE_t pipe);
-
 PE_nRF24_RESULT_t PE_nRF24_attachRXPipe(PE_nRF24_handle_t *handle, PE_nRF24_PIPE_t pipe);
 PE_nRF24_RESULT_t PE_nRF24_detachRXPipe(PE_nRF24_handle_t *handle, PE_nRF24_PIPE_t pipe);
-
-/**
- * Clear pending IRQ bit(s)
- *
- * @param handle
- * @param mask
- *
- * @return Operation result
- */
 PE_nRF24_RESULT_t PE_nRF24_clearIRQ(PE_nRF24_handle_t *handle, PE_nRF24_IRQ_t mask);
-
-/**
- * Check if IRQ occurred
- *
- * @param handle
- * @param mask
- *
- * @return If IRQ bit set return PE_nRF24_RESULT_OK, else return PE_nRF24_RESULT_ERROR
- */
 PE_nRF24_RESULT_t PE_nRF24_checkIRQ(PE_nRF24_handle_t *handle, PE_nRF24_IRQ_t mask);
-
-/**
- * Read packet in blocking mode
- *
- * @param handle
- * @param data
- * @param size
- * @param timeout
- *
- * @return Operation status
- */
 PE_nRF24_RESULT_t PE_nRF24_readPacket(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size, uint16_t timeout);
-
-/**
- * Send packet in blocking mode
- *
- * @param handle
- * @param data
- * @param size
- * @param timeout
- *
- * @return Operation status
- */
 PE_nRF24_RESULT_t PE_nRF24_sendPacket(PE_nRF24_handle_t *handle, uint8_t *addr, uint8_t *data, uint8_t size, uint16_t timeout);
-
-/**
- * Handle IRQ triggered by transmitter (if enabled)
- *
- * Must be called inside of concrete CPU external pin IRQ handler
- *
- * @param handle
- *
- * @return Operation status
- */
 PE_nRF24_RESULT_t PE_nRF24_handleIRQ(PE_nRF24_handle_t *handle);
-
-/**
- * Callback for handle reception completed IRQ
- *
- * @param handle
- */
-void PE_nRF24_RXComplete(PE_nRF24_handle_t *handle);
-
-/**
- * Callback for handle transmission completed IRQ
- *
- * @param handle
- */
 void PE_nRF24_TXComplete(PE_nRF24_handle_t *handle);
-
-/**
- * Platform dependent get clock ms
- *
- * @return
- */
+void PE_nRF24_RXComplete(PE_nRF24_handle_t *handle);
 uint32_t PE_nRF24_clock(void);
 
 /* Exported variables --------------------------------------------------------*/
