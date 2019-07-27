@@ -573,6 +573,9 @@ PE_nRF24_RESULT_t PE_nRF24_configureRF(PE_nRF24_handle_t *handle);
 
 PE_nRF24_RESULT_t PE_nRF24_configureRX(PE_nRF24_handle_t *handle, PE_nRF24_configRX_t *config, PE_nRF24_PIPE_t pipe);
 
+PE_nRF24_RESULT_t PE_nRF24_attachRXPipe(PE_nRF24_handle_t *handle, PE_nRF24_PIPE_t pipe);
+PE_nRF24_RESULT_t PE_nRF24_detachRXPipe(PE_nRF24_handle_t *handle, PE_nRF24_PIPE_t pipe);
+
 /**
  * Clear pending IRQ bit(s)
  *
@@ -592,27 +595,6 @@ PE_nRF24_RESULT_t PE_nRF24_clearIRQ(PE_nRF24_handle_t *handle, PE_nRF24_IRQ_t ma
  * @return If IRQ bit set return PE_nRF24_RESULT_OK, else return PE_nRF24_RESULT_ERROR
  */
 PE_nRF24_RESULT_t PE_nRF24_checkIRQ(PE_nRF24_handle_t *handle, PE_nRF24_IRQ_t mask);
-
-/**
- * Read rx payload register
- *
- * @param handle
- * @param data
- * @param size
- * @return
- */
-PE_nRF24_RESULT_t PE_nRF24_getPayload(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size);
-
-/**
- * Sent tx payload register
- *
- * @param handle
- * @param data
- * @param size
- *
- * @return Operation status
- */
-PE_nRF24_RESULT_t PE_nRF24_setPayload(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size);
 
 /**
  * Read packet in blocking mode
@@ -662,13 +644,6 @@ void PE_nRF24_RXComplete(PE_nRF24_handle_t *handle);
  * @param handle
  */
 void PE_nRF24_TXComplete(PE_nRF24_handle_t *handle);
-
-/**
- * Platform independent delay
- *
- * @param ms
- */
-void PE_nRF24_delay(uint16_t ms);
 
 /**
  * Platform dependent get clock ms

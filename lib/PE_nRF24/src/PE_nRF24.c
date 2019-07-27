@@ -15,6 +15,8 @@ static uint8_t PE_nRF24_NONE;
 
 static PE_nRF24_RESULT_t PE_nRF24_getRegister(PE_nRF24_handle_t *handle, uint8_t addr, uint8_t *byte);
 static PE_nRF24_RESULT_t PE_nRF24_setRegister(PE_nRF24_handle_t *handle, uint8_t addr, uint8_t *byte);
+static PE_nRF24_RESULT_t PE_nRF24_getPayload(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size);
+static PE_nRF24_RESULT_t PE_nRF24_setPayload(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size);
 static PE_nRF24_RESULT_t PE_nRF24_attachIRQ(PE_nRF24_handle_t *handle, PE_nRF24_IRQ_t mask);
 static PE_nRF24_RESULT_t PE_nRF24_detachIRQ(PE_nRF24_handle_t *handle, PE_nRF24_IRQ_t mask);
 static PE_nRF24_RESULT_t PE_nRF24_flushTX(PE_nRF24_handle_t *handle);
@@ -94,6 +96,56 @@ PE_nRF24_RESULT_t PE_nRF24_configureRX(PE_nRF24_handle_t *handle, PE_nRF24_confi
 }
 
 /**
+ * Enable listen RX pipe address
+ *
+ * @param handle
+ * @param pipe
+ *
+ * @return Operation result
+ */
+PE_nRF24_RESULT_t PE_nRF24_attachRXPipe(PE_nRF24_handle_t *handle, PE_nRF24_PIPE_t pipe)
+{
+    uint8_t reg;
+
+    if (PE_nRF24_getRegister(handle, PE_nRF24_REG_EN_RXADDR, &reg) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    reg |= (1U << pipe);
+
+    if (PE_nRF24_setRegister(handle, PE_nRF24_REG_EN_RXADDR, &reg) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    return PE_nRF24_RESULT_OK;
+}
+
+/**
+ * Disable listen RX pipe address
+ *
+ * @param handle
+ * @param pipe
+ *
+ * @return Operation result
+ */
+PE_nRF24_RESULT_t PE_nRF24_detachRXPipe(PE_nRF24_handle_t *handle, PE_nRF24_PIPE_t pipe)
+{
+    uint8_t reg;
+
+    if (PE_nRF24_getRegister(handle, PE_nRF24_REG_EN_RXADDR, &reg) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    reg &= ~(1U << pipe);
+
+    if (PE_nRF24_setRegister(handle, PE_nRF24_REG_EN_RXADDR, &reg) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    return PE_nRF24_RESULT_OK;
+}
+
+/**
  * @inherit
  */
 PE_nRF24_RESULT_t PE_nRF24_clearIRQ(PE_nRF24_handle_t *handle, PE_nRF24_IRQ_t mask)
@@ -129,22 +181,6 @@ PE_nRF24_RESULT_t PE_nRF24_checkIRQ(PE_nRF24_handle_t *handle, PE_nRF24_IRQ_t ma
     }
 
     return PE_nRF24_RESULT_ERROR;
-}
-
-/**
- * @inherit
- */
-PE_nRF24_RESULT_t PE_nRF24_getPayload(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size)
-{
-    return handle->read(PE_nRF24_CMD_R_RX_PAYLOAD, data, size);
-}
-
-/**
- * @inherit
- */
-PE_nRF24_RESULT_t PE_nRF24_setPayload(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size)
-{
-    return handle->read(PE_nRF24_CMD_W_TX_PAYLOAD, data, size);
 }
 
 PE_nRF24_RESULT_t PE_nRF24_readPacket(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size, uint16_t timeout)
@@ -257,11 +293,6 @@ __attribute__((weak)) void PE_nRF24_TXComplete(PE_nRF24_handle_t *handle)
     (void) handle;
 }
 
-__attribute__((weak)) void PE_nRF24_delay(uint16_t ms)
-{
-    for (uint32_t i = ms * 1000; i > 0; i--);
-}
-
 __attribute__((weak)) uint32_t PE_nRF24_clock(void)
 {
     return 0;
@@ -291,6 +322,33 @@ static PE_nRF24_RESULT_t PE_nRF24_setRegister(PE_nRF24_handle_t *handle, uint8_t
     handle->setCS(PE_nRF24_BIT_SET);
 
     return PE_nRF24_RESULT_OK;
+}
+
+/**
+ * Read rx payload register
+ *
+ * @param handle
+ * @param data
+ * @param size
+ * @return
+ */
+static PE_nRF24_RESULT_t PE_nRF24_getPayload(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size)
+{
+    return handle->read(PE_nRF24_CMD_R_RX_PAYLOAD, data, size);
+}
+
+/**
+ * Sent tx payload register
+ *
+ * @param handle
+ * @param data
+ * @param size
+ *
+ * @return Operation status
+ */
+static PE_nRF24_RESULT_t PE_nRF24_setPayload(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size)
+{
+    return handle->read(PE_nRF24_CMD_W_TX_PAYLOAD, data, size);
 }
 
 static PE_nRF24_RESULT_t PE_nRF24_attachIRQ(PE_nRF24_handle_t *handle, PE_nRF24_IRQ_t mask)

@@ -44,6 +44,8 @@ int main(void)
         Error_Handler(__FILE__, __LINE__);
     }
 
+    PE_nRF24_attachRXPipe(&nRF24_handle, PE_nRF24_PIPE_RX0);
+
     uint8_t data[5];
     uint8_t size = 5;
 
