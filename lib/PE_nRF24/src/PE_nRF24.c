@@ -82,11 +82,7 @@ PE_nRF24_RESULT_t PE_nRF24_configureRX(PE_nRF24_handle_t *handle, PE_nRF24_confi
 
     result |= PE_nRF24_setRXAddress(handle, config->address, pipe);
     result |= PE_nRF24_setAutoACK(handle, config->autoACK, pipe);
-
-    // Configure pipe payload width
-    if (PE_nRF24_setRegister(handle, PE_nRF24_REG_RX_PW[pipe], &(config->payloadSize)) != PE_nRF24_RESULT_OK) {
-        return PE_nRF24_RESULT_ERROR;
-    }
+    result |= PE_nRF24_setRegister(handle, PE_nRF24_REG_RX_PW[pipe], &(config->payloadSize));
 
     if (result != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
