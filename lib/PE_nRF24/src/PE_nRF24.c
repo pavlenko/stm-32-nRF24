@@ -33,8 +33,6 @@ static PE_nRF24_RESULT_t PE_nRF24_setRetransmit(PE_nRF24_handle_t *handle, PE_nR
 static PE_nRF24_RESULT_t PE_nRF24_setDirection(PE_nRF24_handle_t *handle, PE_nRF24_DIRECTION_t direction);
 static PE_nRF24_RESULT_t PE_nRF24_setPowerMode(PE_nRF24_handle_t *handle, PE_nRF24_POWER_t value);
 static PE_nRF24_RESULT_t PE_nRF24_setRFChannel(PE_nRF24_handle_t *handle, uint8_t value);
-static PE_nRF24_RESULT_t PE_nRF24_getLostCount(PE_nRF24_handle_t *handle, PE_nRF24_RETRY_COUNT_t *value);
-static PE_nRF24_RESULT_t PE_nRF24_getRetryCount(PE_nRF24_handle_t *handle, PE_nRF24_RETRY_COUNT_t *value);
 static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_RX_DR(PE_nRF24_handle_t *handle);
 static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_TX_DS(PE_nRF24_handle_t *handle);
 static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_handle_t *handle);
@@ -295,6 +293,48 @@ PE_nRF24_RESULT_t PE_nRF24_sendPacket(PE_nRF24_handle_t *handle, uint8_t *addr, 
     } else {
         PE_nRF24_attachIRQ(handle, PE_nRF24_IRQ_TX_DS);
     }
+
+    return PE_nRF24_RESULT_OK;
+}
+
+/**
+ * Get lost packets count
+ *
+ * @param handle
+ * @param value
+ *
+ * @return Operation result
+ */
+PE_nRF24_RESULT_t PE_nRF24_getLostCount(PE_nRF24_handle_t *handle, PE_nRF24_RETRY_COUNT_t *value)
+{
+    uint8_t reg;
+
+    if (PE_nRF24_getRegister(handle, PE_nRF24_REG_OBSERVE_TX, &reg) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    *value = (PE_nRF24_RETRY_COUNT_t) ((reg & PE_nRF24_OBSERVE_TX_PLOS_CNT) >> PE_nRF24_OBSERVE_TX_PLOS_CNT_Pos);
+
+    return PE_nRF24_RESULT_OK;
+}
+
+/**
+ * Get retries count
+ *
+ * @param handle
+ * @param value
+ *
+ * @return Operation result
+ */
+PE_nRF24_RESULT_t PE_nRF24_getRetryCount(PE_nRF24_handle_t *handle, PE_nRF24_RETRY_COUNT_t *value)
+{
+    uint8_t reg;
+
+    if (PE_nRF24_getRegister(handle, PE_nRF24_REG_OBSERVE_TX, &reg) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    *value = (PE_nRF24_RETRY_COUNT_t) ((reg & PE_nRF24_OBSERVE_TX_ARC_CNT) >> PE_nRF24_OBSERVE_TX_ARC_CNT_Pos);
 
     return PE_nRF24_RESULT_OK;
 }
@@ -805,34 +845,6 @@ static PE_nRF24_RESULT_t PE_nRF24_setRFChannel(PE_nRF24_handle_t *handle, uint8_
     if (PE_nRF24_setRegister(handle, PE_nRF24_REG_RF_CH, &reg) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
     }
-
-    return PE_nRF24_RESULT_OK;
-}
-
-//TODO public
-static PE_nRF24_RESULT_t PE_nRF24_getLostCount(PE_nRF24_handle_t *handle, PE_nRF24_RETRY_COUNT_t *value)
-{
-    uint8_t reg;
-
-    if (PE_nRF24_getRegister(handle, PE_nRF24_REG_OBSERVE_TX, &reg) != PE_nRF24_RESULT_OK) {
-        return PE_nRF24_RESULT_ERROR;
-    }
-
-    *value = (PE_nRF24_RETRY_COUNT_t) ((reg & PE_nRF24_OBSERVE_TX_PLOS_CNT) >> PE_nRF24_OBSERVE_TX_PLOS_CNT_Pos);
-
-    return PE_nRF24_RESULT_OK;
-}
-
-//TODO public
-static PE_nRF24_RESULT_t PE_nRF24_getRetryCount(PE_nRF24_handle_t *handle, PE_nRF24_RETRY_COUNT_t *value)
-{
-    uint8_t reg;
-
-    if (PE_nRF24_getRegister(handle, PE_nRF24_REG_OBSERVE_TX, &reg) != PE_nRF24_RESULT_OK) {
-        return PE_nRF24_RESULT_ERROR;
-    }
-
-    *value = (PE_nRF24_RETRY_COUNT_t) ((reg & PE_nRF24_OBSERVE_TX_ARC_CNT) >> PE_nRF24_OBSERVE_TX_ARC_CNT_Pos);
 
     return PE_nRF24_RESULT_OK;
 }
