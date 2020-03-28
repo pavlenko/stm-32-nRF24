@@ -395,6 +395,38 @@ PE_nRF24_RESULT_t PE_nRF24_handleIRQ(PE_nRF24_handle_t *handle)
     return PE_nRF24_RESULT_OK;
 }
 
+__attribute__((weak))
+void PE_nRF24_SPI_setCE(PE_nRF24_handle_t *handle, PE_nRF24_BIT_t state) {
+    (void) handle;
+    (void) state;
+}
+
+__attribute__((weak))
+void PE_nRF24_SPI_setCS(PE_nRF24_handle_t *handle, PE_nRF24_BIT_t state) {
+    (void) handle;
+    (void) state;
+}
+
+__attribute__((weak))
+PE_nRF24_RESULT_t PE_nRF24_SPI_read(PE_nRF24_handle_t *handle, uint8_t addr, uint8_t *data, uint8_t size) {
+    (void) handle;
+    (void) addr;
+    (void) data;
+    (void) size;
+
+    return PE_nRF24_RESULT_OK;
+}
+
+__attribute__((weak))
+PE_nRF24_RESULT_t PE_nRF24_SPI_send(PE_nRF24_handle_t *handle, uint8_t addr, uint8_t *data, uint8_t size) {
+    (void) handle;
+    (void) addr;
+    (void) data;
+    (void) size;
+
+    return PE_nRF24_RESULT_OK;
+}
+
 /**
  * Callback for handle transmission completed IRQ
  *

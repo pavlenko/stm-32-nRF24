@@ -588,6 +588,37 @@ PE_nRF24_RESULT_t PE_nRF24_getLostCount(PE_nRF24_handle_t *handle, PE_nRF24_RETR
 PE_nRF24_RESULT_t PE_nRF24_getRetryCount(PE_nRF24_handle_t *handle, PE_nRF24_RETRY_COUNT_t *value);
 PE_nRF24_RESULT_t PE_nRF24_getCarrierDetect(PE_nRF24_handle_t *handle, PE_nRF24_BIT_t *value);
 PE_nRF24_RESULT_t PE_nRF24_handleIRQ(PE_nRF24_handle_t *handle);
+
+/**
+ * @param handle
+ * @param state
+ */
+void PE_nRF24_SPI_setCE(PE_nRF24_handle_t *handle, PE_nRF24_BIT_t state);
+
+/**
+ * @param handle
+ * @param state
+ */
+void PE_nRF24_SPI_setCS(PE_nRF24_handle_t *handle, PE_nRF24_BIT_t state);
+
+/**
+ * @param handle
+ * @param addr
+ * @param data
+ * @param size
+ * @return
+ */
+PE_nRF24_RESULT_t PE_nRF24_SPI_read(PE_nRF24_handle_t *handle, uint8_t addr, uint8_t *data, uint8_t size);
+
+/**
+ * @param handle
+ * @param addr
+ * @param data
+ * @param size
+ * @return
+ */
+PE_nRF24_RESULT_t PE_nRF24_SPI_send(PE_nRF24_handle_t *handle, uint8_t addr, uint8_t *data, uint8_t size);
+
 void PE_nRF24_TXComplete(PE_nRF24_handle_t *handle);
 void PE_nRF24_RXComplete(PE_nRF24_handle_t *handle);
 uint32_t PE_nRF24_clock(void);
