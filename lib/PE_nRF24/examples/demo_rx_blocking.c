@@ -15,8 +15,8 @@ void Error_Handler(const char *file, int line);
 int main(void)
 {
     // Configure adapters
-    nRF24_handle.setCE = nRF24_setCE;
-    nRF24_handle.setCS = nRF24_setCS;
+    //nRF24_handle.setCE = nRF24_setCE;
+    //nRF24_handle.setCS = nRF24_setCS;
     nRF24_handle.read  = nRF24_read;
     nRF24_handle.send  = nRF24_send;
 

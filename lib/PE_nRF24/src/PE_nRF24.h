@@ -568,8 +568,6 @@ typedef struct {
     uint8_t *bufferData;
     uint8_t bufferSize;
 
-    void (*setCE) (PE_nRF24_BIT_t state);                                  // Toggle chip enable pin
-    void (*setCS) (PE_nRF24_BIT_t state);                                  // Toggle SPI chip select pin
     PE_nRF24_RESULT_t (*read) (uint8_t addr, uint8_t *data, uint8_t size); // Read register byte/data
     PE_nRF24_RESULT_t (*send) (uint8_t addr, uint8_t *data, uint8_t size); // Send register byte/data
 } PE_nRF24_handle_t;

@@ -221,11 +221,11 @@ PE_nRF24_RESULT_t PE_nRF24_readPacket(PE_nRF24_handle_t *handle, uint8_t *data, 
 
     handle->status = PE_nRF24_STATUS_BUSY_RX;
 
-    handle->setCE(0);
+    PE_nRF24_SPI_setCE(handle, PE_nRF24_BIT_CLR);
 
     PE_nRF24_setDirection(handle, PE_nRF24_DIRECTION_RX);
 
-    handle->setCE(1);
+    PE_nRF24_SPI_setCE(handle, PE_nRF24_BIT_SET);
 
     if (timeout > 0) {
         uint32_t start = PE_nRF24_clock();
@@ -272,12 +272,12 @@ PE_nRF24_RESULT_t PE_nRF24_sendPacket(PE_nRF24_handle_t *handle, uint8_t *addr, 
 
     handle->status = PE_nRF24_STATUS_BUSY_TX;
 
-    handle->setCE(0);
+    PE_nRF24_SPI_setCE(handle, PE_nRF24_BIT_CLR);
 
     PE_nRF24_setDirection(handle, PE_nRF24_DIRECTION_TX);
     PE_nRF24_setPayload(handle, data, size);
 
-    handle->setCE(1);
+    PE_nRF24_SPI_setCE(handle, PE_nRF24_BIT_SET);
 
     if (timeout > 0) {
         uint32_t start = PE_nRF24_clock();
@@ -472,13 +472,13 @@ __attribute__((weak)) uint32_t PE_nRF24_clock(void)
  */
 static PE_nRF24_RESULT_t PE_nRF24_getRegister(PE_nRF24_handle_t *handle, uint8_t addr, uint8_t *byte)
 {
-    handle->setCS(PE_nRF24_BIT_CLR);
+    PE_nRF24_SPI_setCS(handle, PE_nRF24_BIT_CLR);
 
     if (handle->read(PE_nRF24_CMD_R_REGISTER | addr, byte, 1) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
     }
 
-    handle->setCS(PE_nRF24_BIT_SET);
+    PE_nRF24_SPI_setCS(handle, PE_nRF24_BIT_SET);
 
     return PE_nRF24_RESULT_OK;
 }
@@ -494,13 +494,13 @@ static PE_nRF24_RESULT_t PE_nRF24_getRegister(PE_nRF24_handle_t *handle, uint8_t
  */
 static PE_nRF24_RESULT_t PE_nRF24_setRegister(PE_nRF24_handle_t *handle, uint8_t addr, uint8_t *byte)
 {
-    handle->setCS(PE_nRF24_BIT_CLR);
+    PE_nRF24_SPI_setCS(handle, PE_nRF24_BIT_CLR);
 
     if (handle->send(PE_nRF24_CMD_W_REGISTER | addr, byte, 1) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
     }
 
-    handle->setCS(PE_nRF24_BIT_SET);
+    PE_nRF24_SPI_setCS(handle, PE_nRF24_BIT_SET);
 
     return PE_nRF24_RESULT_OK;
 }
@@ -913,7 +913,7 @@ static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_RX_DR(PE_nRF24_handle_t *handle)
 {
     uint8_t statusFIFO;
 
-    handle->setCE(0);
+    PE_nRF24_SPI_setCE(handle, PE_nRF24_BIT_CLR);
 
     do {
         // Read payload to internal buffer
@@ -929,7 +929,7 @@ static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_RX_DR(PE_nRF24_handle_t *handle)
         PE_nRF24_RXComplete(handle);
     } while ((statusFIFO & PE_nRF24_FIFO_STATUS_RX_EMPTY) == 0x00);
 
-    handle->setCE(1);
+    PE_nRF24_SPI_setCE(handle, PE_nRF24_BIT_SET);
 
     return PE_nRF24_RESULT_OK;
 }
@@ -943,7 +943,7 @@ static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_RX_DR(PE_nRF24_handle_t *handle)
  */
 static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_TX_DS(PE_nRF24_handle_t *handle)
 {
-    handle->setCE(0);
+    PE_nRF24_SPI_setCE(handle, PE_nRF24_BIT_CLR);
 
     // Set direction to RX
     PE_nRF24_setDirection(handle, PE_nRF24_DIRECTION_RX);
@@ -951,7 +951,7 @@ static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_TX_DS(PE_nRF24_handle_t *handle)
     // Clear pending IRQ
     PE_nRF24_clearIRQ(handle, PE_nRF24_IRQ_TX_DS);
 
-    handle->setCE(1);
+    PE_nRF24_SPI_setCE(handle, PE_nRF24_BIT_SET);
 
     handle->status = PE_nRF24_STATUS_READY;
 
@@ -975,7 +975,7 @@ static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_handle_t *handle)
     PE_nRF24_setPowerMode(handle, PE_nRF24_POWER_OFF);
     PE_nRF24_setPowerMode(handle, PE_nRF24_POWER_ON);
 
-    handle->setCE(0);
+    PE_nRF24_SPI_setCE(handle, PE_nRF24_BIT_CLR);
 
     // Set direction to RX
     PE_nRF24_setDirection(handle, PE_nRF24_DIRECTION_RX);
@@ -983,7 +983,7 @@ static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_handle_t *handle)
     // Clear pending IRQ
     PE_nRF24_clearIRQ(handle, PE_nRF24_IRQ_MAX_RT);
 
-    handle->setCE(1);
+    PE_nRF24_SPI_setCE(handle, PE_nRF24_BIT_SET);
 
     handle->status = PE_nRF24_STATUS_READY;
 
