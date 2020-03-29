@@ -1,6 +1,7 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include "PE_nRF24.h"
+#include "PE_nRF24_api.h"
 
 #include <stddef.h>
 
@@ -13,8 +14,6 @@ static uint8_t PE_nRF24_NONE;
 
 /* Private function prototypes -----------------------------------------------*/
 
-static PE_nRF24_RESULT_t PE_nRF24_getRegister(PE_nRF24_handle_t *handle, uint8_t addr, uint8_t *byte);
-static PE_nRF24_RESULT_t PE_nRF24_setRegister(PE_nRF24_handle_t *handle, uint8_t addr, uint8_t *byte);
 static PE_nRF24_RESULT_t PE_nRF24_getPayload(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size);
 static PE_nRF24_RESULT_t PE_nRF24_setPayload(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size);
 static PE_nRF24_RESULT_t PE_nRF24_attachIRQ(PE_nRF24_handle_t *handle, PE_nRF24_IRQ_t mask);
@@ -459,50 +458,6 @@ __attribute__((weak)) void PE_nRF24_RXComplete(PE_nRF24_handle_t *handle)
 __attribute__((weak)) uint32_t PE_nRF24_clock(void)
 {
     return 0;
-}
-
-/**
- * Get single byte register value
- *
- * @param handle
- * @param addr
- * @param byte
- *
- * @return Operation result
- */
-static PE_nRF24_RESULT_t PE_nRF24_getRegister(PE_nRF24_handle_t *handle, uint8_t addr, uint8_t *byte)
-{
-    PE_nRF24_SPI_setCS(handle, PE_nRF24_BIT_CLR);
-
-    if (PE_nRF24_SPI_read(handle, PE_nRF24_CMD_R_REGISTER | addr, byte, 1) != PE_nRF24_RESULT_OK) {
-        return PE_nRF24_RESULT_ERROR;
-    }
-
-    PE_nRF24_SPI_setCS(handle, PE_nRF24_BIT_SET);
-
-    return PE_nRF24_RESULT_OK;
-}
-
-/**
- * Set single byte register value
- *
- * @param handle
- * @param addr
- * @param byte
- *
- * @return Operation result
- */
-static PE_nRF24_RESULT_t PE_nRF24_setRegister(PE_nRF24_handle_t *handle, uint8_t addr, uint8_t *byte)
-{
-    PE_nRF24_SPI_setCS(handle, PE_nRF24_BIT_CLR);
-
-    if (PE_nRF24_SPI_send(handle, PE_nRF24_CMD_W_REGISTER | addr, byte, 1) != PE_nRF24_RESULT_OK) {
-        return PE_nRF24_RESULT_ERROR;
-    }
-
-    PE_nRF24_SPI_setCS(handle, PE_nRF24_BIT_SET);
-
-    return PE_nRF24_RESULT_OK;
 }
 
 /**
