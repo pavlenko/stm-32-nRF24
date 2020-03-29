@@ -496,7 +496,7 @@ static PE_nRF24_RESULT_t PE_nRF24_setRegister(PE_nRF24_handle_t *handle, uint8_t
 {
     PE_nRF24_SPI_setCS(handle, PE_nRF24_BIT_CLR);
 
-    if (PE_nRF24_SPI_send(handle, PE_nRF24_CMD_R_REGISTER | addr, byte, 1) != PE_nRF24_RESULT_OK) {
+    if (PE_nRF24_SPI_send(handle, PE_nRF24_CMD_W_REGISTER | addr, byte, 1) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
     }
 
