@@ -19,7 +19,7 @@ const uint8_t PE_nRF24_REG_RX_ADDR[7] = {
         PE_nRF24_REG_RX_ADDR_P5,
 };
 
-PE_nRF24_RESULT_t PE_nRF24_getRegister(PE_nRF24_handle_t *handle, uint8_t addr, uint8_t *byte) {
+PE_nRF24_RESULT_t PE_nRF24_getRegister(PE_nRF24_t *handle, uint8_t addr, uint8_t *byte) {
     PE_nRF24_setSS0(handle);
 
     if (PE_nRF24_readMem(handle, PE_nRF24_CMD_R_REGISTER | addr, byte, 1) != PE_nRF24_RESULT_OK) {
@@ -31,7 +31,7 @@ PE_nRF24_RESULT_t PE_nRF24_getRegister(PE_nRF24_handle_t *handle, uint8_t addr, 
     return PE_nRF24_RESULT_OK;
 }
 
-PE_nRF24_RESULT_t PE_nRF24_setRegister(PE_nRF24_handle_t *handle, uint8_t addr, uint8_t *byte) {
+PE_nRF24_RESULT_t PE_nRF24_setRegister(PE_nRF24_t *handle, uint8_t addr, uint8_t *byte) {
     PE_nRF24_setSS0(handle);
 
     if (PE_nRF24_sendMem(handle, PE_nRF24_CMD_W_REGISTER | addr, byte, 1) != PE_nRF24_RESULT_OK) {
@@ -43,15 +43,15 @@ PE_nRF24_RESULT_t PE_nRF24_setRegister(PE_nRF24_handle_t *handle, uint8_t addr, 
     return PE_nRF24_RESULT_OK;
 }
 
-PE_nRF24_RESULT_t PE_nRF24_getPayload(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size) {
+PE_nRF24_RESULT_t PE_nRF24_getPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size) {
     return PE_nRF24_readMem(handle, PE_nRF24_CMD_R_RX_PAYLOAD, data, size);
 }
 
-PE_nRF24_RESULT_t PE_nRF24_setPayload(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size) {
+PE_nRF24_RESULT_t PE_nRF24_setPayload(PE_nRF24_t *handle, uint8_t *data, uint8_t size) {
     return PE_nRF24_sendMem(handle, PE_nRF24_CMD_W_TX_PAYLOAD, data, size);
 }
 
-PE_nRF24_RESULT_t PE_nRF24_readPacket(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size, uint16_t timeout) {
+PE_nRF24_RESULT_t PE_nRF24_readPacket(PE_nRF24_t *handle, uint8_t *data, uint8_t size, uint16_t timeout) {
     if (handle->status != PE_nRF24_STATUS_READY) {
         return PE_nRF24_RESULT_ERROR;
     }
@@ -87,7 +87,7 @@ PE_nRF24_RESULT_t PE_nRF24_readPacket(PE_nRF24_handle_t *handle, uint8_t *data, 
     return PE_nRF24_RESULT_OK;
 }
 
-PE_nRF24_RESULT_t PE_nRF24_sendPacket(PE_nRF24_handle_t *handle, uint8_t *addr, uint8_t *data, uint8_t size, uint16_t timeout) {
+PE_nRF24_RESULT_t PE_nRF24_sendPacket(PE_nRF24_t *handle, uint8_t *addr, uint8_t *data, uint8_t size, uint16_t timeout) {
     if (handle->status != PE_nRF24_STATUS_READY) {
         return PE_nRF24_RESULT_ERROR;
     }
@@ -123,7 +123,7 @@ PE_nRF24_RESULT_t PE_nRF24_sendPacket(PE_nRF24_handle_t *handle, uint8_t *addr, 
     return PE_nRF24_RESULT_OK;
 }
 
-PE_nRF24_RESULT_t PE_nRF24_setAddressWidth(PE_nRF24_handle_t *handle, PE_nRF24_ADDR_WIDTH_t width) {
+PE_nRF24_RESULT_t PE_nRF24_setAddressWidth(PE_nRF24_t *handle, PE_nRF24_ADDR_WIDTH_t width) {
     uint8_t reg;
     if (PE_nRF24_getRegister(handle, PE_nRF24_REG_SETUP_AW, &reg) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
@@ -139,7 +139,7 @@ PE_nRF24_RESULT_t PE_nRF24_setAddressWidth(PE_nRF24_handle_t *handle, PE_nRF24_A
     return PE_nRF24_RESULT_OK;
 }
 
-PE_nRF24_RESULT_t PE_nRF24_getAddressWidth(PE_nRF24_handle_t *handle, PE_nRF24_ADDR_WIDTH_t *width) {
+PE_nRF24_RESULT_t PE_nRF24_getAddressWidth(PE_nRF24_t *handle, PE_nRF24_ADDR_WIDTH_t *width) {
     uint8_t reg;
     if (PE_nRF24_getRegister(handle, PE_nRF24_REG_SETUP_AW, &reg) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
@@ -154,7 +154,7 @@ PE_nRF24_RESULT_t PE_nRF24_getAddressWidth(PE_nRF24_handle_t *handle, PE_nRF24_A
     return PE_nRF24_RESULT_OK;
 }
 
-PE_nRF24_RESULT_t PE_nRF24_setTXAddress(PE_nRF24_handle_t *handle, uint8_t *address) {
+PE_nRF24_RESULT_t PE_nRF24_setTXAddress(PE_nRF24_t *handle, uint8_t *address) {
     uint8_t width;
 
     PE_nRF24_getAddressWidth(handle, (PE_nRF24_ADDR_WIDTH_t *) &width);
@@ -166,7 +166,7 @@ PE_nRF24_RESULT_t PE_nRF24_setTXAddress(PE_nRF24_handle_t *handle, uint8_t *addr
     return PE_nRF24_RESULT_OK;
 }
 
-PE_nRF24_RESULT_t PE_nRF24_setRXAddress(PE_nRF24_handle_t *handle, uint8_t *address, PE_nRF24_PIPE_t pipe) {
+PE_nRF24_RESULT_t PE_nRF24_setRXAddress(PE_nRF24_t *handle, uint8_t *address, PE_nRF24_PIPE_t pipe) {
     uint8_t width;
 
     PE_nRF24_getAddressWidth(handle, (PE_nRF24_ADDR_WIDTH_t *) &width);
@@ -184,15 +184,15 @@ PE_nRF24_RESULT_t PE_nRF24_setRXAddress(PE_nRF24_handle_t *handle, uint8_t *addr
     return PE_nRF24_RESULT_OK;
 }
 
-PE_nRF24_RESULT_t PE_nRF24_flushTX(PE_nRF24_handle_t *handle) {
+PE_nRF24_RESULT_t PE_nRF24_flushTX(PE_nRF24_t *handle) {
     return PE_nRF24_sendByte(handle, PE_nRF24_CMD_FLUSH_TX);
 }
 
-PE_nRF24_RESULT_t PE_nRF24_flushRX(PE_nRF24_handle_t *handle) {
+PE_nRF24_RESULT_t PE_nRF24_flushRX(PE_nRF24_t *handle) {
     return PE_nRF24_sendByte(handle, PE_nRF24_CMD_FLUSH_RX);
 }
 
-PE_nRF24_RESULT_t PE_nRF24_attachIRQ(PE_nRF24_handle_t *handle, PE_nRF24_IRQ_t mask) {
+PE_nRF24_RESULT_t PE_nRF24_attachIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t mask) {
     uint8_t reg;
 
     if (PE_nRF24_getRegister(handle, PE_nRF24_REG_CONFIG, &reg) != PE_nRF24_RESULT_OK) {
@@ -208,7 +208,7 @@ PE_nRF24_RESULT_t PE_nRF24_attachIRQ(PE_nRF24_handle_t *handle, PE_nRF24_IRQ_t m
     return PE_nRF24_RESULT_OK;
 }
 
-PE_nRF24_RESULT_t PE_nRF24_detachIRQ(PE_nRF24_handle_t *handle, PE_nRF24_IRQ_t mask) {
+PE_nRF24_RESULT_t PE_nRF24_detachIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t mask) {
     uint8_t reg;
 
     if (PE_nRF24_getRegister(handle, PE_nRF24_REG_CONFIG, &reg) != PE_nRF24_RESULT_OK) {
@@ -224,7 +224,7 @@ PE_nRF24_RESULT_t PE_nRF24_detachIRQ(PE_nRF24_handle_t *handle, PE_nRF24_IRQ_t m
     return PE_nRF24_RESULT_OK;
 }
 
-PE_nRF24_RESULT_t PE_nRF24_clearIRQ(PE_nRF24_handle_t *handle, PE_nRF24_IRQ_t mask) {
+PE_nRF24_RESULT_t PE_nRF24_clearIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t mask) {
     uint8_t reg;
 
     if (PE_nRF24_getRegister(handle, PE_nRF24_REG_STATUS, &reg) != PE_nRF24_RESULT_OK) {
@@ -240,7 +240,7 @@ PE_nRF24_RESULT_t PE_nRF24_clearIRQ(PE_nRF24_handle_t *handle, PE_nRF24_IRQ_t ma
     return PE_nRF24_RESULT_OK;
 }
 
-PE_nRF24_RESULT_t PE_nRF24_checkIRQ(PE_nRF24_handle_t *handle, PE_nRF24_IRQ_t mask) {
+PE_nRF24_RESULT_t PE_nRF24_checkIRQ(PE_nRF24_t *handle, PE_nRF24_IRQ_t mask) {
     uint8_t reg;
 
     if (PE_nRF24_getRegister(handle, PE_nRF24_REG_STATUS, &reg) != PE_nRF24_RESULT_OK) {
@@ -254,7 +254,7 @@ PE_nRF24_RESULT_t PE_nRF24_checkIRQ(PE_nRF24_handle_t *handle, PE_nRF24_IRQ_t ma
     return PE_nRF24_RESULT_ERROR;
 }
 
-PE_nRF24_RESULT_t PE_nRF24_setDirection(PE_nRF24_handle_t *handle, PE_nRF24_DIRECTION_t direction) {
+PE_nRF24_RESULT_t PE_nRF24_setDirection(PE_nRF24_t *handle, PE_nRF24_DIRECTION_t direction) {
     uint8_t reg;
     if (PE_nRF24_getRegister(handle, PE_nRF24_REG_CONFIG, &reg) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
@@ -270,7 +270,7 @@ PE_nRF24_RESULT_t PE_nRF24_setDirection(PE_nRF24_handle_t *handle, PE_nRF24_DIRE
     return PE_nRF24_RESULT_OK;
 }
 
-PE_nRF24_RESULT_t PE_nRF24_setAutoACK(PE_nRF24_handle_t *handle, PE_nRF24_AUTO_ACK_t ack, PE_nRF24_PIPE_t pipe) {
+PE_nRF24_RESULT_t PE_nRF24_setAutoACK(PE_nRF24_t *handle, PE_nRF24_AUTO_ACK_t ack, PE_nRF24_PIPE_t pipe) {
     uint8_t reg;
     if (PE_nRF24_getRegister(handle, PE_nRF24_REG_EN_AA, &reg) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
@@ -286,7 +286,7 @@ PE_nRF24_RESULT_t PE_nRF24_setAutoACK(PE_nRF24_handle_t *handle, PE_nRF24_AUTO_A
     return PE_nRF24_RESULT_OK;
 }
 
-PE_nRF24_RESULT_t PE_nRF24_setDataRate(PE_nRF24_handle_t *handle, PE_nRF24_DATA_RATE_t rate) {
+PE_nRF24_RESULT_t PE_nRF24_setDataRate(PE_nRF24_t *handle, PE_nRF24_DATA_RATE_t rate) {
     uint8_t reg;
     if (PE_nRF24_getRegister(handle, PE_nRF24_REG_RF_SETUP, &reg) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
@@ -302,7 +302,7 @@ PE_nRF24_RESULT_t PE_nRF24_setDataRate(PE_nRF24_handle_t *handle, PE_nRF24_DATA_
     return PE_nRF24_RESULT_OK;
 }
 
-PE_nRF24_RESULT_t PE_nRF24_setCRCScheme(PE_nRF24_handle_t *handle, PE_nRF24_CRC_SCHEME_t scheme) {
+PE_nRF24_RESULT_t PE_nRF24_setCRCScheme(PE_nRF24_t *handle, PE_nRF24_CRC_SCHEME_t scheme) {
     uint8_t reg;
     if (PE_nRF24_getRegister(handle, PE_nRF24_REG_CONFIG, &reg) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
@@ -318,7 +318,7 @@ PE_nRF24_RESULT_t PE_nRF24_setCRCScheme(PE_nRF24_handle_t *handle, PE_nRF24_CRC_
     return PE_nRF24_RESULT_OK;
 }
 
-PE_nRF24_RESULT_t PE_nRF24_setTXPower(PE_nRF24_handle_t *handle, PE_nRF24_TX_POWER_t power) {
+PE_nRF24_RESULT_t PE_nRF24_setTXPower(PE_nRF24_t *handle, PE_nRF24_TX_POWER_t power) {
     uint8_t reg;
     if (PE_nRF24_getRegister(handle, PE_nRF24_REG_RF_SETUP, &reg) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
@@ -334,7 +334,7 @@ PE_nRF24_RESULT_t PE_nRF24_setTXPower(PE_nRF24_handle_t *handle, PE_nRF24_TX_POW
     return PE_nRF24_RESULT_OK;
 }
 
-PE_nRF24_RESULT_t PE_nRF24_setRetransmit(PE_nRF24_handle_t *handle, PE_nRF24_RETRY_COUNT_t count, PE_nRF24_RETRY_DELAY_t delay) {
+PE_nRF24_RESULT_t PE_nRF24_setRetransmit(PE_nRF24_t *handle, PE_nRF24_RETRY_COUNT_t count, PE_nRF24_RETRY_DELAY_t delay) {
     uint8_t reg;
     if (PE_nRF24_getRegister(handle, PE_nRF24_REG_SETUP_RETR, &reg) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
@@ -351,7 +351,7 @@ PE_nRF24_RESULT_t PE_nRF24_setRetransmit(PE_nRF24_handle_t *handle, PE_nRF24_RET
     return PE_nRF24_RESULT_OK;
 }
 
-PE_nRF24_RESULT_t PE_nRF24_setPowerMode(PE_nRF24_handle_t *handle, PE_nRF24_POWER_t value) {
+PE_nRF24_RESULT_t PE_nRF24_setPowerMode(PE_nRF24_t *handle, PE_nRF24_POWER_t value) {
     uint8_t reg;
 
     if (PE_nRF24_getRegister(handle, PE_nRF24_REG_CONFIG, &reg) != PE_nRF24_RESULT_OK) {
@@ -368,10 +368,121 @@ PE_nRF24_RESULT_t PE_nRF24_setPowerMode(PE_nRF24_handle_t *handle, PE_nRF24_POWE
     return PE_nRF24_RESULT_OK;
 }
 
-PE_nRF24_RESULT_t PE_nRF24_setRFChannel(PE_nRF24_handle_t *handle, uint8_t value) {
+PE_nRF24_RESULT_t PE_nRF24_setRFChannel(PE_nRF24_t *handle, uint8_t value) {
     uint8_t reg = (value & PE_nRF24_RF_CH);
 
     if (PE_nRF24_setRegister(handle, PE_nRF24_REG_RF_CH, &reg) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    return PE_nRF24_RESULT_OK;
+}
+
+PE_nRF24_RESULT_t PE_nRF24_attachRXPipe(PE_nRF24_t *handle, PE_nRF24_PIPE_t pipe) {
+    uint8_t reg;
+    if (PE_nRF24_getRegister(handle, PE_nRF24_REG_EN_RXADDR, &reg) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    reg |= (1U << pipe);
+
+    if (PE_nRF24_setRegister(handle, PE_nRF24_REG_EN_RXADDR, &reg) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    return PE_nRF24_RESULT_OK;
+}
+
+PE_nRF24_RESULT_t PE_nRF24_detachRXPipe(PE_nRF24_t *handle, PE_nRF24_PIPE_t pipe) {
+    uint8_t reg;
+    if (PE_nRF24_getRegister(handle, PE_nRF24_REG_EN_RXADDR, &reg) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    reg &= ~(1U << pipe);
+
+    if (PE_nRF24_setRegister(handle, PE_nRF24_REG_EN_RXADDR, &reg) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    return PE_nRF24_RESULT_OK;
+}
+
+PE_nRF24_RESULT_t PE_nRF24_getLostCount(PE_nRF24_t *handle, PE_nRF24_RETRY_COUNT_t *value) {
+    uint8_t reg;
+    if (PE_nRF24_getRegister(handle, PE_nRF24_REG_OBSERVE_TX, &reg) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    *value = (PE_nRF24_RETRY_COUNT_t) ((reg & PE_nRF24_OBSERVE_TX_PLOS_CNT) >> PE_nRF24_OBSERVE_TX_PLOS_CNT_Pos);
+
+    return PE_nRF24_RESULT_OK;
+}
+
+PE_nRF24_RESULT_t PE_nRF24_getRetryCount(PE_nRF24_t *handle, PE_nRF24_RETRY_COUNT_t *value) {
+    uint8_t reg;
+    if (PE_nRF24_getRegister(handle, PE_nRF24_REG_OBSERVE_TX, &reg) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    *value = (PE_nRF24_RETRY_COUNT_t) ((reg & PE_nRF24_OBSERVE_TX_ARC_CNT) >> PE_nRF24_OBSERVE_TX_ARC_CNT_Pos);
+
+    return PE_nRF24_RESULT_OK;
+}
+
+PE_nRF24_RESULT_t PE_nRF24_getCarrierDetect(PE_nRF24_t *handle, PE_nRF24_BIT_t *value) {
+    uint8_t reg;
+    if (PE_nRF24_getRegister(handle, PE_nRF24_REG_CD, &reg) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    *value = (PE_nRF24_BIT_t) (reg & PE_nRF24_CD_BIT);
+
+    return PE_nRF24_RESULT_OK;
+}
+
+PE_nRF24_RESULT_t PE_nRF24_configureRF(PE_nRF24_t *handle) {
+    uint8_t reg;
+    PE_nRF24_RESULT_t result = PE_nRF24_RESULT_OK;
+
+    // Set device power up
+    if (PE_nRF24_setPowerMode(handle, PE_nRF24_POWER_ON) != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    // Check if prev operation success
+    do {
+        if (PE_nRF24_getRegister(handle, PE_nRF24_REG_CONFIG, &reg) != PE_nRF24_RESULT_OK) {
+            return PE_nRF24_RESULT_ERROR;
+        }
+    } while ((reg & PE_nRF24_CONFIG_PWR_UP) == 0x00);
+
+    result |= PE_nRF24_setAddressWidth(handle, handle->config.addressWidth);
+    result |= PE_nRF24_setDataRate(handle, handle->config.dataRate);
+    result |= PE_nRF24_setRFChannel(handle, handle->config.rfChannel);
+    result |= PE_nRF24_setCRCScheme(handle, handle->config.crcScheme);
+    result |= PE_nRF24_setTXPower(handle, handle->config.txPower);
+    result |= PE_nRF24_setRetransmit(handle, handle->config.retryCount, handle->config.retryDelay);
+    result |= PE_nRF24_detachIRQ(handle, PE_nRF24_IRQ_ALL);
+    result |= PE_nRF24_clearIRQ(handle, PE_nRF24_IRQ_ALL);
+    result |= PE_nRF24_flushTX(handle);
+    result |= PE_nRF24_flushRX(handle);
+
+    if (result != PE_nRF24_RESULT_OK) {
+        return PE_nRF24_RESULT_ERROR;
+    }
+
+    return PE_nRF24_RESULT_OK;
+}
+
+PE_nRF24_RESULT_t PE_nRF24_configureRX(PE_nRF24_t *handle, PE_nRF24_configRX_t *config, PE_nRF24_PIPE_t pipe) {
+    PE_nRF24_RESULT_t result = PE_nRF24_RESULT_OK;
+
+    result |= PE_nRF24_setRXAddress(handle, config->address, pipe);
+    result |= PE_nRF24_setAutoACK(handle, config->autoACK, pipe);
+    result |= PE_nRF24_setRegister(handle, PE_nRF24_REG_RX_PW[pipe], &(config->payloadSize));
+
+    if (result != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
     }
 

@@ -562,7 +562,7 @@ typedef struct {
 
     uint8_t *bufferData;
     uint8_t bufferSize;
-} PE_nRF24_handle_t;
+} PE_nRF24_t;
 
 #ifdef __cplusplus
 }

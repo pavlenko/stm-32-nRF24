@@ -4,11 +4,11 @@
 #include "PE_nRF24_api.h"
 #include "PE_nRF24_spi.h"
 
-static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_RX_DR(PE_nRF24_handle_t *handle);
-static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_TX_DS(PE_nRF24_handle_t *handle);
-static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_handle_t *handle);
+static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_RX_DR(PE_nRF24_t *handle);
+static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_TX_DS(PE_nRF24_t *handle);
+static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_t *handle);
 
-PE_nRF24_RESULT_t PE_nRF24_handleIRQ(PE_nRF24_handle_t *handle) {
+PE_nRF24_RESULT_t PE_nRF24_handleIRQ(PE_nRF24_t *handle) {
     uint8_t status;
 
     if (PE_nRF24_getRegister(handle, PE_nRF24_REG_STATUS, &status) != PE_nRF24_RESULT_OK) {
@@ -33,7 +33,7 @@ PE_nRF24_RESULT_t PE_nRF24_handleIRQ(PE_nRF24_handle_t *handle) {
     return PE_nRF24_RESULT_OK;
 }
 
-static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_RX_DR(PE_nRF24_handle_t *handle)
+static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_RX_DR(PE_nRF24_t *handle)
 {
     uint8_t statusFIFO;
 
@@ -58,7 +58,7 @@ static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_RX_DR(PE_nRF24_handle_t *handle)
     return PE_nRF24_RESULT_OK;
 }
 
-static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_TX_DS(PE_nRF24_handle_t *handle)
+static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_TX_DS(PE_nRF24_t *handle)
 {
     PE_nRF24_setCE0(handle);
 
@@ -77,7 +77,7 @@ static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_TX_DS(PE_nRF24_handle_t *handle)
     return PE_nRF24_RESULT_OK;
 }
 
-static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_handle_t *handle)
+static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_t *handle)
 {
     PE_nRF24_flushTX(handle);
 
@@ -103,16 +103,16 @@ static PE_nRF24_RESULT_t PE_nRF24_handleIRQ_MAX_RT(PE_nRF24_handle_t *handle)
 }
 
 __attribute__((weak))
-void PE_nRF24_onTXComplete(PE_nRF24_handle_t *handle) {
+void PE_nRF24_onTXComplete(PE_nRF24_t *handle) {
     (void) handle;
 }
 
 __attribute__((weak))
-void PE_nRF24_onRXComplete(PE_nRF24_handle_t *handle) {
+void PE_nRF24_onRXComplete(PE_nRF24_t *handle) {
     (void) handle;
 }
 
 __attribute__((weak))
-void PE_nRF24_onMaxRetransmit(PE_nRF24_handle_t *handle) {
+void PE_nRF24_onMaxRetransmit(PE_nRF24_t *handle) {
     (void) handle;
 }
