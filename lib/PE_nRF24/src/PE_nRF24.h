@@ -567,9 +567,6 @@ typedef struct {
 
     uint8_t *bufferData;
     uint8_t bufferSize;
-
-    PE_nRF24_RESULT_t (*read) (uint8_t addr, uint8_t *data, uint8_t size); // Read register byte/data
-    PE_nRF24_RESULT_t (*send) (uint8_t addr, uint8_t *data, uint8_t size); // Send register byte/data
 } PE_nRF24_handle_t;
 
 /* Exported function prototypes --------------------------------------------- */

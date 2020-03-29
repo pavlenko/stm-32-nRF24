@@ -474,7 +474,7 @@ static PE_nRF24_RESULT_t PE_nRF24_getRegister(PE_nRF24_handle_t *handle, uint8_t
 {
     PE_nRF24_SPI_setCS(handle, PE_nRF24_BIT_CLR);
 
-    if (handle->read(PE_nRF24_CMD_R_REGISTER | addr, byte, 1) != PE_nRF24_RESULT_OK) {
+    if (PE_nRF24_SPI_read(handle, PE_nRF24_CMD_R_REGISTER | addr, byte, 1) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
     }
 
@@ -496,7 +496,7 @@ static PE_nRF24_RESULT_t PE_nRF24_setRegister(PE_nRF24_handle_t *handle, uint8_t
 {
     PE_nRF24_SPI_setCS(handle, PE_nRF24_BIT_CLR);
 
-    if (handle->send(PE_nRF24_CMD_W_REGISTER | addr, byte, 1) != PE_nRF24_RESULT_OK) {
+    if (PE_nRF24_SPI_send(handle, PE_nRF24_CMD_R_REGISTER | addr, byte, 1) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
     }
 
@@ -515,7 +515,7 @@ static PE_nRF24_RESULT_t PE_nRF24_setRegister(PE_nRF24_handle_t *handle, uint8_t
  */
 static PE_nRF24_RESULT_t PE_nRF24_getPayload(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size)
 {
-    return handle->read(PE_nRF24_CMD_R_RX_PAYLOAD, data, size);
+    return PE_nRF24_SPI_read(handle, PE_nRF24_CMD_R_RX_PAYLOAD, data, size);
 }
 
 /**
@@ -529,7 +529,7 @@ static PE_nRF24_RESULT_t PE_nRF24_getPayload(PE_nRF24_handle_t *handle, uint8_t 
  */
 static PE_nRF24_RESULT_t PE_nRF24_setPayload(PE_nRF24_handle_t *handle, uint8_t *data, uint8_t size)
 {
-    return handle->read(PE_nRF24_CMD_W_TX_PAYLOAD, data, size);
+    return PE_nRF24_SPI_read(handle, PE_nRF24_CMD_W_TX_PAYLOAD, data, size);
 }
 
 /**
@@ -591,7 +591,7 @@ static PE_nRF24_RESULT_t PE_nRF24_detachIRQ(PE_nRF24_handle_t *handle, PE_nRF24_
  */
 static PE_nRF24_RESULT_t PE_nRF24_flushTX(PE_nRF24_handle_t *handle)
 {
-    return handle->send(PE_nRF24_CMD_FLUSH_TX, &PE_nRF24_NONE, 0);
+    return PE_nRF24_SPI_send(handle, PE_nRF24_CMD_FLUSH_TX, &PE_nRF24_NONE, 0);
 }
 
 /**
@@ -603,7 +603,7 @@ static PE_nRF24_RESULT_t PE_nRF24_flushTX(PE_nRF24_handle_t *handle)
  */
 static PE_nRF24_RESULT_t PE_nRF24_flushRX(PE_nRF24_handle_t *handle)
 {
-    return handle->send(PE_nRF24_CMD_FLUSH_RX, &PE_nRF24_NONE, 0);
+    return PE_nRF24_SPI_send(handle, PE_nRF24_CMD_FLUSH_RX, &PE_nRF24_NONE, 0);
 }
 
 /**
@@ -669,7 +669,7 @@ static PE_nRF24_RESULT_t PE_nRF24_setTXAddress(PE_nRF24_handle_t *handle, uint8_
 
     PE_nRF24_getAddressWidth(handle, (PE_nRF24_ADDR_WIDTH_t *) &width);
 
-    if (handle->send(PE_nRF24_CMD_W_REGISTER + PE_nRF24_REG_TX_ADDR, address, width + 2) != PE_nRF24_RESULT_OK) {
+    if (PE_nRF24_SPI_send(handle, PE_nRF24_CMD_W_REGISTER + PE_nRF24_REG_TX_ADDR, address, width + 2) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
     }
 
@@ -697,7 +697,7 @@ static PE_nRF24_RESULT_t PE_nRF24_setRXAddress(PE_nRF24_handle_t *handle, uint8_
         width += 2;
     }
 
-    if (handle->send(PE_nRF24_CMD_W_REGISTER + PE_nRF24_REG_RX_ADDR[pipe], address, width) != PE_nRF24_RESULT_OK) {
+    if (PE_nRF24_SPI_send(handle, PE_nRF24_CMD_W_REGISTER + PE_nRF24_REG_RX_ADDR[pipe], address, width) != PE_nRF24_RESULT_OK) {
         return PE_nRF24_RESULT_ERROR;
     }
 
